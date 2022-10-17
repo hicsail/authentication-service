@@ -1,0 +1,35 @@
+name: server
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/server
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Clean Up
+        run: rm ../../package.json ../../package-lock.json
+      - name: Install dependencies
+        run: npm install
+      - name: Check Formatting
+        run: npm run prettier
+      - name: Check Linting
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm run test
+      - name: npm production install
+        if: github.ref == 'refs/heads/main'
+        run: npm prune --omit=dev
