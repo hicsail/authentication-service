@@ -25,10 +25,8 @@
     "url": "https://github.com/hicsail/authentication-service/issues"
   },
   "homepage": "https://github.com/hicsail/authentication-service#readme",
-  "devDependencies": {
-    "prisma": "^4.5.0"
-  },
   "dependencies": {
-    "@prisma/client": "^4.5.0"
+    "@prisma/client": "^4.5.0",
+    "prisma": "^4.5.0"
   }
 }
