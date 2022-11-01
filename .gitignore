@@ -27,7 +27,9 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
+# Database config
+.env
 /packages/server/.env
-/packages/server/dist
 
+/packages/server/dist
 /packages/client/dist
