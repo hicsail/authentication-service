@@ -24,5 +24,11 @@
   "bugs": {
     "url": "https://github.com/hicsail/authentication-service/issues"
   },
-  "homepage": "https://github.com/hicsail/authentication-service#readme"
+  "homepage": "https://github.com/hicsail/authentication-service#readme",
+  "devDependencies": {
+    "prisma": "^4.5.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.5.0"
+  }
 }
