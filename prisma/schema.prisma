@@ -5,6 +5,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// configure DATABASE_URL in .env file
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -21,7 +22,7 @@ model USER {
   updated_at  DateTime  @default(now())
   deleted_at  DateTime?
   reset_code            String?
-  reset_code_created_at DateTime?
+  reset_code_expires_at DateTime?
 
   @@id([id, project_id])
 }
