@@ -31,5 +31,7 @@ lerna-debug.log*
 .env
 /packages/server/.env
 
+# misc
+package-lock.json
 /packages/server/dist
 /packages/client/dist
