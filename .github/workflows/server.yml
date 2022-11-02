@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 16
       - name: Clean Up
-        run: rm ../../package.json ../../package-lock.json
+        run: rm ../../package.json
       - name: Install dependencies
         run: npm install
       - name: Check Formatting
