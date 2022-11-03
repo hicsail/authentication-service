@@ -22,8 +22,6 @@ jobs:
         run: rm ../../package.json
       - name: Install dependencies
         run: npm install
-      - name: Generate prisma client
-        run: npx prisma generate
       - name: Check Formatting
         run: npm run prettier
       - name: Check Linting
