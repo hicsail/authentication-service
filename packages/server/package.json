@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist && npx prisma generate",
     "build": "nest build",
     "prettier": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
     "prettier:fix": "prettier -wl \"src/**/*.ts\" \"test/**/*.ts\"",
