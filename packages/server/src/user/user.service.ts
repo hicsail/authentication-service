@@ -7,7 +7,8 @@ import * as argon2 from 'argon2';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async createTempUsers() {
+  // TODO: remove this function when deploying
+  async createTempUsers(): Promise<void> {
     // TODO: add temp users to database
   }
 
@@ -25,8 +26,7 @@ export class UserService {
         project_id: data.project_id,
         username: data.username,
         email: data.email,
-        password: pwd_hash,
-        role: 0
+        password: pwd_hash
       }
     });
 
@@ -93,7 +93,7 @@ export class UserService {
    * @param params object includes: `project_id` and `email` as string
    * @param reset_code_plain a string of reset code in plain text
    */
-  async setResetToken(params: { project_id; email }, reset_code_plain: string) {
+  async setResetToken(params: { project_id; email }, reset_code_plain: string): Promise<void> {
     const reset_code_hash = await argon2.hash(reset_code_plain);
 
     const valid_time = 60 * 60 * 1000; // valid time for reset code in millisecond
@@ -115,7 +115,7 @@ export class UserService {
    * @param pwd_plain password in plain text
    * @param reset_code_plain a string of reset code in plain text
    */
-  async updateUserPassword(params: { project_id; email }, pwd_plain: string, reset_code_plain: string) {
+  async updateUserPassword(params: { project_id; email }, pwd_plain: string, reset_code_plain: string): Promise<void> {
     // check if reset code matches
     const user = await this.prisma.uSER.findUniqueOrThrow({
       where: {
