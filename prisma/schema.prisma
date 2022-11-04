@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model USER {
+model User {
   id          String  @unique @default(uuid())
   project_id  String
   username    String?

@@ -7,7 +7,7 @@ export class LoginController {
 
   @Post('/username')
   async login(@Body('project_id') project_id: string, @Body('username') username: string, @Body('password') password: string): Promise<string> {
-    return this.loginService.login();
+    return this.loginService.loginUsername(project_id, username, password);
   }
 }
 
@@ -17,7 +17,7 @@ export class SignupController {
   constructor(private signupService: SignupService) {}
 
   @Post()
-  async signup(@Body('project_id') project_id: string, @Body('username') username: string, @Body('method') method: string, @Body('password') password: string): Promise<string> {
-    return await this.signupService.signup(project_id, username, method, password);
+  async signup(@Body('project_id') project_id: string, @Body('username') username: string, @Body('email') email: string, @Body('method') method: string, @Body('password') password: string): Promise<string> {
+    return await this.signupService.signup(project_id, username, email, method, password);
   }
 }
