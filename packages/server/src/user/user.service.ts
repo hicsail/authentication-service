@@ -8,6 +8,11 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   // TODO: remove this function when deploying
+  /**
+   * This function is for creating a list of users record in database. It should be called only once.
+   * The purpose of this function is for testing only and should be removed before deployment.
+   * You can also modify or add more user obejct to the `temp_users` list.
+   */
   async createTempUsers(): Promise<void> {
     const temp_users = [
       {
@@ -52,10 +57,14 @@ export class UserService {
       }
     ];
 
-    for (const user of temp_users) {
-      this.prisma.uSER.create({
-        data: user
-      });
+    try {
+      for (const user of temp_users) {
+        this.prisma.uSER.create({
+          data: user
+        });
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
