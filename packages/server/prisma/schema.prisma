@@ -25,4 +25,6 @@ model USER {
   reset_code_expires_at DateTime?
 
   @@id([id, project_id])
+  @@unique(fields: [project_id, username], name: "proj_username")
+  @@unique(fields: [project_id, email], name: "proj_email")
 }
