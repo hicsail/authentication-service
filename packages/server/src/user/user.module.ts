@@ -7,4 +7,4 @@ import { UserService } from './user.service';
   controllers: [],
   providers: [UserService, PrismaService]
 })
-export class AuthModule {}
+export class UserModule {}
