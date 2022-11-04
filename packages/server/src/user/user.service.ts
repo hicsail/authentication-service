@@ -74,7 +74,7 @@ export class UserService {
    * @param data object that should contains `project_id: string`, `username?: string`, `email: string` and `password: string` in plain text
    * @returns User object
    */
-  async registerUser(data: Prisma.USERCreateInput): Promise<USER> {
+  async createUser(data: Prisma.USERCreateInput): Promise<USER> {
     const pwd_hash = await argon2.hash(data.password);
 
     const user = this.prisma.uSER.create({
