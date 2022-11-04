@@ -8,6 +8,20 @@ export class LoginService {
     return 'JWT token';
   }
 
+  forgot(): void {
+    // TODO:
+    // 1. send email
+  }
+
+  reset(): void {
+    // TODO:
+    // 1 Check credentials
+    // 2. Send email
+  }
+}
+
+@Injectable()
+export class SignupService {
   async signup(project_id: string, username: string, method: string, password: string): Promise<string> {
     // TODO:
     // 0. Check password strength and credentials
@@ -23,16 +37,5 @@ export class LoginService {
       console.log(err);
       return err;
     }
-  }
-
-  forgot(): void {
-    // TODO:
-    // 1. send email
-  }
-
-  reset(): void {
-    // TODO:
-    // 1 Check credentials
-    // 2. Send email
   }
 }
