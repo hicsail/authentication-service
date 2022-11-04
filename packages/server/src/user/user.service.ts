@@ -132,7 +132,7 @@ export class UserService {
     if ((await argon2.verify(user.reset_code, reset_code_plain)) && now < user.reset_code_expires_at) {
       const pwd_hash = await argon2.hash(pwd_plain);
 
-      this.prisma.uSER.update({
+      await this.prisma.uSER.update({
         where: {
           proj_email: params
         },
