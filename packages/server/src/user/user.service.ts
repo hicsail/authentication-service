@@ -9,7 +9,54 @@ export class UserService {
 
   // TODO: remove this function when deploying
   async createTempUsers(): Promise<void> {
-    // TODO: add temp users to database
+    const temp_users = [
+      {
+        project_id: 'project-001',
+        username: 'admin0',
+        email: 'some.admin@mail.com',
+        password: await argon2.hash('some_admin.password'),
+        role: 1,
+        created_at: new Date('2020-01-01T09:00:01'),
+        updated_at: new Date('2020-01-01T09:00:01')
+      },
+      {
+        project_id: 'project-001',
+        username: 'user0',
+        email: 'some.user@mail.com',
+        password: await argon2.hash('some_user_password'),
+        created_at: new Date('2020-10-21T09:10:33'),
+        updated_at: new Date('2020-10-21T09:10:33')
+      },
+      {
+        project_id: 'project-001',
+        username: 'user1',
+        email: 'another.user@mail.com',
+        password: await argon2.hash('another-user-password'),
+        created_at: new Date('2021-02-17T15:44:10'),
+        updated_at: new Date('2021-12-30T12:03:01')
+      },
+      {
+        project_id: 'project-002',
+        email: 'the_admin@mail.com',
+        password: await argon2.hash('the_admin@project2'),
+        role: 3,
+        created_at: new Date('2022-02-10T10:30:00'),
+        updated_at: new Date('2022-03-01T15:32:09')
+      },
+      {
+        project_id: 'project-002',
+        email: 'one_poor_user@mail.com',
+        password: await argon2.hash('a_poor_user'),
+        created_at: new Date('2022-05-10T15:10:30'),
+        updated_at: new Date('2022-05-10T15:10:30')
+      }
+    ];
+
+    for (const user of temp_users) {
+      this.prisma.uSER.create({
+        data: user
+      });
+    }
   }
 
   /**
