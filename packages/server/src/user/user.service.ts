@@ -1,53 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, USER } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  // TODO: Remove temporary users
-  private readonly users: USER[] = [
-    {
-      id: 'a31247c5-2632-45e8-b7e2-746ba5a2d1e8',
-      project_id: 'project-001',
-      username: 'user0',
-      email: 'some.user@mail.com',
-      password: 'some_user_password',
-      role: 0,
-      created_at: null,
-      updated_at: null,
-      deleted_at: null,
-      reset_code: 'some_reset_code',
-      reset_code_expires_at: null
-    },
-    {
-      id: '94ea3787-16e0-4a5c-b9a5-d345f4fa82dd',
-      project_id: 'project-001',
-      username: 'user1',
-      email: 'another.user@mail.com',
-      password: 'another_user_password',
-      role: 0,
-      created_at: null,
-      updated_at: null,
-      deleted_at: null,
-      reset_code: null,
-      reset_code_expires_at: null
-    },
-    {
-      id: 'e929ebd5-a899-4df2-a94c-0f024de39cbd',
-      project_id: 'project-002',
-      username: 'admin0',
-      email: 'some.admin@mail.com',
-      password: 'some_admin_password',
-      role: 1,
-      created_at: null,
-      updated_at: null,
-      deleted_at: null,
-      reset_code: null,
-      reset_code_expires_at: null
-    }
-  ];
+  async createTempUsers() {
+    // TODO: add temp users to database
+  }
 
   /**
    * Register a new record of user in the database
@@ -56,22 +18,17 @@ export class UserService {
    * @returns User object
    */
   async registerUser(data: Prisma.USERCreateInput): Promise<USER> {
-    // TODO: Replace create temperary user
-    const user = {
-      id: '259aab6e-ac66-4ad0-b2ca-6671336d67bf',
-      project_id: data.project_id,
-      username: data.username,
-      email: data.username,
-      password: data.password,
-      role: 0,
-      created_at: null,
-      updated_at: null,
-      deleted_at: null,
-      reset_code: null,
-      reset_code_expires_at: null
-    };
+    const pwd_hash = await argon2.hash(data.password);
 
-    this.users.push(user);
+    const user = this.prisma.uSER.create({
+      data: {
+        project_id: data.project_id,
+        username: data.username,
+        email: data.email,
+        password: pwd_hash,
+        role: 0
+      }
+    });
 
     return user;
   }
@@ -79,16 +36,25 @@ export class UserService {
   /**
    * Find unique user for a project using email and login.
    *
-   * @param params object includes: `project_id`, `username`, and `password` in plain text
-   * @returns User object
+   * @param params object includes: `project_id` and `username` as string
+   * @param pwd_plain password in plain text
+   * @returns User object if password matches, otherwise return `null`
    */
-  async loginUserByUsername(params: { project_id; username; password }): Promise<USER> {
-    // TODO: Replace find temperary user
-    for (const user of this.users) {
-      if (params.project_id === user.project_id && params.username === user.username && params.password === user.password) {
-        // return dummy user for testing
-        return user;
+  async loginUserByUsername(params: { project_id; username }, pwd_plain: string): Promise<USER> {
+    const user = await this.prisma.uSER.findUniqueOrThrow({
+      where: {
+        proj_username: params
       }
+    });
+
+    try {
+      if (await argon2.verify(user.password, pwd_plain)) {
+        return user;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      // TODO: internal failure behavior
     }
 
     return null;
@@ -97,16 +63,25 @@ export class UserService {
   /**
    * Find unique user for a project using email and login.
    *
-   * @param params object includes: `project_id`, `email`, and `password` in plain text
-   * @returns User object
+   * @param params object includes: `project_id` and `email` as string
+   * @param pwd_plain password in plain text
+   * @returns User object if password matches, otherwise return `null`
    */
-  async loginUserByEmail(params: { project_id; email; password }): Promise<USER> {
-    // TODO: Replace find temperary user
-    for (const user of this.users) {
-      if (params.project_id === user.project_id && params.email === user.email && params.password === user.password) {
-        // return dummy user for testing
-        return user;
+  async loginUserByEmail(params: { project_id; email }, pwd_plain: string): Promise<USER> {
+    const user = await this.prisma.uSER.findUniqueOrThrow({
+      where: {
+        proj_email: params
       }
+    });
+
+    try {
+      if (await argon2.verify(user.password, pwd_plain)) {
+        return user;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      // TODO: internal failure behavior
     }
 
     return null;
@@ -115,34 +90,53 @@ export class UserService {
   /**
    * Generate reset token for a user and update it in the database.
    *
-   * @param params object includes: `project_id` and `email`
-   * @param reset_code a string of reset code in plain text
+   * @param params object includes: `project_id` and `email` as string
+   * @param reset_code_plain a string of reset code in plain text
    */
-  async setResetToken(params: { project_id; email }, reset_code: string) {
-    // TODO: Replace set reset token for temperary user
-    for (let idx = 0; idx < this.users.length; idx++) {
-      const user = this.users[idx];
-      if (params.project_id === user.project_id && params.email === user.email) {
-        user.reset_code = reset_code;
-        break;
+  async setResetToken(params: { project_id; email }, reset_code_plain: string) {
+    const reset_code_hash = await argon2.hash(reset_code_plain);
+
+    const valid_time = 60 * 60 * 1000; // valid time for reset code in millisecond
+    const user = await this.prisma.uSER.update({
+      where: {
+        proj_email: params
+      },
+      data: {
+        reset_code: reset_code_hash,
+        reset_code_expires_at: new Date(Date.now() + valid_time)
       }
-    }
+    });
   }
 
   /**
    * Update user password after verifying user's reset_code against the database
    *
-   * @param params object includes: `project_id`, `email` and new `password` in plain text
-   * @param reset_code a string of reset code in plain text
+   * @param params object includes: `project_id` and `email` as string
+   * @param pwd_plain password in plain text
+   * @param reset_code_plain a string of reset code in plain text
    */
-  async updateUserPassword(params: { project_id; email; password }, reset_code: string) {
-    // TODO: Replace update password for temperary user
-    for (let idx = 0; idx < this.users.length; idx++) {
-      const user = this.users[idx];
-      if (params.project_id === user.project_id && params.email === user.email && reset_code === user.reset_code) {
-        user.reset_code = null;
-        user.password = params.password;
+  async updateUserPassword(params: { project_id; email }, pwd_plain: string, reset_code_plain: string) {
+    // check if reset code matches
+    const user = await this.prisma.uSER.findUniqueOrThrow({
+      where: {
+        proj_email: params
       }
+    });
+
+    const now = new Date(Date.now());
+    if ((await argon2.verify(user.reset_code, reset_code_plain)) && now < user.reset_code_expires_at) {
+      const pwd_hash = await argon2.hash(pwd_plain);
+
+      this.prisma.uSER.update({
+        where: {
+          proj_email: params
+        },
+        data: {
+          password: pwd_hash,
+          reset_code: null,
+          reset_code_expires_at: null
+        }
+      });
     }
   }
 
