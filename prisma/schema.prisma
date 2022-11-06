@@ -12,10 +12,10 @@ datasource db {
 }
 
 model User {
-  id          String  @unique @default(uuid())
-  project_id  String
-  username    String?
-  email       String
+  id          String @unique @default(uuid())
+  project_id  String @unique
+  username    String @unique
+  email       String @unique
   password    String
   role        Int
   created_at  DateTime  @default(now())
@@ -25,4 +25,5 @@ model User {
   reset_code_expires_at DateTime?
 
   @@id([id, project_id])
+  @@unique([id, project_id, email, username])
 }
