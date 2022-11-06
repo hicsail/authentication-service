@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { LoginController, SignupController } from './auth.controller';
-import { LoginService, SignupService } from './auth.service';
+import { AuthService, LoginService, SignupService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './local.strategy';
 
 @Module({
-  imports: [],
+  imports: [UsersModule, PassportModule],
   controllers: [LoginController, SignupController],
-  providers: [LoginService, SignupService, PrismaService]
+  providers: [AuthService, LoginService, SignupService, PrismaService, LocalStrategy]
 })
 export class AuthModule {}
