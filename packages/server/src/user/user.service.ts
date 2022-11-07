@@ -150,7 +150,7 @@ export class UserService {
     const reset_code_hash = await argon2.hash(reset_code_plain);
 
     const valid_time = 60 * 60 * 1000; // valid time for reset code in millisecond
-    const user = await this.prisma.uSER.update({
+    await this.prisma.uSER.update({
       where: {
         proj_email: params
       },
