@@ -101,57 +101,41 @@ export class UserService {
   }
 
   /**
-   * Find unique user for a project using email and login.
+   * Find unique user using id for all project
    *
-   * @param params object includes: `project_id` and `username` as string
-   * @param pwd_plain password in plain text
-   * @returns User object if password matches, otherwise return `null`
+   * @param id uuid of the user as string
+   * @returns User object, or throw `NotFoundError` when not exist
    */
-  async loginUserByUsername(params: { project_id; username }, pwd_plain: string): Promise<User> {
-    const user = await this.prisma.user.findUniqueOrThrow({
-      where: {
-        proj_username: params
-      }
-    });
-
-    try {
-      if (await argon2.verify(user.password, pwd_plain)) {
-        return user;
-      } else {
-        return null;
-      }
-    } catch (err) {
-      // TODO: internal failure behavior
-    }
-
-    return null;
+  async findUserById(id: string): Promise<User> {
+    return await this.prisma.user.findFirstOrThrow({ where: { id: id } });
   }
 
   /**
-   * Find unique user for a project using email and login.
+   * Find unique user for a project using email.
    *
-   * @param params object includes: `project_id` and `email` as string
-   * @param pwd_plain password in plain text
-   * @returns User object if password matches, otherwise return `null`
+   * @returns User object, or throw `NotFoundError` when not exist
    */
-  async loginUserByEmail(params: { project_id; email }, pwd_plain: string): Promise<User> {
-    const user = await this.prisma.user.findUniqueOrThrow({
+  async findUserByUsername(project_id: string, username: string): Promise<User> {
+    return await this.prisma.user.findFirstOrThrow({
       where: {
-        proj_email: params
+        project_id: project_id,
+        username: username
       }
     });
+  }
 
-    try {
-      if (await argon2.verify(user.password, pwd_plain)) {
-        return user;
-      } else {
-        return null;
+  /**
+   * Find unique user for a project using email.
+   *
+   * @returns User object, or throw `NotFoundError` when not exist
+   */
+  async findUserByEmail(project_id: string, email: string): Promise<User> {
+    return await this.prisma.user.findFirstOrThrow({
+      where: {
+        project_id: project_id,
+        email: email
       }
-    } catch (err) {
-      // TODO: internal failure behavior
-    }
-
-    return null;
+    });
   }
 
   /**
