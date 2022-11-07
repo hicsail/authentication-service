@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private usersService: UsersService, private prisma: PrismaService, private jwtService: JwtService) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
+  async validateUsername(username: string, password: string): Promise<any> {
     const user = await this.usersService.findOneUsername(username);
 
     if(user && await bcrypt.compare(password, user.password)) {
@@ -19,8 +19,25 @@ export class AuthService {
     return null;
   }
 
+  async validateEmail(email: string, password: string): Promise<any> {
+    const user = await this.usersService.findOneEmail(email);
+
+    if(user && await bcrypt.compare(password, user.password)) {
+      const { password, email, ...rest } = user;
+      return rest;
+    }
+
+    return null;
+  }
+
   loginUsername(project_id: string, username: string, password: string) {
     const payload = { username: username, sub: project_id };
+
+    return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+  }
+
+  loginEmail(project_id: string, email: string, password: string) {
+    const payload = { email: email, sub: project_id };
 
     return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
   }
