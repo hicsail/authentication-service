@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
+import { addHours, isFuture } from 'date-fns';
 
 @Injectable()
 export class UserService {
@@ -139,22 +140,28 @@ export class UserService {
   }
 
   /**
-   * Generate reset token for a user and update it in the database.
+   * Generate reset token for a user and store it in the database.
    *
    * @param params object includes: `project_id` and `email` as string
    * @param reset_code_plain a string of reset code in plain text
    */
   async setResetToken(params: { project_id; email }, reset_code_plain: string): Promise<void> {
+    const user_to_update = await this.prisma.user.findFirstOrThrow({
+      where: {
+        project_id: params.project_id,
+        email: params.email
+      }
+    });
+
     const reset_code_hash = await argon2.hash(reset_code_plain);
 
-    const valid_time = 60 * 60 * 1000; // valid time for reset code in millisecond
     await this.prisma.user.update({
       where: {
-        proj_email: params
+        id: user_to_update.id
       },
       data: {
         reset_code: reset_code_hash,
-        reset_code_expires_at: new Date(Date.now() + valid_time)
+        reset_code_expires_at: addHours(new Date(), 1) // TODO: change default expiration time
       }
     });
   }
@@ -163,27 +170,28 @@ export class UserService {
    * Update user password after verifying user's reset_code against the database
    *
    * @param params object includes: `project_id` and `email` as string
-   * @param pwd_plain password in plain text
+   * @param pwd_plain new password in plain text
    * @param reset_code_plain a string of reset code in plain text
    */
   async updateUserPassword(params: { project_id; email }, pwd_plain: string, reset_code_plain: string): Promise<void> {
-    // check if reset code matches
-    const user = await this.prisma.user.findUniqueOrThrow({
+    const user_to_update = await this.prisma.user.findFirstOrThrow({
       where: {
-        proj_email: params
+        project_id: params.project_id,
+        email: params.email
       }
     });
 
-    const now = new Date(Date.now());
-    if ((await argon2.verify(user.reset_code, reset_code_plain)) && now < user.reset_code_expires_at) {
+    // check expiration time and if reset code matches
+    if ((await argon2.verify(user_to_update.reset_code, reset_code_plain)) && isFuture(user_to_update.reset_code_expires_at)) {
       const pwd_hash = await argon2.hash(pwd_plain);
 
       await this.prisma.user.update({
         where: {
-          proj_email: params
+          id: user_to_update.id
         },
         data: {
           password: pwd_hash,
+          updated_at: new Date(),
           reset_code: null,
           reset_code_expires_at: null
         }
