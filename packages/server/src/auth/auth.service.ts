@@ -10,7 +10,7 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findOneUsername(username);
 
-    if(user && user.password === password) {
+    if(user && await bcrypt.compare(password, user.password)) {
       const { password, username, ...rest } = user;
       return rest;
     }
@@ -51,15 +51,15 @@ export class SignupService {
     // 1. Create account using inputs
     // 2. Return JWT token
     try {
-      const salt = await bcrypt.genSalt();
-      const passwordSaltSHA256 = await bcrypt.hash(password, salt);
+      const saltRounds = 10;
+      const passwordSaltSHA256 = await bcrypt.hash(password, saltRounds);
 
       await this.prisma.user.create({
         data: {
           project_id: project_id,
           username: username,
           email: email,
-          password: passwordSaltSHA256, 
+          password: passwordSaltSHA256,
           role: 0
         },
       });
