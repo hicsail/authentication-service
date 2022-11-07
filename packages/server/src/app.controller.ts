@@ -1,16 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth/auth.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
-@Controller()
+@Controller('protected')
 export class AppController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   getHello(): string {
-    // TODO:
-    // 1. Require JWT
-    // 2. Validate JWT
     return "Hello, World"
   }
 }

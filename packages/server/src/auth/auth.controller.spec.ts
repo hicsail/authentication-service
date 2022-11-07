@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoginController, SignupController } from './auth.controller';
-import { LoginService, SignupService } from './auth.service';
+import { AuthService } from './auth.service';
 
 describe('LoginController', () => {
   let loginController: LoginController;
@@ -8,7 +8,7 @@ describe('LoginController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [LoginController],
-      providers: [LoginService]
+      providers: [AuthService]
     }).compile();
 
     loginController = app.get<LoginController>(LoginController);
@@ -33,7 +33,7 @@ describe('SignupController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [SignupController],
-      providers: [SignupService]
+      providers: [AuthService]
     }).compile();
 
     signupController = app.get<SignupController>(SignupController);
@@ -43,10 +43,11 @@ describe('SignupController', () => {
     it('Should return JWT token', async () => {
       const project_id = '1';
       const username = 'username';
+      const email = 'my@gmail.com';
       const method = 'username';
       const password = 'pw';
       const expectedResp = `${project_id}-${username}-${method}-${password}`;
-      await expect(signupController.signup(project_id, username, method, password)).resolves.toBe(expectedResp);
+      await expect(signupController.signup(project_id, username, email, method, password)).resolves.toBe(expectedResp);
     });
   });
 });
