@@ -5,7 +5,7 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService, private prisma: PrismaService) {}
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findOneUsername(username);
@@ -17,15 +17,8 @@ export class AuthService {
 
     return null;
   }
-}
-
-@Injectable()
-export class LoginService {
-  constructor(private prisma: PrismaService) {}
 
   loginUsername(project_id: string, username: string, password: string): string {
-    // check username and check email
-    console.log('LOGGED IN');
     return 'JWT token';
   }
 
@@ -39,11 +32,6 @@ export class LoginService {
     // 1 Check credentials
     // 2. Send email
   }
-}
-
-@Injectable()
-export class SignupService {
-  constructor(private prisma: PrismaService) {}
 
   async signup(project_id: string, username: string, email: string, method: string, password: string): Promise<string> {
     // TODO:

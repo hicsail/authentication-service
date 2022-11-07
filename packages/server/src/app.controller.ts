@@ -7,6 +7,9 @@ export class AppController {
 
   @Get()
   getHello(): string {
+    // TODO:
+    // 1. Require JWT
+    // 2. Validate JWT
     return this.appService.getHello();
   }
 }
