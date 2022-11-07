@@ -186,6 +186,8 @@ export class UserService {
           reset_code_expires_at: null
         }
       });
+    } else {
+      throw new Error(`Password failed to be updated.`);
     }
   }
 
