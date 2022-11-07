@@ -146,12 +146,7 @@ export class UserService {
    * @param reset_code_plain a string of reset code in plain text
    */
   async setResetToken(params: { project_id; email }, reset_code_plain: string): Promise<void> {
-    const user_to_update = await this.prisma.user.findFirstOrThrow({
-      where: {
-        project_id: params.project_id,
-        email: params.email
-      }
-    });
+    const user_to_update = await this.findUserByEmail(params.project_id, params.email);
 
     const reset_code_hash = await argon2.hash(reset_code_plain);
 
@@ -174,12 +169,7 @@ export class UserService {
    * @param reset_code_plain a string of reset code in plain text
    */
   async updateUserPassword(params: { project_id; email }, pwd_plain: string, reset_code_plain: string): Promise<void> {
-    const user_to_update = await this.prisma.user.findFirstOrThrow({
-      where: {
-        project_id: params.project_id,
-        email: params.email
-      }
-    });
+    const user_to_update = await this.findUserByEmail(params.project_id, params.email);
 
     // check expiration time and if reset code matches
     if ((await argon2.verify(user_to_update.reset_code, reset_code_plain)) && isFuture(user_to_update.reset_code_expires_at)) {
