@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, USER } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
 
@@ -59,7 +59,7 @@ export class UserService {
     ];
 
     for (const user of temp_users) {
-      await this.prisma.uSER.create({
+      await this.prisma.user.create({
         data: user
       });
     }
@@ -71,10 +71,10 @@ export class UserService {
    * @param data object that should contains `project_id: string`, `username?: string`, `email: string` and `password: string` in plain text
    * @returns User object
    */
-  async createUser(data: Prisma.USERCreateInput): Promise<USER> {
+  async createUser(data: Prisma.UserCreateInput): Promise<User> {
     const pwd_hash = await argon2.hash(data.password);
 
-    const user = this.prisma.uSER.create({
+    const user = this.prisma.user.create({
       data: {
         project_id: data.project_id,
         username: data.username,
@@ -93,8 +93,8 @@ export class UserService {
    * @param pwd_plain password in plain text
    * @returns User object if password matches, otherwise return `null`
    */
-  async loginUserByUsername(params: { project_id; username }, pwd_plain: string): Promise<USER> {
-    const user = await this.prisma.uSER.findUniqueOrThrow({
+  async loginUserByUsername(params: { project_id; username }, pwd_plain: string): Promise<User> {
+    const user = await this.prisma.user.findUniqueOrThrow({
       where: {
         proj_username: params
       }
@@ -120,8 +120,8 @@ export class UserService {
    * @param pwd_plain password in plain text
    * @returns User object if password matches, otherwise return `null`
    */
-  async loginUserByEmail(params: { project_id; email }, pwd_plain: string): Promise<USER> {
-    const user = await this.prisma.uSER.findUniqueOrThrow({
+  async loginUserByEmail(params: { project_id; email }, pwd_plain: string): Promise<User> {
+    const user = await this.prisma.user.findUniqueOrThrow({
       where: {
         proj_email: params
       }
@@ -150,7 +150,7 @@ export class UserService {
     const reset_code_hash = await argon2.hash(reset_code_plain);
 
     const valid_time = 60 * 60 * 1000; // valid time for reset code in millisecond
-    await this.prisma.uSER.update({
+    await this.prisma.user.update({
       where: {
         proj_email: params
       },
@@ -170,7 +170,7 @@ export class UserService {
    */
   async updateUserPassword(params: { project_id; email }, pwd_plain: string, reset_code_plain: string): Promise<void> {
     // check if reset code matches
-    const user = await this.prisma.uSER.findUniqueOrThrow({
+    const user = await this.prisma.user.findUniqueOrThrow({
       where: {
         proj_email: params
       }
@@ -180,7 +180,7 @@ export class UserService {
     if ((await argon2.verify(user.reset_code, reset_code_plain)) && now < user.reset_code_expires_at) {
       const pwd_hash = await argon2.hash(pwd_plain);
 
-      await this.prisma.uSER.update({
+      await this.prisma.user.update({
         where: {
           proj_email: params
         },
