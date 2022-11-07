@@ -36,7 +36,7 @@ export class AuthService {
     // 2. Send email
   }
 
-  async signup(project_id: string, username: string, email: string, method: string, password: string): Promise<string> {
+  async signup(project_id: string, username: string, email: string, method: string, password: string) {
     // TODO:
     // 0. Check password strength and credentials
     // 1. Create account using inputs
@@ -56,7 +56,9 @@ export class AuthService {
       });
 
       // JWT returned here
-      return `${project_id}-${username}-${method}-${passwordSaltSHA256}`;
+      const payload = { username: username, sub: project_id };
+
+      return { access_token: this.jwtService.sign(payload) };
     } catch (err) {
       console.log(err);
       return err;
