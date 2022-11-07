@@ -68,13 +68,29 @@ export class UserService {
   /**
    * Register a new record of user in the database
    *
-   * @param data object that should contains `project_id: string`, `username?: string`, `email: string` and `password: string` in plain text
-   * @returns User object
+   * @param data object that should contains `project_id: string`, `username?: string`, `email?: string` and `password: string` in plain text.
+   * **NOTE:** `data` should contain either `username`, `email`, or both.
+   * @returns User object, throws an `Error` when user already exist in the database
    */
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
+    // check if such user exist in the database
+    const user_count = await this.prisma.user.count({
+      where: {
+        AND: {
+          project_id: data.project_id,
+          OR: [{ username: data.username }, { email: data.email }]
+        }
+      }
+    });
+
+    // throw error if user exist
+    if (user_count !== 0) {
+      throw new Error('User already exist in the database.');
+    }
+
     const pwd_hash = await argon2.hash(data.password);
 
-    const user = this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         project_id: data.project_id,
         username: data.username,
@@ -82,8 +98,6 @@ export class UserService {
         password: pwd_hash
       }
     });
-
-    return user;
   }
 
   /**
