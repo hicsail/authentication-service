@@ -8,7 +8,7 @@ export class LoginController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/username')
-  async login(@Body('project_id') project_id: string, @Body('username') username: string, @Body('password') password: string): Promise<string> {
+  async login(@Body('project_id') project_id: string, @Body('username') username: string, @Body('password') password: string) {
     return this.authService.loginUsername(project_id, username, password);
   }
 }

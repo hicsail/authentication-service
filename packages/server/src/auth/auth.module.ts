@@ -5,10 +5,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [UsersModule, PassportModule],
+  imports: [UsersModule, PassportModule, JwtModule.register({
+    secret: 'SECRET', //TODO: import from env
+    signOptions: { expiresIn: '60s' },
+  })],
   controllers: [LoginController, SignupController],
-  providers: [AuthService, PrismaService, LocalStrategy]
+  providers: [AuthService, PrismaService, LocalStrategy],
+  exports: [AuthService]
 })
 export class AuthModule {}
