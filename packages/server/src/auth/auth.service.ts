@@ -22,7 +22,7 @@ export class AuthService {
   loginUsername(project_id: string, username: string, password: string) {
     const payload = { username: username, sub: project_id };
 
-    return { access_token: this.jwtService.sign(payload) };
+    return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
   }
 
   forgot(): void {
@@ -37,10 +37,6 @@ export class AuthService {
   }
 
   async signup(project_id: string, username: string, email: string, method: string, password: string) {
-    // TODO:
-    // 0. Check password strength and credentials
-    // 1. Create account using inputs
-    // 2. Return JWT token
     try {
       const saltRounds = 10;
       const passwordSaltSHA256 = await bcrypt.hash(password, saltRounds);
@@ -55,10 +51,12 @@ export class AuthService {
         },
       });
 
-      // JWT returned here
+      // TODO: Query to get generated uuid to use for sub using 
+      // https://github.com/hicsail/authentication-service/blob/05d74299bb1b31070ed604b51af79400e895d8e4/packages/server/src/user/user.service.ts#L74
+
       const payload = { username: username, sub: project_id };
 
-      return { access_token: this.jwtService.sign(payload) };
+      return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     } catch (err) {
       console.log(err);
       return err;
