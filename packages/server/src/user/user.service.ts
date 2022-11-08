@@ -145,7 +145,7 @@ export class UserService {
    * @param params object includes: `project_id` and `email` as string
    * @param reset_code_plain a string of reset code in plain text
    */
-  async setResetToken(params: { project_id; email }, reset_code_plain: string): Promise<void> {
+  async setResetToken(params: { project_id: string; email: string }, reset_code_plain: string): Promise<void> {
     const user_to_update = await this.findUserByEmail(params.project_id, params.email);
 
     const reset_code_hash = await argon2.hash(reset_code_plain);
@@ -168,7 +168,7 @@ export class UserService {
    * @param pwd_plain new password in plain text
    * @param reset_code_plain a string of reset code in plain text
    */
-  async updateUserPassword(params: { project_id; email }, pwd_plain: string, reset_code_plain: string): Promise<void> {
+  async updateUserPassword(params: { project_id: string; email: string }, pwd_plain: string, reset_code_plain: string): Promise<void> {
     const user_to_update = await this.findUserByEmail(params.project_id, params.email);
 
     // check expiration time and if reset code matches
