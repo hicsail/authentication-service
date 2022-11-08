@@ -7,12 +7,11 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategyUsername, LocalStrategyEmail } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
-import * as dotenv from 'dotenv'
 
 @Module({
   imports: [UsersModule, PassportModule, JwtModule.register({
     secret: process.env.SECRET,
-    signOptions: { expiresIn: '60s' },
+    signOptions: { expiresIn: process.env.JWT_EXPIRATION },
   })],
   controllers: [LoginController, SignupController],
   providers: [AuthService, PrismaService, LocalStrategyUsername, LocalStrategyEmail, JwtStrategy],
