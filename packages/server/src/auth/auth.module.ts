@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv'
 
 @Module({
   imports: [UsersModule, PassportModule, JwtModule.register({
-    secret: process.env.TEST_SECRET,
+    secret: process.env.SECRET,
     signOptions: { expiresIn: '60s' },
   })],
   controllers: [LoginController, SignupController],
