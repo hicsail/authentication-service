@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
+import { LocalStrategyUsername, LocalStrategyEmail } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import * as dotenv from 'dotenv'
@@ -15,7 +15,7 @@ import * as dotenv from 'dotenv'
     signOptions: { expiresIn: '60s' },
   })],
   controllers: [LoginController, SignupController],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, PrismaService, LocalStrategyUsername, LocalStrategyEmail, JwtStrategy],
   exports: [AuthService]
 })
 export class AuthModule {}
