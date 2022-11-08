@@ -11,20 +11,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model USER {
-  id          String  @unique @default(uuid())
+model User {
+  id          String    @default(uuid()) @id
   project_id  String
   username    String?
-  email       String
+  email       String?
   password    String
-  role        Int
+  role        Int       @default(0)
   created_at  DateTime  @default(now())
   updated_at  DateTime  @default(now())
   deleted_at  DateTime?
   reset_code            String?
   reset_code_expires_at DateTime?
-
-  @@id([id, project_id])
-  @@unique(fields: [project_id, username], name: "proj_username")
-  @@unique(fields: [project_id, email], name: "proj_email")
 }

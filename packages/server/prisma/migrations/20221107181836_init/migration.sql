@@ -1,19 +1,16 @@
 -- CreateTable
-CREATE TABLE "USER" (
+CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "project_id" TEXT NOT NULL,
     "username" TEXT,
-    "email" TEXT NOT NULL,
+    "email" TEXT,
     "password" TEXT NOT NULL,
-    "role" INTEGER NOT NULL,
+    "role" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
     "reset_code" TEXT,
-    "reset_code_created_at" TIMESTAMP(3),
+    "reset_code_expires_at" TIMESTAMP(3),
 
-    CONSTRAINT "USER_pkey" PRIMARY KEY ("id","project_id")
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "USER_id_key" ON "USER"("id");
