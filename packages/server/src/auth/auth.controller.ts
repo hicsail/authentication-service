@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { UserSignup } from './types/auth.types';
 
 @Controller('/login')
 export class LoginController {
@@ -25,7 +26,7 @@ export class SignupController {
   constructor(private authService: AuthService) {}
 
   @Post()
-  async signup(@Body('project_id') project_id: string, @Body('username') username: string, @Body('email') email: string, @Body('method') method: string, @Body('password') password: string): Promise<string> {
-    return await this.authService.signup({ project_id, username, email, method, password });
+  async signup(@Body() user: UserSignup): Promise<string> {
+    return await this.authService.signup({ ...user });
   }
 }
