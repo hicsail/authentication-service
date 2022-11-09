@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
+import { UserSignup } from './types/auth.types';
 
 
 @Injectable()
@@ -54,16 +55,11 @@ export class AuthService {
     // 2. Send email
   }
 
-  async signup(project_id: string, username: string, email: string, method: string, password: string) {
+  async signup(user: UserSignup) {
+    const data = user;
+    const username = user.username;
+
     try {
-
-      const data = {
-        project_id: project_id,
-        username: username,
-        email: email,
-        password: password
-      }
-
       const user = await this.usersService.createUser(data);
       const payload = { username: username, sub: user.id };
 

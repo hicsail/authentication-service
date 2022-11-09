@@ -26,6 +26,6 @@ export class SignupController {
 
   @Post()
   async signup(@Body('project_id') project_id: string, @Body('username') username: string, @Body('email') email: string, @Body('method') method: string, @Body('password') password: string): Promise<string> {
-    return await this.authService.signup(project_id, username, email, method, password);
+    return await this.authService.signup({ project_id, username, email, method, password });
   }
 }
