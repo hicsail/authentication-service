@@ -191,5 +191,29 @@ export class UserService {
     }
   }
 
+  /**
+   * Update user's role
+   *
+   * @param id uuid of the user as string
+   * @param role_to_edit role needs to edit in number representation, refer to `role.enum.ts`
+   * @param add_role `true` for add new role to user, `false` for remove role from user
+   */
+  async updateUserRole(id: string, role_to_edit: number, add_role: boolean): Promise<void> {
+    const user_to_update = await this.findUserById(id);
+
+    // Add a role: role OR role_to_add
+    // Remove a role: role XOR role_to_remove
+    const role = add_role ? user_to_update.role | role_to_edit : user_to_update.role ^ role_to_edit;
+
+    await this.prisma.user.update({
+      where: {
+        id: user_to_update.id
+      },
+      data: {
+        role: role
+      }
+    });
+  }
+
   // TODO: Add other functions, refer to docs on clickup and diagrams
 }

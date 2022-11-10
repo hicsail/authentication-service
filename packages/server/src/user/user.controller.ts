@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -20,15 +20,15 @@ export class UserController {
 
   // TODO: remove this function after merging with AuthServcie
   @Post(`email`)
-  async loginEmail(@Body() params: { project_id: string; email: string }): Promise<string> {
-    const user = await this.userService.findUserByEmail(params.project_id, params.email);
+  async loginEmail(@Body() body: { project_id: string; email: string }): Promise<string> {
+    const user = await this.userService.findUserByEmail(body.project_id, body.email);
     return this.jwtService.sign({ id: user.id, project_id: user.project_id, role: user.role });
   }
 
   // TODO: remove this function after merging with AuthService
   @Post(`username`)
-  async loginUsername(@Body() params: { project_id: string; username: string }): Promise<string> {
-    const user = await this.userService.findUserByUsername(params.project_id, params.username);
+  async loginUsername(@Body() body: { project_id: string; username: string }): Promise<string> {
+    const user = await this.userService.findUserByUsername(body.project_id, body.username);
     return this.jwtService.sign({ id: user.id, project_id: user.project_id, role: user.role });
   }
 
@@ -40,7 +40,19 @@ export class UserController {
 
   @Get(`:id`)
   @Roles(Role.admin)
-  async getUserInfo(@Param() params): Promise<User> {
-    return await this.userService.findUserById(params.id);
+  async getUserInfo(@Param('id') id: string): Promise<User> {
+    return await this.userService.findUserById(id);
+  }
+
+  @Post(`:id/add-role`)
+  @Roles(Role.admin)
+  async addRoleToUser(@Param('id') id: string, @Body('role') role: number): Promise<void> {
+    await this.userService.updateUserRole(id, role, true);
+  }
+
+  @Delete(`:id/remove-role`)
+  @Roles(Role.admin)
+  async removeRoleFromUser(@Param('id') id: string, @Body('role') role: number): Promise<void> {
+    await this.userService.updateUserRole(id, role, false);
   }
 }
