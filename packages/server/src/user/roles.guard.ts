@@ -12,8 +12,6 @@ export class RolesGuard implements CanActivate {
     // TODO: Verify user's role
     const roles = this.reflector.getAllAndMerge<Role[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
 
-    console.log(roles);
-
     // when there is no roles restriction
     if (!roles || roles.length === 0) {
       return true;
