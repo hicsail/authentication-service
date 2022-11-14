@@ -223,7 +223,7 @@ export class UserService {
    * @param roleToEdit role needs to edit in number representation, refer to `role.enum.ts`
    * @param addRole `true` for add new role to user, `false` for remove role from user
    */
-  async updateUserRole(id: string, roleToEdit: number, addRole: boolean = true): Promise<void> {
+  async updateUserRole(id: string, roleToEdit: number, addRole = true): Promise<void> {
     const userToUpdate = await this.findUserById(id);
 
     // Add a role: role OR role_to_add
