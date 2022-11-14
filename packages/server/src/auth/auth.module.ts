@@ -9,10 +9,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
-  imports: [UsersModule, PassportModule, JwtModule.register({
-    secret: process.env.SECRET,
-    signOptions: { expiresIn: process.env.JWT_EXPIRATION },
-  })],
+  imports: [
+    UsersModule,
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRATION }
+    })
+  ],
   controllers: [LoginController, SignupController],
   providers: [AuthService, PrismaService, LocalStrategyUsername, LocalStrategyEmail, JwtStrategy],
   exports: [AuthService]

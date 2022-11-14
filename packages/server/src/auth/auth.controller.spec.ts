@@ -26,7 +26,6 @@ describe('LoginController', () => {
   });
 });
 
-
 describe('SignupController', () => {
   let signupController: SignupController;
 
@@ -51,4 +50,3 @@ describe('SignupController', () => {
     });
   });
 });
-
