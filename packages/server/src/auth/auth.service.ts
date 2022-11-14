@@ -13,7 +13,7 @@ export class AuthService {
     const user = await this.usersService.findOneUsername(username);
 
     if (user && (await argon2.verify(user.password, password))) {
-      const { password, username, ...rest } = user;
+      const [, , ...rest] = user;
       return rest;
     }
 
@@ -24,20 +24,20 @@ export class AuthService {
     const user = await this.usersService.findOneEmail(email);
 
     if (user && (await argon2.verify(user.password, password))) {
-      const { password, email, ...rest } = user;
+      const [, , ...rest] = user;
       return rest;
     }
 
     return null;
   }
 
-  loginUsername(project_id: string, username: string, password: string): AccessToken {
+  loginUsername(project_id: string, username: string): AccessToken {
     const payload = { username: username, sub: project_id };
 
     return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
   }
 
-  loginEmail(project_id: string, email: string, password: string): AccessToken {
+  loginEmail(project_id: string, email: string): AccessToken {
     const payload = { email: email, sub: project_id };
 
     return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };

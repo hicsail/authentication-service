@@ -10,13 +10,13 @@ export class LoginController {
   @UseGuards(AuthGuard('username'))
   @Post('/username')
   async loginUsername(@Body() user: UsernameLogin): Promise<AccessToken> {
-    return this.authService.loginUsername(user.project_id, user.username, user.password);
+    return this.authService.loginUsername(user.project_id, user.username);
   }
 
   @UseGuards(AuthGuard('email'))
   @Post('/email')
   async loginEmail(@Body() user: EmailLogin): Promise<AccessToken> {
-    return this.authService.loginEmail(user.project_id, user.email, user.password);
+    return this.authService.loginEmail(user.project_id, user.email);
   }
 }
 
