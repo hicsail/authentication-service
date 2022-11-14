@@ -1,6 +1,5 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthModule } from 'src/auth/auth.module';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
