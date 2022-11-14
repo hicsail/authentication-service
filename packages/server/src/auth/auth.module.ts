@@ -5,7 +5,7 @@ import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
-  imports: [forwardRef(() => UserModule), PassportModule, JwtModule.register({ secret: process.env.SECRET })],
+  imports: [UserModule, PassportModule, JwtModule.register({ secret: process.env.SECRET })],
   controllers: [],
   providers: [JwtStrategy]
 })

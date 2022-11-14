@@ -6,7 +6,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
-  imports: [forwardRef(() => AuthModule), JwtModule.register({ secret: process.env.SECRET })],
+  imports: [JwtModule.register({ secret: process.env.SECRET })],
   controllers: [UserController],
   providers: [UserService, PrismaService]
 })
