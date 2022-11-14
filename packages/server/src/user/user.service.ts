@@ -189,7 +189,7 @@ export class UserService {
   /**
    * Update user password after verifying user's reset code against the database
    *
-   * @param params object includes: `project_id` and `email` as string
+   * @param params object includes: `projectId` and `email` as string
    * @param pwdPlain new password in plain text
    * @param resetCodePlain a string of reset code in plain text
    */
@@ -223,7 +223,7 @@ export class UserService {
    * @param roleToEdit role needs to edit in number representation, refer to `role.enum.ts`
    * @param addRole `true` for add new role to user, `false` for remove role from user
    */
-  async updateUserRole(id: string, roleToEdit: number, addRole: boolean): Promise<void> {
+  async updateUserRole(id: string, roleToEdit: number, addRole: boolean = true): Promise<void> {
     const userToUpdate = await this.findUserById(id);
 
     // Add a role: role OR role_to_add
@@ -235,7 +235,7 @@ export class UserService {
         id: userToUpdate.id
       },
       data: {
-        role: role
+        role
       }
     });
   }
