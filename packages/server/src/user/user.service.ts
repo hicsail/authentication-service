@@ -102,10 +102,33 @@ export class UserService {
   }
 
   /**
+   * Find all user records in the database
+   *
+   * @returns List of `User` object, will return empty list if no user found
+   */
+  async findAllUsers(): Promise<User[]> {
+    return await this.prisma.user.findMany();
+  }
+
+  /**
+   * Find all user records from one project using project ID
+   *
+   * @param project_id id of the project
+   * @returns List of `User` object, will return empty list if no user found
+   */
+  async findUsersByProjectId(project_id: string): Promise<User[]> {
+    return await this.prisma.user.findMany({
+      where: {
+        project_id: project_id
+      }
+    });
+  }
+
+  /**
    * Find unique user using id for all project
    *
    * @param id uuid of the user as string
-   * @returns User object, or throw `NotFoundError` when not exist
+   * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserById(id: string): Promise<User> {
     return await this.prisma.user.findFirstOrThrow({ where: { id: id } });
@@ -114,7 +137,7 @@ export class UserService {
   /**
    * Find unique user for a project using email.
    *
-   * @returns User object, or throw `NotFoundError` when not exist
+   * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByUsername(project_id: string, username: string): Promise<User> {
     return await this.prisma.user.findFirstOrThrow({
@@ -128,7 +151,7 @@ export class UserService {
   /**
    * Find unique user for a project using email.
    *
-   * @returns User object, or throw `NotFoundError` when not exist
+   * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByEmail(project_id: string, email: string): Promise<User> {
     return await this.prisma.user.findFirstOrThrow({
