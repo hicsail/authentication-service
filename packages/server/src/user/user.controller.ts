@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -52,7 +52,7 @@ export class UserController {
   @Post(':id/add-role')
   @Roles(Role.admin)
   async addRoleToUser(@Param('id') id: string, @Body('role') role: number): Promise<void> {
-    await this.userService.updateUserRole(id, role, true);
+    await this.userService.updateUserRole(id, role);
   }
 
   @Delete(':id/remove-role')
