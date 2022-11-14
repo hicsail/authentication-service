@@ -17,10 +17,15 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const { role: req_role } = context.switchToHttp().getRequest().user;
+    const { role: usersRole } = context.switchToHttp().getRequest().user;
 
-    // bitwise operation:
-    // role of request & sum of all permitted roles
-    return (req_role & roles.reduce((sum, current) => sum + current, 0)) !== 0;
+    for (const role of roles) {
+      // Permission granted if role of request AND all permitted roles is not 0
+      if ((usersRole & role) !== 0) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
