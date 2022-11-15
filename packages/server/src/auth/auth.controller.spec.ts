@@ -21,7 +21,7 @@ describe('LoginController', () => {
       const method = 'username';
       const password = 'pw';
       const expectedResp = `${project_id}-${username}-${method}-${password}`;
-      await expect(loginController.login(project_id, username, password)).resolves.toBe(expectedResp);
+      await expect(loginController.loginUsername({ project_id, username, password })).resolves.toBe(expectedResp);
     });
   });
 });
@@ -46,7 +46,7 @@ describe('SignupController', () => {
       const method = 'username';
       const password = 'pw';
       const expectedResp = `${project_id}-${username}-${method}-${password}`;
-      await expect(signupController.signup(project_id, username, email, method, password)).resolves.toBe(expectedResp);
+      await expect(signupController.signup({ project_id, username, email, method, password })).resolves.toBe(expectedResp);
     });
   });
 });
