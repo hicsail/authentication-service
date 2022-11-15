@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { LoginController, SignupController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { UsersModule } from '../users/users.module';
+import { UsersModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategyUsername, LocalStrategyEmail } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
