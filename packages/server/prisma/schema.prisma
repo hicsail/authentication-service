@@ -14,8 +14,8 @@ datasource db {
 model User {
   id          String @unique @default(uuid())
   project_id  String
-  username    String? @unique
-  email       String? @unique
+  username    String?
+  email       String?
   password    String
   role        Int?      @default(0)
   created_at  DateTime  @default(now())
