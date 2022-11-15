@@ -24,6 +24,6 @@ model User {
   reset_code            String?
   reset_code_expires_at DateTime?
 
-  @@id([id, project_id])
-  @@unique([id, project_id, email, username])
+  @@id([id])
+  @@unique([id, project_id])
 }
