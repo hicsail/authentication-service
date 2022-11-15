@@ -51,13 +51,25 @@ export class UserController {
 
   @Post(':id/add-role')
   @Roles(Role.admin)
-  async addRoleToUser(@Param('id') id: string, @Body('role') role: number): Promise<void> {
-    await this.userService.updateUserRole(id, role);
+  async addRoleToUser(@Param('id') id: string, @Body('role') role: number): Promise<boolean> {
+    try {
+      await this.userService.updateUserRole(id, role);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
   }
 
   @Delete(':id/remove-role')
   @Roles(Role.admin)
-  async removeRoleFromUser(@Param('id') id: string, @Body('role') role: number): Promise<void> {
-    await this.userService.updateUserRole(id, role, false);
+  async removeRoleFromUser(@Param('id') id: string, @Body('role') role: number): Promise<boolean> {
+    try {
+      await this.userService.updateUserRole(id, role, false);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
   }
 }
