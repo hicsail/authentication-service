@@ -8,12 +8,12 @@ export class LoginController {
 
   @Post('/username')
   async loginUsername(@Body() user: UsernameLogin): Promise<AccessToken> {
-    return this.authService.validateUsername(user.project_id, user.project_id, user.username);
+    return this.authService.validateUsername(user.project_id, user.username, user.password);
   }
 
   @Post('/email')
   async loginEmail(@Body() user: EmailLogin): Promise<AccessToken> {
-    return this.authService.validateEmail(user.project_id, user.project_id, user.email);
+    return this.authService.validateEmail(user.project_id, user.email, user.password);
   }
 }
 

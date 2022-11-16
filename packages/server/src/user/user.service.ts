@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as argon2 from 'argon2';
+import * as bcrypt from 'bcrypt';
 import { addHours, isFuture } from 'date-fns';
 import { Prisma, User } from '@prisma/client';
+const saltRounds = 10;
 
 @Injectable()
 export class UserService {
@@ -20,7 +21,7 @@ export class UserService {
         project_id: 'project-001',
         username: 'admin0',
         email: 'some.admin@mail.com',
-        password: await argon2.hash('some_admin.password'),
+        password: await bcrypt.hash('some_admin.password', saltRounds),
         role: 1,
         created_at: new Date('2020-01-01T09:00:01'),
         updated_at: new Date('2020-01-01T09:00:01')
@@ -29,7 +30,7 @@ export class UserService {
         project_id: 'project-001',
         username: 'user0',
         email: 'some.user@mail.com',
-        password: await argon2.hash('some_user_password'),
+        password: await bcrypt.hash('some_user_password', saltRounds),
         created_at: new Date('2020-10-21T09:10:33'),
         updated_at: new Date('2020-10-21T09:10:33')
       },
@@ -37,14 +38,14 @@ export class UserService {
         project_id: 'project-001',
         username: 'user1',
         email: 'another.user@mail.com',
-        password: await argon2.hash('another-user-password'),
+        password: await bcrypt.hash('another-user-password', saltRounds),
         created_at: new Date('2021-02-17T15:44:10'),
         updated_at: new Date('2021-12-30T12:03:01')
       },
       {
         project_id: 'project-002',
         email: 'the_admin@mail.com',
-        password: await argon2.hash('the_admin@project2'),
+        password: await bcrypt.hash('the_admin@project2', saltRounds),
         role: 3,
         created_at: new Date('2022-02-10T10:30:00'),
         updated_at: new Date('2022-03-01T15:32:09')
@@ -52,7 +53,7 @@ export class UserService {
       {
         project_id: 'project-002',
         email: 'one_poor_user@mail.com',
-        password: await argon2.hash('a_poor_user'),
+        password: await bcrypt.hash('a_poor_user', saltRounds),
         created_at: new Date('2022-05-10T15:10:30'),
         updated_at: new Date('2022-05-10T15:10:30')
       }
@@ -88,7 +89,7 @@ export class UserService {
       throw new Error('User already exist in the database.');
     }
 
-    const pwd_hash = await argon2.hash(data.password);
+    const pwd_hash = await bcrypt.hash(data.password, saltRounds);
 
     return await this.prisma.user.create({
       data: {
@@ -148,7 +149,7 @@ export class UserService {
   async setResetToken(params: { project_id; email }, reset_code_plain: string): Promise<void> {
     const user_to_update = await this.findUserByEmail(params.project_id, params.email);
 
-    const reset_code_hash = await argon2.hash(reset_code_plain);
+    const reset_code_hash = await bcrypt.hash(reset_code_plain, saltRounds);
 
     await this.prisma.user.update({
       where: {
@@ -172,8 +173,8 @@ export class UserService {
     const user_to_update = await this.findUserByEmail(params.project_id, params.email);
 
     // check expiration time and if reset code matches
-    if ((await argon2.verify(user_to_update.reset_code, reset_code_plain)) && isFuture(user_to_update.reset_code_expires_at)) {
-      const pwd_hash = await argon2.hash(pwd_plain);
+    if ((await bcrypt.compare(user_to_update.reset_code, reset_code_plain)) && isFuture(user_to_update.reset_code_expires_at)) {
+      const pwd_hash = await bcrypt.hash(pwd_plain, saltRounds);
 
       await this.prisma.user.update({
         where: {
