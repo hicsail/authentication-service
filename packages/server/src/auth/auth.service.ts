@@ -24,12 +24,9 @@ export class AuthService {
     const user = await this.userService.findUserByUsername(project_id, username);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      console.log('correct pw')
       const payload = { username: username, sub: project_id };
       return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
-
-    console.log('incorrect pw')
 
     return null;
   }
