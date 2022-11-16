@@ -1,31 +1,28 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { UserSignup, UsernameLogin, EmailLogin, AccessToken } from './types/auth.types';
 
 @Controller('/login')
 export class LoginController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('username'))
   @Post('/username')
-  async loginUsername(@Body('project_id') project_id: string, @Body('username') username: string, @Body('password') password: string) {
-    return this.authService.loginUsername(project_id, username, password);
+  async loginUsername(@Body() user: UsernameLogin): Promise<AccessToken> {
+    return this.authService.validateUsername(user.project_id, user.project_id, user.username);
   }
 
-  @UseGuards(AuthGuard('email'))
   @Post('/email')
-  async loginEmail(@Body('project_id') project_id: string, @Body('email') email: string, @Body('password') password: string) {
-    return this.authService.loginEmail(project_id, email, password);
+  async loginEmail(@Body() user: EmailLogin): Promise<AccessToken> {
+    return this.authService.validateEmail(user.project_id, user.project_id, user.email);
   }
 }
-
 
 @Controller('/signup')
 export class SignupController {
   constructor(private authService: AuthService) {}
 
   @Post()
-  async signup(@Body('project_id') project_id: string, @Body('username') username: string, @Body('email') email: string, @Body('method') method: string, @Body('password') password: string): Promise<string> {
-    return await this.authService.signup(project_id, username, email, method, password);
+  async signup(@Body() user: UserSignup): Promise<AccessToken> {
+    return await this.authService.signup({ ...user });
   }
 }

@@ -1,22 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 describe('AppController', () => {
-  let appController: AppController;
+  let jwtAuthGuard: JwtAuthGuard;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService]
-    }).compile();
-
-    appController = app.get<AppController>(AppController);
+    jwtAuthGuard = new JwtAuthGuard();
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
+  it('should be define', () => {
+    expect(jwtAuthGuard).toBeDefined();
   });
 });

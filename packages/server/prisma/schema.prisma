@@ -12,18 +12,29 @@ datasource db {
 }
 
 model User {
+<<<<<<< HEAD:prisma/schema.prisma
   id          String @unique @default(uuid())
   project_id  String
   username    String @unique
   email       String @unique
+=======
+  id          String @default(uuid()) @id
+  project_id  String
+  username    String?
+  email       String?
+>>>>>>> main:packages/server/prisma/schema.prisma
   password    String
-  role        Int
+  role        Int?      @default(0)
   created_at  DateTime  @default(now())
   updated_at  DateTime  @default(now())
   deleted_at  DateTime?
   reset_code            String?
   reset_code_expires_at DateTime?
+<<<<<<< HEAD:prisma/schema.prisma
 
   @@id([id, project_id])
   @@unique([id, project_id, email, username])
 }
+=======
+}
+>>>>>>> main:packages/server/prisma/schema.prisma
