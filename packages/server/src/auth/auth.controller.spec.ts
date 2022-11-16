@@ -1,6 +1,6 @@
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
-describe('AppController', () => {
+describe('LoginController', () => {
   let jwtAuthGuard: JwtAuthGuard;
 
   beforeEach(async () => {
