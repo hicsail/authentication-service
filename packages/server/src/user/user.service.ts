@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
 import { addHours, isFuture } from 'date-fns';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-
   // TODO: remove this function when deploying
   /**
    * This function is for creating a list of users record in database. It should be called only once.
@@ -96,7 +95,8 @@ export class UserService {
         project_id: data.project_id,
         username: data.username,
         email: data.email,
-        password: pwd_hash
+        password: pwd_hash,
+        role: data.role
       }
     });
   }
