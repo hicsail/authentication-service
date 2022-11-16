@@ -12,6 +12,14 @@ dotenv.config({ path: `${__dirname}/../../.env` });
 export class AuthService {
   constructor(private userService: UserService, private prisma: PrismaService, private jwtService: JwtService) {}
 
+  /**
+   * Validate login using username.
+   *
+   * @param project_id
+   * @param username
+   * @param password
+   * @returns JWT or null
+   */
   async validateUsername(project_id: string, username: string, password: string): Promise<any> {
     const user = await this.userService.findUserByUsername(project_id, username);
 
@@ -23,6 +31,14 @@ export class AuthService {
     return null;
   }
 
+  /**
+   * Validate login using email.
+   *
+   * @param project_id
+   * @param username
+   * @param password
+   * @returns JWT or null
+   */
   async validateEmail(project_id: string, email: string, password: string): Promise<any> {
     const user = await this.userService.findUserByEmail(project_id, email);
 
@@ -34,17 +50,39 @@ export class AuthService {
     return null;
   }
 
+  /**
+   *
+   * @param project_id
+   * @param username
+   * @param password
+   * @returns
+   */
   forgot(): void {
     // TODO:
     // 1. send email
   }
 
+  /**
+   *
+   * @param project_id
+   * @param username
+   * @param password
+   * @returns
+   */
   reset(): void {
     // TODO:
     // 1 Check credentials
     // 2. Send email
   }
 
+  /**
+   * User signup.
+   *
+   * @param project_id
+   * @param username
+   * @param password
+   * @returns JWT or log= error.
+   */
   async signup(user: UserSignup): Promise<AccessToken> {
     const data = user;
     const username = user.username;
