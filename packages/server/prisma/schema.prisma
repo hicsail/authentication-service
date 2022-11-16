@@ -12,7 +12,7 @@ datasource db {
 }
 
 model User {
-  id          String @unique @default(uuid())
+  id          String @default(uuid()) @id
   project_id  String
   username    String?
   email       String?
@@ -23,7 +23,4 @@ model User {
   deleted_at  DateTime?
   reset_code            String?
   reset_code_expires_at DateTime?
-
-  @@id([id])
-  @@unique([id, project_id])
 }

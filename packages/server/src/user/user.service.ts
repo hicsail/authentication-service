@@ -5,25 +5,8 @@ import { addHours, isFuture } from 'date-fns';
 import { Prisma, User } from '@prisma/client';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(private prisma: PrismaService) {}
-
-  async findOneUsername(username: string): Promise<any> {
-    return await this.prisma.user.findUnique({
-      where: {
-        username: username
-      }
-    });
-  }
-
-  async findOneEmail(email: string): Promise<any> {
-    return await this.prisma.user.findUnique({
-      where: {
-        email: email
-      }
-    });
-  }
-
   // TODO: remove this function when deploying
   /**
    * This function is for creating a list of users record in database. It should be called only once.
