@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class AuthService {
@@ -68,7 +69,7 @@ export class AuthService {
         },
       });
 
-      // TODO: Query to get generated uuid to use for sub using 
+      // TODO: Query to get generated uuid to use for sub using
       // https://github.com/hicsail/authentication-service/blob/05d74299bb1b31070ed604b51af79400e895d8e4/packages/server/src/user/user.service.ts#L74
 
       const payload = { username: username, sub: project_id };
