@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
-import { ValidatedUser } from './types/auth.types';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       secretOrKey: process.env.SECRET,
@@ -13,11 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any): Promise<ValidatedUser> {
-    return {
-      userId: payload.sub,
-      username: payload.username
-      role: payload.role
-    };
+  async validate(payload: any): Promise<any> {
+    return { id: payload.id, project_id: payload.project_id, role: payload.role };
   }
 }

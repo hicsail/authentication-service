@@ -12,12 +12,12 @@ datasource db {
 }
 
 model User {
-  id          String @default(uuid()) @id
+  id          String    @default(uuid()) @id
   project_id  String
   username    String?
   email       String?
   password    String
-  role        Int?      @default(0)
+  role        Int       @default(0)
   created_at  DateTime  @default(now())
   updated_at  DateTime  @default(now())
   deleted_at  DateTime?

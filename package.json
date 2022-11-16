@@ -24,6 +24,5 @@
   "bugs": {
     "url": "https://github.com/hicsail/authentication-service/issues"
   },
-  "homepage": "https://github.com/hicsail/authentication-service#readme",
-  "type": "module"
+  "homepage": "https://github.com/hicsail/authentication-service#readme"
 }
