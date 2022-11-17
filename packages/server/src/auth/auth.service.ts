@@ -15,17 +15,17 @@ export class AuthService {
   /**
    * Validate login using username.
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns JWT or null
    */
-  async validateUsername(project_id: string, username: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByUsername(project_id, username);
+  async validateUsername(projectId: string, username: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByUsername(projectId, username);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { username: username, sub: project_id };
-      return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const payload = { username: username, sub: projectId };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
     return null;
@@ -34,51 +34,51 @@ export class AuthService {
   /**
    * Validate login using email.
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns JWT or null
    */
-  async validateEmail(project_id: string, email: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByEmail(project_id, email);
+  async validateEmail(projectId: string, email: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByEmail(projectId, email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { email: email, sub: project_id };
-      return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const payload = { email: email, sub: projectId };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
     return null;
   }
 
   /**
-   *
-   * @param project_id
-   * @param username
-   * @param password
-   * @returns
+   * Generates a unique link to reset password that encodes the given parameters.
+   * 
+   * @param projectId
+   * @param email
    */
-  forgot(): void {
+  forgotPassword(project_id: string, email: string): void {
     // TODO:
-    // 1. send email
+    // 1. Call notification service email api
+    const token = this.userService.setResetToken({project_id, email}, '')
   }
 
   /**
    *
-   * @param project_id
-   * @param username
+   * @param projectId
+   * @param email
    * @param password
-   * @returns
+   * @param resetCodePlain
    */
-  reset(): void {
+  async resetPassword(project_id: string, email: string, password: string, resetCodePlain: string): Promise<void> {
+    this.userService.updateUserPassword({ project_id, email }, password, resetCodePlain)
     // TODO:
-    // 1 Check credentials
-    // 2. Send email
+    // 1 Send email notifying that password was updated.
   }
 
   /**
    * User signup.
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns JWT or log= error.
