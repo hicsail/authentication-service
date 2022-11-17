@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from '
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Role } from './enum/role.enum';
+import { Role } from '../auth/enum/role.enum';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { UserService } from './user.service';
