@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 @Module({
   imports: [JwtModule.register({ secret: process.env.SECRET })],
   controllers: [UserController],
-  providers: [UserService, PrismaService]
+  providers: [UserService, PrismaService],
+  exports: [UserService]
 })
 export class UserModule {}
