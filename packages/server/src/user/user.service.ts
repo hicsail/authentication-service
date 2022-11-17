@@ -109,7 +109,7 @@ export class UserService {
    * @returns List of `User` object, will return empty list if no user found
    */
   async findAllUsers(): Promise<User[]> {
-    return await this.prisma.user.findMany();
+    return this.prisma.user.findMany();
   }
 
   /**
