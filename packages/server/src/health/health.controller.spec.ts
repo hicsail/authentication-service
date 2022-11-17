@@ -11,10 +11,4 @@ describe('HealthController', () => {
 
     healthController = app.get<HealthController>(HealthController);
   });
-
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(healthController.sendMessage()).toBe('Ok');
-    });
-  });
 });
