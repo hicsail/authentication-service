@@ -170,8 +170,8 @@ export class UserService {
    * @param params object includes: `projectId` and `email` as string
    * @param resetCodePlain a string of reset code in plain text
    */
-  async setResetToken(params: { projectId: string; email: string }, resetCodePlain: string): Promise<void> {
-    const userToUpdate = await this.findUserByEmail(params.projectId, params.email);
+  async setResetToken(projectId: string, email: string, resetCodePlain: string): Promise<void> {
+    const userToUpdate = await this.findUserByEmail(projectId, email);
 
     const resetCodeHash = await bcrypt.hash(resetCodePlain, this.SALT_ROUNDS);
 
@@ -193,8 +193,8 @@ export class UserService {
    * @param pwdPlain new password in plain text
    * @param resetCodePlain a string of reset code in plain text
    */
-  async updateUserPassword(params: { projectId: string; email: string }, pwdPlain: string, resetCodePlain: string): Promise<void> {
-    const userToUpdate = await this.findUserByEmail(params.projectId, params.email);
+  async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<void> {
+    const userToUpdate = await this.findUserByEmail(projectId, email);
 
     // check expiration time and if reset code matches
     if ((await bcrypt.compare(resetCodePlain, userToUpdate.reset_code)) && isFuture(userToUpdate.reset_code_expires_at)) {
