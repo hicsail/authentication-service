@@ -38,19 +38,19 @@ export class UserController {
   }
 
   @Get()
-  @Roles(Role.admin)
+  @Roles(Role.Admin)
   async getAllUsersFromCurrentProject(@Request() req): Promise<User[]> {
     return await this.userService.findUsersByProjectId(req.user.project_id);
   }
 
   @Get(':id')
-  @Roles(Role.admin)
+  @Roles(Role.Admin)
   async getUserInfo(@Param('id') id: string): Promise<User> {
     return await this.userService.findUserById(id);
   }
 
   @Post(':id/add-role')
-  @Roles(Role.admin)
+  @Roles(Role.Admin)
   async addRoleToUser(@Param('id') id: string, @Body('role') role: number): Promise<boolean> {
     try {
       await this.userService.updateUserRole(id, role);
@@ -62,7 +62,7 @@ export class UserController {
   }
 
   @Delete(':id/remove-role')
-  @Roles(Role.admin)
+  @Roles(Role.Admin)
   async removeRoleFromUser(@Param('id') id: string, @Body('role') role: number): Promise<boolean> {
     try {
       await this.userService.updateUserRole(id, role, false);
