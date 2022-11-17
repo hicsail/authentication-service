@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { LoginController, SignupController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { UsersModule } from '../user/user.module';
+import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
@@ -12,7 +12,7 @@ dotenv.config({ path: `${__dirname}/../../.env` });
 
 @Module({
   imports: [
-    UsersModule,
+    UserModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.SECRET,
