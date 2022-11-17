@@ -5,6 +5,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignup, AccessToken } from './types/auth.types';
 import * as dotenv from 'dotenv';
+import * as randomstring from 'randomstring';
+
+const { default: axios } = require('axios');
 
 dotenv.config({ path: `${__dirname}/../../.env` });
 
@@ -57,9 +60,11 @@ export class AuthService {
    * @param email
    */
   forgotPassword(project_id: string, email: string): void {
-    // TODO:
-    // 1. Call notification service email api
-    const token = this.userService.setResetToken({project_id, email}, '')
+    const resetCodePlain = randomstring.generate(10);
+    this.userService.setResetToken({ project_id, email }, resetCodePlain);
+    const payload = { message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}` };
+
+    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
   }
 
   /**
@@ -70,9 +75,10 @@ export class AuthService {
    * @param resetCodePlain
    */
   async resetPassword(project_id: string, email: string, password: string, resetCodePlain: string): Promise<void> {
-    this.userService.updateUserPassword({ project_id, email }, password, resetCodePlain)
-    // TODO:
-    // 1 Send email notifying that password was updated.
+    this.userService.updateUserPassword({ project_id, email }, password, resetCodePlain);
+    const payload = { message: 'Password updated.' }
+
+    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
   }
 
   /**
