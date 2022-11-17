@@ -4,9 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignup, AccessToken } from './types/auth.types';
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: `${__dirname}/../../.env` });
 
 @Injectable()
 export class AuthService {

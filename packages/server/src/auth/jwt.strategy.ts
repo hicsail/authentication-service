@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ValidatedUser } from './types/auth.types';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: `${__dirname}/../../.env` });
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
