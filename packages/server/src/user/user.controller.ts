@@ -3,11 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Role } from './enum/role.enum';
-import { Roles } from './roles.decorator';
-import { RolesGuard } from './roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { UserService } from './user.service';
 
-@Controller('user')
+@Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private readonly userService: UserService, private jwtService: JwtService) {}
@@ -37,7 +37,7 @@ export class UserController {
     return await this.userService.findUserById(req.user.id);
   }
 
-  @Get('list')
+  @Get()
   @Roles(Role.admin)
   async getAllUsersFromCurrentProject(@Request() req): Promise<User[]> {
     return await this.userService.findUsersByProjectId(req.user.project_id);
