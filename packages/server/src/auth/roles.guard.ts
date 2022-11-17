@@ -9,7 +9,6 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector, private jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // TODO: Verify user's role
     const roles = this.reflector.getAllAndMerge<Role[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
 
     // when there is no roles restriction
