@@ -20,16 +20,16 @@ export class UserController {
 
   // TODO: remove this function after merging with AuthServcie
   @Post('email')
-  async loginEmail(@Body() body: { project_id: string; email: string }): Promise<string> {
-    const user = await this.userService.findUserByEmail(body.project_id, body.email);
-    return this.jwtService.sign({ id: user.id, project_id: user.project_id, role: user.role });
+  async loginEmail(@Body() body: { projectId: string; email: string }): Promise<string> {
+    const user = await this.userService.findUserByEmail(body.projectId, body.email);
+    return this.jwtService.sign({ id: user.id, projectId: user.projectId, role: user.role });
   }
 
   // TODO: remove this function after merging with AuthService
   @Post('username')
-  async loginUsername(@Body() body: { project_id: string; username: string }): Promise<string> {
-    const user = await this.userService.findUserByUsername(body.project_id, body.username);
-    return this.jwtService.sign({ id: user.id, project_id: user.project_id, role: user.role });
+  async loginUsername(@Body() body: { projectId: string; username: string }): Promise<string> {
+    const user = await this.userService.findUserByUsername(body.projectId, body.username);
+    return this.jwtService.sign({ id: user.id, projectId: user.projectId, role: user.role });
   }
 
   @Get('me')
@@ -40,7 +40,7 @@ export class UserController {
   @Get()
   @Roles(Role.Admin)
   async getAllUsersFromCurrentProject(@Request() req): Promise<User[]> {
-    return await this.userService.findUsersByProjectId(req.user.project_id);
+    return await this.userService.findUsersByProjectId(req.user.projectId);
   }
 
   @Get(':id')

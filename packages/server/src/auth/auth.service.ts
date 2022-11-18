@@ -13,16 +13,16 @@ export class AuthService {
   /**
    * Validate login using username.
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns JWT or null
    */
-  async validateUsername(project_id: string, username: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByUsername(project_id, username);
+  async validateUsername(projectId: string, username: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByUsername(projectId, username);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { id: user.id, project_id: user.project_id, role: user.role };
+      const payload = { id: user.id, projectId: user.projectId, role: user.role };
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -32,16 +32,16 @@ export class AuthService {
   /**
    * Validate login using email.
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns JWT or null
    */
-  async validateEmail(project_id: string, email: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByEmail(project_id, email);
+  async validateEmail(projectId: string, email: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByEmail(projectId, email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { id: user.id, project_id: user.project_id, role: user.role };
+      const payload = { id: user.id, projectId: user.projectId, role: user.role };
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -50,7 +50,7 @@ export class AuthService {
 
   /**
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns
@@ -62,7 +62,7 @@ export class AuthService {
 
   /**
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns
@@ -76,7 +76,7 @@ export class AuthService {
   /**
    * User signup.
    *
-   * @param project_id
+   * @param projectId
    * @param username
    * @param password
    * @returns JWT or log= error.
@@ -84,11 +84,13 @@ export class AuthService {
   async signup(user: UserSignupDto): Promise<AccessToken> {
     const data = user;
 
+    if(data == null || (data && Object.keys(data).length == 0)) {
+      return { accessToken: '' };
+    }
+
     try {
       const user = await this.userService.createUser(data);
-      const payload = { id: user.id, project_id: user.project_id, role: user.role };
-
-      // return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const payload = { id: user.id, projectId: user.projectId, role: user.role };
       const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
       return resp;
     } catch (err) {
