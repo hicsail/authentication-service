@@ -24,3 +24,16 @@ model User {
   resetCode           String?
   resetCodeExpiresAt  DateTime?
 }
+
+model Project {
+  id          String    @default(uuid()) @id
+  name        String
+  description String?
+  logo        String?
+  muiTheme    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  homePage    String?
+  redirectUrl String?
+}

@@ -15,9 +15,6 @@ export class UserSignupDto {
   @IsEmail()
   email: string;
 
-  @IsString()
-  method: string;
-
   @IsNotEmpty()
   @IsString()
   password: string;
@@ -56,15 +53,6 @@ export class EmailLoginDto {
 export class SignupTransformPipe implements PipeTransform {
   transform(body: UserSignup): UserSignupDto {
     const user = new UserSignupDto();
-    const properties = ['projectId', 'username', 'email', 'password'];
-
-    if (
-      !properties.every((x) => {
-        return x in body;
-      })
-    ) {
-      return null;
-    }
 
     user.projectId = body.projectId.toString();
     user.username = body.username.toString();
@@ -78,15 +66,6 @@ export class SignupTransformPipe implements PipeTransform {
 export class UsernameLoginTransformPipe implements PipeTransform {
   transform(body: any): UsernameLoginDto {
     const user = new UserSignupDto();
-    const properties = ['projectId', 'username', 'password'];
-
-    if (
-      !properties.every((x) => {
-        return x in body;
-      })
-    ) {
-      return null;
-    }
 
     user.projectId = body.projectId.toString();
     user.username = body.username;
@@ -99,15 +78,6 @@ export class UsernameLoginTransformPipe implements PipeTransform {
 export class EmailLoginTransformPipe implements PipeTransform {
   transform(body: any): EmailLoginDto {
     const user = new UserSignupDto();
-    const properties = ['projectId', 'email', 'password'];
-
-    if (
-      !properties.every((x) => {
-        return x in body;
-      })
-    ) {
-      return null;
-    }
 
     user.projectId = body.projectId.toString();
     user.email = body.email;
