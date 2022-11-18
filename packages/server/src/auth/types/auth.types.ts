@@ -23,6 +23,7 @@ export type AccessToken = {
 };
 
 export type ValidatedUser = {
-  userId: string;
-  username: string;
+  id: string;
+  project_id: string;
+  role: string;
 };

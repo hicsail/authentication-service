@@ -4,9 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignup, AccessToken } from './types/auth.types';
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: `${__dirname}/../../.env` });
 
 @Injectable()
 export class AuthService {
@@ -24,7 +21,7 @@ export class AuthService {
     const user = await this.userService.findUserByUsername(project_id, username);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { username: username, sub: project_id };
+      const payload = { id: user.id, project_id: user.project_id, role: user.role };
       return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -43,7 +40,7 @@ export class AuthService {
     const user = await this.userService.findUserByEmail(project_id, email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { email: email, sub: project_id };
+      const payload = { id: user.id, project_id: user.project_id, role: user.role };
       return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -89,7 +86,7 @@ export class AuthService {
 
     try {
       const user = await this.userService.createUser(data);
-      const payload = { username: username, sub: user.id };
+      const payload = { id: user.id, project_id: user.project_id, role: user.role };
 
       return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     } catch (err) {
