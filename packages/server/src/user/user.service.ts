@@ -13,7 +13,7 @@ export class UserService {
   /**
    * Register a new record of user in the database
    *
-   * @param data object that should contain `project_id: string`, `username?: string`, `email?: string` and `password: string` in plain text.
+   * @param data object that should contain `projectId: string`, `username?: string`, `email?: string` and `password: string` in plain text.
    * **NOTE:** `data` should contain either `username`, `email`, or both.
    * @returns User object, throws an `Error` when user already exist in the database
    */
@@ -22,7 +22,7 @@ export class UserService {
     const userCount = await this.prisma.user.count({
       where: {
         AND: {
-          project_id: data.project_id,
+          projectId: data.projectId,
           OR: [{ username: data.username }, { email: data.email }]
         }
       }
@@ -37,7 +37,7 @@ export class UserService {
 
     return await this.prisma.user.create({
       data: {
-        project_id: data.project_id,
+        projectId: data.projectId,
         username: data.username,
         email: data.email,
         password: pwdHash
@@ -63,7 +63,7 @@ export class UserService {
   async findUsersByProjectId(projectId: string): Promise<User[]> {
     return await this.prisma.user.findMany({
       where: {
-        project_id: projectId
+        projectId: projectId
       }
     });
   }
@@ -86,7 +86,7 @@ export class UserService {
   async findUserByUsername(projectId: string, username: string): Promise<User> {
     return await this.prisma.user.findFirstOrThrow({
       where: {
-        project_id: projectId,
+        projectId: projectId,
         username: username
       }
     });
@@ -100,7 +100,7 @@ export class UserService {
   async findUserByEmail(projectId: string, email: string): Promise<User> {
     return await this.prisma.user.findFirstOrThrow({
       where: {
-        project_id: projectId,
+        projectId: projectId,
         email: email
       }
     });
@@ -122,8 +122,8 @@ export class UserService {
         id: userToUpdate.id
       },
       data: {
-        reset_code: resetCodeHash,
-        reset_code_expires_at: addHours(new Date(), 1) // TODO: change default expiration time
+        resetCode: resetCodeHash,
+        resetCodeExpiresAt: addHours(new Date(), 1) // TODO: change default expiration time
       }
     });
   }
@@ -145,8 +145,8 @@ export class UserService {
 
     // check expiration time and if reset code matches
     if (
-      (await bcrypt.compare(resetCodePlain, userToUpdate.reset_code)) &&
-      isFuture(userToUpdate.reset_code_expires_at)
+      (await bcrypt.compare(resetCodePlain, userToUpdate.resetCode)) &&
+      isFuture(userToUpdate.resetCodeExpiresAt)
     ) {
       const pwdHash = await bcrypt.hash(pwdPlain, this.SALT_ROUNDS);
 
@@ -156,9 +156,9 @@ export class UserService {
         },
         data: {
           password: pwdHash,
-          updated_at: new Date(),
-          reset_code: null,
-          reset_code_expires_at: null
+          updatedAt: new Date(),
+          resetCode: null,
+          resetCodeExpiresAt: null
         }
       });
     } else {
@@ -189,6 +189,4 @@ export class UserService {
       }
     });
   }
-
-  // TODO: Add other functions, refer to docs on clickup and diagrams
 }
