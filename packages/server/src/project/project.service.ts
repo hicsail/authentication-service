@@ -16,8 +16,10 @@ export class ProjectService {
    * @throws Will throw an error if the project ID is already in use
    */
   async createProject(newProject: Prisma.ProjectCreateInput): Promise<Project> {
-    if (await this.exists(newProject.id)) {
-      throw new Error('Project already exists');
+    // ProjectCreateInput by default allows the ID to be provided, but we
+    // don't want to allow that. If the ID is provided, we remove it
+    if (newProject.id) {
+      delete newProject.id;
     }
 
     return this.prisma.project.create({
