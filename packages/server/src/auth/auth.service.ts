@@ -8,11 +8,7 @@ import { AccessToken } from './types/auth.types';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private prisma: PrismaService,
-    private jwtService: JwtService
-  ) {}
+  constructor(private userService: UserService, private prisma: PrismaService, private jwtService: JwtService) {}
 
   /**
    * Validate login using username.

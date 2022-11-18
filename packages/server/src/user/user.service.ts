@@ -135,19 +135,11 @@ export class UserService {
    * @param pwdPlain new password in plain text
    * @param resetCodePlain a string of reset code in plain text
    */
-  async updateUserPassword(
-    projectId: string,
-    email: string,
-    pwdPlain: string,
-    resetCodePlain: string
-  ): Promise<void> {
+  async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<void> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
 
     // check expiration time and if reset code matches
-    if (
-      (await bcrypt.compare(resetCodePlain, userToUpdate.resetCode)) &&
-      isFuture(userToUpdate.resetCodeExpiresAt)
-    ) {
+    if ((await bcrypt.compare(resetCodePlain, userToUpdate.resetCode)) && isFuture(userToUpdate.resetCodeExpiresAt)) {
       const pwdHash = await bcrypt.hash(pwdPlain, this.SALT_ROUNDS);
 
       await this.prisma.user.update({

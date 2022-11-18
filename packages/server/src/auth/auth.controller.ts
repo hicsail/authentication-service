@@ -1,13 +1,6 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  UsernameLoginTransformPipe,
-  EmailLoginTransformPipe,
-  SignupTransformPipe,
-  UserSignupDto,
-  EmailLoginDto,
-  UsernameLoginDto
-} from './dto/auth.dto';
+import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
 
 @Controller('/login')
