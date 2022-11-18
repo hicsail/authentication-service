@@ -7,7 +7,7 @@ import { ProjectService } from './project.service';
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
-  @Post('/create')
+  @Post()
   createProject(@Body() newProject: Prisma.ProjectCreateInput): Promise<Project> {
     return this.projectService.createProject(newProject);
   }
