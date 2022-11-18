@@ -12,21 +12,21 @@ datasource db {
 }
 
 model User {
-  id                 String @default(uuid()) @id
-  projectId          String
-  username           String?
-  email              String?
-  password           String
-  role               Int?      @default(0)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @default(now())
-  deletedAt          DateTime?
-  resetCode          String?
-  resetCodeExpiresAt DateTime?
+  id          String    @default(uuid()) @id
+  projectId   String
+  username    String?
+  email       String?
+  password    String
+  role        Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  resetCode           String?
+  resetCodeExpiresAt  DateTime?
 }
 
 model Project {
-  id          String @default(uuid()) @id
+  id          String    @default(uuid()) @id
   name        String
   description String?
   logo        String?

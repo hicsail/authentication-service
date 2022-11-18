@@ -10,64 +10,6 @@ export class UserService {
 
   private readonly SALT_ROUNDS: number = 10;
 
-  // TODO: remove this function when deploying
-  /**
-   * This function is for creating a list of users record in database. It should be called only once.
-   * The purpose of this function is for testing only and should be removed before deployment.
-   * You can also modify or add more user obejct to the `tempUsers` list.
-   */
-  async createTempUsers(): Promise<void> {
-    // TODO: add temp users to database
-    const tempUsers = [
-      {
-        projectId: 'project-001',
-        username: 'admin0',
-        email: 'some.admin@mail.com',
-        password: await bcrypt.hash('someAdmin.password', this.SALT_ROUNDS),
-        role: 1,
-        createdAt: new Date('2020-01-01T09:00:01'),
-        updatedAt: new Date('2020-01-01T09:00:01')
-      },
-      {
-        projectId: 'project-001',
-        username: 'user0',
-        email: 'some.user@mail.com',
-        password: await bcrypt.hash('someUserPassword', this.SALT_ROUNDS),
-        createdAt: new Date('2020-10-21T09:10:33'),
-        updatedAt: new Date('2020-10-21T09:10:33')
-      },
-      {
-        projectId: 'project-001',
-        username: 'user1',
-        email: 'another.user@mail.com',
-        password: await bcrypt.hash('anotherUserPassword', this.SALT_ROUNDS),
-        createdAt: new Date('2021-02-17T15:44:10'),
-        updatedAt: new Date('2021-12-30T12:03:01')
-      },
-      {
-        projectId: 'project-002',
-        email: 'the_admin@mail.com',
-        password: await bcrypt.hash('the_admin@project2', this.SALT_ROUNDS),
-        role: 3,
-        createdAt: new Date('2022-02-10T10:30:00'),
-        updatedAt: new Date('2022-03-01T15:32:09')
-      },
-      {
-        projectId: 'project-002',
-        email: 'one_poor_user@mail.com',
-        password: await bcrypt.hash('aPoorUser', this.SALT_ROUNDS),
-        createdAt: new Date('2022-05-10T15:10:30'),
-        updatedAt: new Date('2022-05-10T15:10:30')
-      }
-    ];
-
-    for (const user of tempUsers) {
-      await this.prisma.user.create({
-        data: user
-      });
-    }
-  }
-
   /**
    * Register a new record of user in the database
    *
@@ -239,6 +181,4 @@ export class UserService {
       }
     });
   }
-
-  // TODO: Add other functions, refer to docs on clickup and diagrams
 }
