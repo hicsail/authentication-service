@@ -1,5 +1,5 @@
 export type UserSignup = {
-  project_id: string;
+  projectId: string;
   username: string;
   email: string;
   method: string;
@@ -7,13 +7,13 @@ export type UserSignup = {
 };
 
 export type UsernameLogin = {
-  project_id: string;
+  projectId: string;
   username: string;
   password: string;
 };
 
 export type EmailLogin = {
-  project_id: string;
+  projectId: string;
   email: string;
   password: string;
 };
@@ -24,6 +24,6 @@ export type AccessToken = {
 
 export type ValidatedUser = {
   id: string;
-  project_id: string;
+  projectId: string;
   role: string;
 };
