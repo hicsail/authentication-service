@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
+    "migrate:dev": "prisma migrate dev",
     "build": "nest build",
     "prettier": "prettier -l \"src/**/*.ts\" \"test/**/*.ts\"",
     "prettier:fix": "prettier -wl \"src/**/*.ts\" \"test/**/*.ts\"",
