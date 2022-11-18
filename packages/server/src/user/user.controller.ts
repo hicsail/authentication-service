@@ -18,20 +18,6 @@ export class UserController {
     this.userService.createTempUsers();
   }
 
-  // TODO: remove this function after merging with AuthServcie
-  @Post('email')
-  async loginEmail(@Body() body: { project_id: string; email: string }): Promise<string> {
-    const user = await this.userService.findUserByEmail(body.project_id, body.email);
-    return this.jwtService.sign({ id: user.id, project_id: user.project_id, role: user.role });
-  }
-
-  // TODO: remove this function after merging with AuthService
-  @Post('username')
-  async loginUsername(@Body() body: { project_id: string; username: string }): Promise<string> {
-    const user = await this.userService.findUserByUsername(body.project_id, body.username);
-    return this.jwtService.sign({ id: user.id, project_id: user.project_id, role: user.role });
-  }
-
   @Get('me')
   async getMyInfo(@Request() req): Promise<User> {
     return await this.userService.findUserById(req.user.id);
