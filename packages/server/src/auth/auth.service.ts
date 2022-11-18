@@ -8,7 +8,11 @@ import { AccessToken } from './types/auth.types';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private userService: UserService,
+    private prisma: PrismaService,
+    private jwtService: JwtService
+  ) {}
 
   /**
    * Validate login using username.
@@ -23,7 +27,9 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, project_id: user.project_id, role: user.role };
-      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return {
+        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION })
+      };
     }
 
     return null;
@@ -42,7 +48,9 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, project_id: user.project_id, role: user.role };
-      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return {
+        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION })
+      };
     }
 
     return null;
@@ -89,7 +97,9 @@ export class AuthService {
       const payload = { id: user.id, project_id: user.project_id, role: user.role };
 
       // return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
-      const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const resp = {
+        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION })
+      };
       return resp;
     } catch (err) {
       console.log(err);
