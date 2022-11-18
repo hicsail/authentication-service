@@ -3,13 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
-import { UserSignup, AccessToken } from './types/auth.types';
-import * as dotenv from 'dotenv';
-import * as randomstring from 'randomstring';
-
-const { default: axios } = require('axios');
-
-dotenv.config({ path: `${__dirname}/../../.env` });
+import { UserSignupDto } from './dto/auth.dto';
+import { AccessToken } from './types/auth.types';
 
 @Injectable()
 export class AuthService {
@@ -18,16 +13,16 @@ export class AuthService {
   /**
    * Validate login using username.
    *
-   * @param projectId
+   * @param project_id
    * @param username
    * @param password
    * @returns JWT or null
    */
-  async validateUsername(projectId: string, username: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByUsername(projectId, username);
+  async validateUsername(project_id: string, username: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByUsername(project_id, username);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { username: username, sub: projectId };
+      const payload = { id: user.id, project_id: user.project_id, role: user.role };
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -37,16 +32,16 @@ export class AuthService {
   /**
    * Validate login using email.
    *
-   * @param projectId
+   * @param project_id
    * @param username
    * @param password
    * @returns JWT or null
    */
-  async validateEmail(projectId: string, email: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByEmail(projectId, email);
+  async validateEmail(project_id: string, email: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByEmail(project_id, email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { email: email, sub: projectId };
+      const payload = { id: user.id, project_id: user.project_id, role: user.role };
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -54,50 +49,48 @@ export class AuthService {
   }
 
   /**
-   * Generates a unique link to reset password that encodes the given parameters.
-   * 
-   * @param projectId
-   * @param email
+   *
+   * @param project_id
+   * @param username
+   * @param password
+   * @returns
    */
-  forgotPassword(project_id: string, email: string): void {
-    const resetCodePlain = randomstring.generate(10);
-    this.userService.setResetToken({ project_id, email }, resetCodePlain);
-    const payload = { message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}` };
-
-    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
+  forgot(): void {
+    // TODO:
+    // 1. send email
   }
 
   /**
    *
-   * @param projectId
-   * @param email
+   * @param project_id
+   * @param username
    * @param password
-   * @param resetCodePlain
+   * @returns
    */
-  async resetPassword(project_id: string, email: string, password: string, resetCodePlain: string): Promise<void> {
-    this.userService.updateUserPassword({ project_id, email }, password, resetCodePlain);
-    const payload = { message: 'Password updated.' }
-
-    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
+  reset(): void {
+    // TODO:
+    // 1 Check credentials
+    // 2. Send email
   }
 
   /**
    * User signup.
    *
-   * @param projectId
+   * @param project_id
    * @param username
    * @param password
    * @returns JWT or log= error.
    */
-  async signup(user: UserSignup): Promise<AccessToken> {
+  async signup(user: UserSignupDto): Promise<AccessToken> {
     const data = user;
-    const username = user.username;
 
     try {
       const user = await this.userService.createUser(data);
-      const payload = { username: username, sub: user.id };
+      const payload = { id: user.id, project_id: user.project_id, role: user.role };
 
-      return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      // return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return resp;
     } catch (err) {
       console.log(err);
       return err;
