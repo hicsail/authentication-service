@@ -1,6 +1,6 @@
-import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Put } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
-import { ProjectIdentifier } from './dto/project.dto';
+import { ProjectIdentifier, ConfigurableProjectSettings } from './dto/project.dto';
 import { ProjectService } from './project.service';
 
 @Controller('/project')
@@ -20,5 +20,10 @@ export class ProjectController {
   @Get(':id')
   getProject(@Param('id') id: string): Promise<Project> {
     return this.projectService.getProject(id);
+  }
+
+  @Put(':id')
+  updateProject(@Param('id') id: string, @Body() settings: ConfigurableProjectSettings): Promise<Project> {
+    return this.projectService.updateProject(id, settings);
   }
 }

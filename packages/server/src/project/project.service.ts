@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, Project } from '@prisma/client';
-import {ProjectIdentifier} from './dto/project.dto';
+import {ConfigurableProjectSettings, ProjectIdentifier} from './dto/project.dto';
 
 @Injectable()
 export class ProjectService {
@@ -48,6 +48,26 @@ export class ProjectService {
    */
   async getProject(id: string): Promise<Project> {
     return this.prisma.project.findFirstOrThrow({ where: { id } });
+  }
+
+  /**
+   * Update the project settings.
+   *
+   * Project settings that are provided in the given object will be updated.
+   * Project settings that are not provided will not be changed.
+   *
+   * @param id The ID of the project to update
+   * @param settings The new settings to apply
+   * @returns The updated project
+   * @throws Will throw an error if the project does not exist
+   */
+  async updateProject(id: string, settings: ConfigurableProjectSettings): Promise<Project> {
+    return this.prisma.project.update({
+      where: {
+        id: id,
+      },
+      data: settings,
+    });
   }
 
 
