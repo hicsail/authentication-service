@@ -3,7 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
-import { UserSignup, AccessToken } from './types/auth.types';
+import { UserSignupDto } from './dto/auth.dto';
+import { AccessToken } from './types/auth.types';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, project_id: user.project_id, role: user.role };
-      return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
     return null;
@@ -41,7 +42,7 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, project_id: user.project_id, role: user.role };
-      return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
     return null;
@@ -80,15 +81,16 @@ export class AuthService {
    * @param password
    * @returns JWT or log= error.
    */
-  async signup(user: UserSignup): Promise<AccessToken> {
+  async signup(user: UserSignupDto): Promise<AccessToken> {
     const data = user;
-    const username = user.username;
 
     try {
       const user = await this.userService.createUser(data);
       const payload = { id: user.id, project_id: user.project_id, role: user.role };
 
-      return { access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      // return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return resp;
     } catch (err) {
       console.log(err);
       return err;

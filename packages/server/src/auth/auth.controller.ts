@@ -1,18 +1,21 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserSignup, UsernameLogin, EmailLogin, AccessToken } from './types/auth.types';
+import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto } from './dto/auth.dto';
+import { AccessToken } from './types/auth.types';
 
 @Controller('/login')
 export class LoginController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/username')
-  async loginUsername(@Body() user: UsernameLogin): Promise<AccessToken> {
+  @UsePipes(new UsernameLoginTransformPipe())
+  async loginUsername(@Body() user: UsernameLoginDto): Promise<AccessToken> {
     return this.authService.validateUsername(user.project_id, user.username, user.password);
   }
 
   @Post('/email')
-  async loginEmail(@Body() user: EmailLogin): Promise<AccessToken> {
+  @UsePipes(new EmailLoginTransformPipe())
+  async loginEmail(@Body() user: EmailLoginDto): Promise<AccessToken> {
     return this.authService.validateEmail(user.project_id, user.email, user.password);
   }
 }
@@ -22,7 +25,8 @@ export class SignupController {
   constructor(private authService: AuthService) {}
 
   @Post()
-  async signup(@Body() user: UserSignup): Promise<AccessToken> {
+  @UsePipes(new SignupTransformPipe())
+  async signup(@Body() user: UserSignupDto): Promise<AccessToken> {
     return await this.authService.signup({ ...user });
   }
 }
