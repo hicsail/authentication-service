@@ -19,7 +19,7 @@ export type EmailLogin = {
 };
 
 export type AccessToken = {
-  access_token: string;
+  accessToken: string;
 };
 
 export type ValidatedUser = {

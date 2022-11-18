@@ -71,7 +71,7 @@ export class UserService {
   /**
    * Register a new record of user in the database
    *
-   * @param data object that should contains `project_id: string`, `username?: string`, `email?: string` and `password: string` in plain text.
+   * @param data object that should contain `project_id: string`, `username?: string`, `email?: string` and `password: string` in plain text.
    * **NOTE:** `data` should contain either `username`, `email`, or both.
    * @returns User object, throws an `Error` when user already exist in the database
    */
