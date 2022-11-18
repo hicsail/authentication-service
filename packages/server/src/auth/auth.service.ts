@@ -23,9 +23,7 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
-      return {
-        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION })
-      };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
     return null;
@@ -44,9 +42,7 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
-      return {
-        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION })
-      };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
     return null;
@@ -88,14 +84,14 @@ export class AuthService {
   async signup(user: UserSignupDto): Promise<AccessToken> {
     const data = user;
 
+    if (data == null || (data && Object.keys(data).length == 0)) {
+      return { accessToken: '' };
+    }
+
     try {
       const user = await this.userService.createUser(data);
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
-
-      // return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
-      const resp = {
-        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION })
-      };
+      const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
       return resp;
     } catch (err) {
       console.log(err);

@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { PipeTransform } from '@nestjs/common';
+import { UserSignup } from '../types/auth.types';
 
 export class UserSignupDto {
   @IsNotEmpty()
@@ -53,9 +54,19 @@ export class EmailLoginDto {
 }
 
 export class SignupTransformPipe implements PipeTransform {
-  transform(body: any): UserSignupDto {
+  transform(body: UserSignup): UserSignupDto {
     const user = new UserSignupDto();
-    user.projectId = body.project_id.toString();
+    const properties = ['projectId', 'username', 'email', 'password'];
+
+    if (
+      !properties.every((x) => {
+        return x in body;
+      })
+    ) {
+      return null;
+    }
+
+    user.projectId = body.projectId.toString();
     user.username = body.username.toString();
     user.email = body.email.toString();
     user.password = body.password;
@@ -67,7 +78,17 @@ export class SignupTransformPipe implements PipeTransform {
 export class UsernameLoginTransformPipe implements PipeTransform {
   transform(body: any): UsernameLoginDto {
     const user = new UserSignupDto();
-    user.projectId = body.project_id.toString();
+    const properties = ['projectId', 'username', 'password'];
+
+    if (
+      !properties.every((x) => {
+        return x in body;
+      })
+    ) {
+      return null;
+    }
+
+    user.projectId = body.projectId.toString();
     user.username = body.username;
     user.password = body.password;
 
@@ -78,7 +99,17 @@ export class UsernameLoginTransformPipe implements PipeTransform {
 export class EmailLoginTransformPipe implements PipeTransform {
   transform(body: any): EmailLoginDto {
     const user = new UserSignupDto();
-    user.projectId = body.project_id.toString();
+    const properties = ['projectId', 'email', 'password'];
+
+    if (
+      !properties.every((x) => {
+        return x in body;
+      })
+    ) {
+      return null;
+    }
+
+    user.projectId = body.projectId.toString();
     user.email = body.email;
     user.password = body.password;
 

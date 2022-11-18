@@ -27,6 +27,6 @@ export class SignupController {
   @Post()
   @UsePipes(new SignupTransformPipe())
   async signup(@Body() user: UserSignupDto): Promise<AccessToken> {
-    return await this.authService.signup({ ...user });
+    return await this.authService.signup(user);
   }
 }

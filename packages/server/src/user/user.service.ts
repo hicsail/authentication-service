@@ -168,8 +168,8 @@ export class UserService {
   async updateUserRole(id: string, roleToEdit: number, addRole = true): Promise<void> {
     const userToUpdate = await this.findUserById(id);
 
-    // Add a role: role OR role_to_add
-    // Remove a role: role XOR role_to_remove
+    // Add a role: role OR roleToAdd
+    // Remove a role: role XOR roleToRemove
     const role = addRole ? userToUpdate.role | roleToEdit : userToUpdate.role ^ roleToEdit;
 
     await this.prisma.user.update({
