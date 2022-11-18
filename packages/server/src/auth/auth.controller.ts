@@ -10,13 +10,13 @@ export class LoginController {
   @Post('/username')
   @UsePipes(new UsernameLoginTransformPipe())
   async loginUsername(@Body() user: UsernameLoginDto): Promise<AccessToken> {
-    return this.authService.validateUsername(user.project_id, user.username, user.password);
+    return this.authService.validateUsername(user.projectId, user.username, user.password);
   }
 
   @Post('/email')
   @UsePipes(new EmailLoginTransformPipe())
   async loginEmail(@Body() user: EmailLoginDto): Promise<AccessToken> {
-    return this.authService.validateEmail(user.project_id, user.email, user.password);
+    return this.authService.validateEmail(user.projectId, user.email, user.password);
   }
 }
 
