@@ -3,7 +3,7 @@ import { Prisma, Project } from '@prisma/client';
 import { ProjectIdentifier, ConfigurableProjectSettings } from './dto/project.dto';
 import { ProjectService } from './project.service';
 
-@Controller('/project')
+@Controller('/projects')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
@@ -12,7 +12,7 @@ export class ProjectController {
     return this.projectService.createProject(newProject);
   }
 
-  @Get('/list')
+  @Get()
   listProjects(): Promise<ProjectIdentifier[]> {
     return this.projectService.listProjects();
   }
