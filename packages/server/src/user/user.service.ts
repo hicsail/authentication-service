@@ -10,64 +10,6 @@ export class UserService {
 
   private readonly SALT_ROUNDS: number = 10;
 
-  // TODO: remove this function when deploying
-  /**
-   * This function is for creating a list of users record in database. It should be called only once.
-   * The purpose of this function is for testing only and should be removed before deployment.
-   * You can also modify or add more user obejct to the `tempUsers` list.
-   */
-  async createTempUsers(): Promise<void> {
-    // TODO: add temp users to database
-    const tempUsers = [
-      {
-        project_id: 'project-001',
-        username: 'admin0',
-        email: 'some.admin@mail.com',
-        password: await bcrypt.hash('some_admin.password', this.SALT_ROUNDS),
-        role: 1,
-        created_at: new Date('2020-01-01T09:00:01'),
-        updated_at: new Date('2020-01-01T09:00:01')
-      },
-      {
-        project_id: 'project-001',
-        username: 'user0',
-        email: 'some.user@mail.com',
-        password: await bcrypt.hash('some_user_password', this.SALT_ROUNDS),
-        created_at: new Date('2020-10-21T09:10:33'),
-        updated_at: new Date('2020-10-21T09:10:33')
-      },
-      {
-        project_id: 'project-001',
-        username: 'user1',
-        email: 'another.user@mail.com',
-        password: await bcrypt.hash('another-user-password', this.SALT_ROUNDS),
-        created_at: new Date('2021-02-17T15:44:10'),
-        updated_at: new Date('2021-12-30T12:03:01')
-      },
-      {
-        project_id: 'project-002',
-        email: 'the_admin@mail.com',
-        password: await bcrypt.hash('the_admin@project2', this.SALT_ROUNDS),
-        role: 3,
-        created_at: new Date('2022-02-10T10:30:00'),
-        updated_at: new Date('2022-03-01T15:32:09')
-      },
-      {
-        project_id: 'project-002',
-        email: 'one_poor_user@mail.com',
-        password: await bcrypt.hash('a_poor_user', this.SALT_ROUNDS),
-        created_at: new Date('2022-05-10T15:10:30'),
-        updated_at: new Date('2022-05-10T15:10:30')
-      }
-    ];
-
-    for (const user of tempUsers) {
-      await this.prisma.user.create({
-        data: user
-      });
-    }
-  }
-
   /**
    * Register a new record of user in the database
    *
@@ -193,11 +135,19 @@ export class UserService {
    * @param pwdPlain new password in plain text
    * @param resetCodePlain a string of reset code in plain text
    */
-  async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<void> {
+  async updateUserPassword(
+    projectId: string,
+    email: string,
+    pwdPlain: string,
+    resetCodePlain: string
+  ): Promise<void> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
 
     // check expiration time and if reset code matches
-    if ((await bcrypt.compare(resetCodePlain, userToUpdate.reset_code)) && isFuture(userToUpdate.reset_code_expires_at)) {
+    if (
+      (await bcrypt.compare(resetCodePlain, userToUpdate.reset_code)) &&
+      isFuture(userToUpdate.reset_code_expires_at)
+    ) {
       const pwdHash = await bcrypt.hash(pwdPlain, this.SALT_ROUNDS);
 
       await this.prisma.user.update({
