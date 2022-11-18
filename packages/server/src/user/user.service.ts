@@ -20,44 +20,44 @@ export class UserService {
     // TODO: add temp users to database
     const tempUsers = [
       {
-        project_id: 'project-001',
+        projectId: 'project-001',
         username: 'admin0',
         email: 'some.admin@mail.com',
         password: await bcrypt.hash('some_admin.password', this.SALT_ROUNDS),
         role: 1,
-        created_at: new Date('2020-01-01T09:00:01'),
-        updated_at: new Date('2020-01-01T09:00:01')
+        createdAt: new Date('2020-01-01T09:00:01'),
+        updatedAt: new Date('2020-01-01T09:00:01')
       },
       {
-        project_id: 'project-001',
+        projectId: 'project-001',
         username: 'user0',
         email: 'some.user@mail.com',
         password: await bcrypt.hash('some_user_password', this.SALT_ROUNDS),
-        created_at: new Date('2020-10-21T09:10:33'),
-        updated_at: new Date('2020-10-21T09:10:33')
+        createdAt: new Date('2020-10-21T09:10:33'),
+        updatedAt: new Date('2020-10-21T09:10:33')
       },
       {
-        project_id: 'project-001',
+        projectId: 'project-001',
         username: 'user1',
         email: 'another.user@mail.com',
         password: await bcrypt.hash('another-user-password', this.SALT_ROUNDS),
-        created_at: new Date('2021-02-17T15:44:10'),
-        updated_at: new Date('2021-12-30T12:03:01')
+        createdAt: new Date('2021-02-17T15:44:10'),
+        updatedAt: new Date('2021-12-30T12:03:01')
       },
       {
-        project_id: 'project-002',
+        projectId: 'project-002',
         email: 'the_admin@mail.com',
         password: await bcrypt.hash('the_admin@project2', this.SALT_ROUNDS),
         role: 3,
-        created_at: new Date('2022-02-10T10:30:00'),
-        updated_at: new Date('2022-03-01T15:32:09')
+        createdAt: new Date('2022-02-10T10:30:00'),
+        updatedAt: new Date('2022-03-01T15:32:09')
       },
       {
-        project_id: 'project-002',
+        projectId: 'project-002',
         email: 'one_poor_user@mail.com',
         password: await bcrypt.hash('a_poor_user', this.SALT_ROUNDS),
-        created_at: new Date('2022-05-10T15:10:30'),
-        updated_at: new Date('2022-05-10T15:10:30')
+        createdAt: new Date('2022-05-10T15:10:30'),
+        updatedAt: new Date('2022-05-10T15:10:30')
       }
     ];
 
@@ -71,7 +71,7 @@ export class UserService {
   /**
    * Register a new record of user in the database
    *
-   * @param data object that should contain `project_id: string`, `username?: string`, `email?: string` and `password: string` in plain text.
+   * @param data object that should contain `projectId: string`, `username?: string`, `email?: string` and `password: string` in plain text.
    * **NOTE:** `data` should contain either `username`, `email`, or both.
    * @returns User object, throws an `Error` when user already exist in the database
    */
@@ -80,7 +80,7 @@ export class UserService {
     const userCount = await this.prisma.user.count({
       where: {
         AND: {
-          project_id: data.project_id,
+          projectId: data.projectId,
           OR: [{ username: data.username }, { email: data.email }]
         }
       }
@@ -95,7 +95,7 @@ export class UserService {
 
     return await this.prisma.user.create({
       data: {
-        project_id: data.project_id,
+        projectId: data.projectId,
         username: data.username,
         email: data.email,
         password: pwdHash
@@ -121,7 +121,7 @@ export class UserService {
   async findUsersByProjectId(projectId: string): Promise<User[]> {
     return await this.prisma.user.findMany({
       where: {
-        project_id: projectId
+        projectId: projectId
       }
     });
   }
@@ -144,7 +144,7 @@ export class UserService {
   async findUserByUsername(projectId: string, username: string): Promise<User> {
     return await this.prisma.user.findFirstOrThrow({
       where: {
-        project_id: projectId,
+        projectId: projectId,
         username: username
       }
     });
@@ -158,7 +158,7 @@ export class UserService {
   async findUserByEmail(projectId: string, email: string): Promise<User> {
     return await this.prisma.user.findFirstOrThrow({
       where: {
-        project_id: projectId,
+        projectId: projectId,
         email: email
       }
     });
@@ -180,8 +180,8 @@ export class UserService {
         id: userToUpdate.id
       },
       data: {
-        reset_code: resetCodeHash,
-        reset_code_expires_at: addHours(new Date(), 1) // TODO: change default expiration time
+        resetCode: resetCodeHash,
+        resetCodeExpiresAt: addHours(new Date(), 1) // TODO: change default expiration time
       }
     });
   }
@@ -193,11 +193,19 @@ export class UserService {
    * @param pwdPlain new password in plain text
    * @param resetCodePlain a string of reset code in plain text
    */
-  async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<void> {
+  async updateUserPassword(
+    projectId: string,
+    email: string,
+    pwdPlain: string,
+    resetCodePlain: string
+  ): Promise<void> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
 
     // check expiration time and if reset code matches
-    if ((await bcrypt.compare(resetCodePlain, userToUpdate.reset_code)) && isFuture(userToUpdate.reset_code_expires_at)) {
+    if (
+      (await bcrypt.compare(resetCodePlain, userToUpdate.resetCode)) &&
+      isFuture(userToUpdate.resetCodeExpiresAt)
+    ) {
       const pwdHash = await bcrypt.hash(pwdPlain, this.SALT_ROUNDS);
 
       await this.prisma.user.update({
@@ -206,9 +214,9 @@ export class UserService {
         },
         data: {
           password: pwdHash,
-          updated_at: new Date(),
-          reset_code: null,
-          reset_code_expires_at: null
+          updatedAt: new Date(),
+          resetCode: null,
+          resetCodeExpiresAt: null
         }
       });
     } else {
@@ -239,6 +247,4 @@ export class UserService {
       }
     });
   }
-
-  // TODO: Add other functions, refer to docs on clickup and diagrams
 }

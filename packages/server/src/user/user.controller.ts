@@ -26,7 +26,7 @@ export class UserController {
   @Get()
   @Roles(Role.Admin)
   async getAllUsersFromCurrentProject(@Request() req): Promise<User[]> {
-    return await this.userService.findUsersByProjectId(req.user.project_id);
+    return await this.userService.findUsersByProjectId(req.user.projectId);
   }
 
   @Get(':id')
