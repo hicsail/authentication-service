@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, Project } from '@prisma/client';
-import {ConfigurableProjectSettings, ProjectIdentifier} from './dto/project.dto';
+import { ConfigurableProjectSettings, ProjectIdentifier } from './dto/project.dto';
 
 @Injectable()
 export class ProjectService {
@@ -21,7 +21,7 @@ export class ProjectService {
     }
 
     return this.prisma.project.create({
-      data: newProject,
+      data: newProject
     });
   }
 
@@ -34,8 +34,8 @@ export class ProjectService {
     return this.prisma.project.findMany({
       select: {
         id: true,
-        name: true,
-      },
+        name: true
+      }
     });
   }
 
@@ -64,12 +64,11 @@ export class ProjectService {
   async updateProject(id: string, settings: ConfigurableProjectSettings): Promise<Project> {
     return this.prisma.project.update({
       where: {
-        id: id,
+        id: id
       },
-      data: settings,
+      data: settings
     });
   }
-
 
   /**
    * Check if a project exists. If the projectId is not provided, will
@@ -87,8 +86,8 @@ export class ProjectService {
     // Return true if there is a project with the provided ID
     const projectCount = await this.prisma.project.count({
       where: {
-        id: projectId,
-      },
+        id: projectId
+      }
     });
     return projectCount > 0;
   }

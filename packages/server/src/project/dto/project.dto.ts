@@ -10,5 +10,4 @@ export class ProjectIdentifier {
  * Project type and is partial to allow changing only some of the settings
  * at a time.
  */
-export type ConfigurableProjectSettings =
-  Partial<Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+export type ConfigurableProjectSettings = Partial<Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;

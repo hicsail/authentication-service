@@ -6,6 +6,6 @@ import { ProjectPipe } from './project.pipe';
 
 @Module({
   providers: [ProjectService, PrismaService, ProjectPipe],
-  controllers: [ProjectController],
+  controllers: [ProjectController]
 })
 export class ProjectModule {}

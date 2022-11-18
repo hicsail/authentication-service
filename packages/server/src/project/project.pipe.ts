@@ -2,7 +2,6 @@ import { Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { Project } from '@prisma/client';
 
-
 /**
  * Pipe to get a project based on the project ID
  */
