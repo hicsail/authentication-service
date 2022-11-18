@@ -84,7 +84,7 @@ export class AuthService {
   async signup(user: UserSignupDto): Promise<AccessToken> {
     const data = user;
 
-    if(data == null || (data && Object.keys(data).length == 0)) {
+    if (data == null || (data && Object.keys(data).length == 0)) {
       return { accessToken: '' };
     }
 

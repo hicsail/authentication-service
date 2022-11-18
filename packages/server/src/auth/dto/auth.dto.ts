@@ -56,10 +56,14 @@ export class EmailLoginDto {
 export class SignupTransformPipe implements PipeTransform {
   transform(body: UserSignup): UserSignupDto {
     const user = new UserSignupDto();
-    const properties = ['projectId', 'username', 'email', 'password']
+    const properties = ['projectId', 'username', 'email', 'password'];
 
-    if(!properties.every((x) => { return x in body; })) {
-      return null
+    if (
+      !properties.every((x) => {
+        return x in body;
+      })
+    ) {
+      return null;
     }
 
     user.projectId = body.projectId.toString();
@@ -74,10 +78,14 @@ export class SignupTransformPipe implements PipeTransform {
 export class UsernameLoginTransformPipe implements PipeTransform {
   transform(body: any): UsernameLoginDto {
     const user = new UserSignupDto();
-    const properties = ['projectId', 'username', 'password']
-    
-    if(!properties.every((x) => { return x in body; })) {
-      return null
+    const properties = ['projectId', 'username', 'password'];
+
+    if (
+      !properties.every((x) => {
+        return x in body;
+      })
+    ) {
+      return null;
     }
 
     user.projectId = body.projectId.toString();
@@ -91,10 +99,14 @@ export class UsernameLoginTransformPipe implements PipeTransform {
 export class EmailLoginTransformPipe implements PipeTransform {
   transform(body: any): EmailLoginDto {
     const user = new UserSignupDto();
-    const properties = ['projectId', 'email', 'password']
-    
-    if(!properties.every((x) => { return x in body; })) {
-      return null
+    const properties = ['projectId', 'email', 'password'];
+
+    if (
+      !properties.every((x) => {
+        return x in body;
+      })
+    ) {
+      return null;
     }
 
     user.projectId = body.projectId.toString();
