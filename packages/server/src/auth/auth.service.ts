@@ -56,11 +56,13 @@ export class AuthService {
    * @param email
    */
   forgotPassword(projectId: string, email: string): void {
-    const resetCodePlain = randomstring.generate(10);
-    this.userService.setResetToken(projectId, email, resetCodePlain);
-    const payload = { message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}` };
+    const resetCode = randomstring.generate(10);
+    this.userService.setResetToken(projectId, email, resetCode);
 
-    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
+    const payload = { message: `${process.env.BASE_URL}/reset?code=${resetCode}` };
+    const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
+
+    axios.post(sendEmailEndpoint, payload);
   }
 
   /**
