@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { LoginController, SignupController } from './auth.controller';
+import { LoginController, SignupController, RecoveryController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
@@ -16,7 +16,7 @@ import { JwtStrategy } from './jwt.strategy';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION }
     })
   ],
-  controllers: [LoginController, SignupController],
+  controllers: [LoginController, SignupController, RecoveryController],
   providers: [AuthService, PrismaService, JwtStrategy],
   exports: [AuthService]
 })
