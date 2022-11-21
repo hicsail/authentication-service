@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import randomstring from 'randomstring';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
+
+const { default: axios } = require('axios');
 
 @Injectable()
 export class AuthService {
@@ -51,26 +54,26 @@ export class AuthService {
   /**
    *
    * @param projectId
-   * @param username
-   * @param password
-   * @returns
+   * @param email
    */
-  forgot(): void {
-    // TODO:
-    // 1. send email
+  forgotPassword(projectId: string, email: string): void {
+    const resetCodePlain = randomstring.generate(10);
+    this.userService.setResetToken(projectId, email, resetCodePlain);
+    const payload = { message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}` };
+
+    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
   }
 
   /**
    *
    * @param projectId
-   * @param username
-   * @param password
-   * @returns
+   * @param email
    */
-  reset(): void {
-    // TODO:
-    // 1 Check credentials
-    // 2. Send email
+  async resetPassword(projectId: string, email: string, password: string, resetCodePlain: string): Promise<void> {
+    this.userService.updateUserPassword(projectId, email, password, resetCodePlain);
+    const payload = { message: 'Password updated.' }
+
+    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
   }
 
   /**
