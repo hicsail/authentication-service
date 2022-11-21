@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import axios from 'axios';
 import * as bcrypt from 'bcrypt';
 import randomstring from 'randomstring';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
-
-const { default: axios } = require('axios');
 
 @Injectable()
 export class AuthService {
@@ -73,7 +72,7 @@ export class AuthService {
    */
   async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<void> {
     this.userService.updateUserPassword(projectId, email, password, resetCode);
-    const payload = { message: 'Password updated.' }
+    const payload = { message: 'Password updated.' };
 
     axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
   }
