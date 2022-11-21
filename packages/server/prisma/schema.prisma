@@ -23,6 +23,7 @@ model User {
   deletedAt   DateTime?
   resetCode           String?
   resetCodeExpiresAt  DateTime?
+  Project     Project   @relation(fields: [projectId], references: [id])
 }
 
 model Project {
@@ -36,4 +37,5 @@ model Project {
   deletedAt   DateTime?
   homePage    String?
   redirectUrl String?
+  User        User[]
 }
