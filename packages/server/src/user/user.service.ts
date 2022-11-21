@@ -14,7 +14,7 @@ export class UserService {
    * Register a new record of user in the database
    *
    * @param newUser object that should contain `projectId: string`, `username?: string`, `email?: string` and `password: string` in plain text.
-   * **NOTE:** `data` should contain either `username`, `email`, or both.
+   * **NOTE:** `newUser` should contain either `username`, `email`, or both.
    * @returns User object, throws an `Error` when user already exist in the database
    */
   async createUser(newUser: Prisma.UserUncheckedCreateInput): Promise<User> {
