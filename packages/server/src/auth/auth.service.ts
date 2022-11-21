@@ -68,9 +68,11 @@ export class AuthService {
    *
    * @param projectId
    * @param email
+   * @param password
+   * @param resetCode
    */
-  async resetPassword(projectId: string, email: string, password: string, resetCodePlain: string): Promise<void> {
-    this.userService.updateUserPassword(projectId, email, password, resetCodePlain);
+  async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<void> {
+    this.userService.updateUserPassword(projectId, email, password, resetCode);
     const payload = { message: 'Password updated.' }
 
     axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);

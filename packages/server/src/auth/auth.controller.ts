@@ -30,3 +30,18 @@ export class SignupController {
     return await this.authService.signup(user);
   }
 }
+
+@Controller('recover')
+export class RecoveryController {
+  constructor(private authService: AuthService) {}
+
+  @Post('forgot')
+  async forgotPassword(@Body('projectId') projectId: string, @Body('email') email: string): Promise<void> {
+    return this.authService.forgotPassword(projectId, email);
+  }
+
+  @Post('reset')
+  async resetPassword(@Body('projectId') projectId: string, @Body('email') email: string, @Body('password') password: string, @Body('resetCode') resetCode: string): Promise<void> {
+    return this.authService.resetPassword(projectId, email, resetCode, password);
+  }
+}
