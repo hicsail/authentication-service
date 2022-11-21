@@ -13,17 +13,17 @@ export class UserService {
   /**
    * Register a new record of user in the database
    *
-   * @param data object that should contain `projectId: string`, `username?: string`, `email?: string` and `password: string` in plain text.
-   * **NOTE:** `data` should contain either `username`, `email`, or both.
+   * @param newUser object that should contain `projectId: string`, `username?: string`, `email?: string` and `password: string` in plain text.
+   * **NOTE:** `newUser` should contain either `username`, `email`, or both.
    * @returns User object, throws an `Error` when user already exist in the database
    */
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+  async createUser(newUser: Prisma.UserUncheckedCreateInput): Promise<User> {
     // check if such user exist in the database
     const userCount = await this.prisma.user.count({
       where: {
         AND: {
-          projectId: data.projectId,
-          OR: [{ username: data.username }, { email: data.email }]
+          projectId: newUser.projectId,
+          OR: [{ username: newUser.username }, { email: newUser.email }]
         }
       }
     });
@@ -33,13 +33,13 @@ export class UserService {
       throw new Error('User already exist in the database.');
     }
 
-    const pwdHash = await bcrypt.hash(data.password, this.SALT_ROUNDS);
+    const pwdHash = await bcrypt.hash(newUser.password, this.SALT_ROUNDS);
 
-    return await this.prisma.user.create({
+    return this.prisma.user.create({
       data: {
-        projectId: data.projectId,
-        username: data.username,
-        email: data.email,
+        projectId: newUser.projectId,
+        username: newUser.username,
+        email: newUser.email,
         password: pwdHash
       }
     });
@@ -57,37 +57,39 @@ export class UserService {
   /**
    * Find all user records from one project using project ID
    *
-   * @param projectId id of the project
+   * @param projectId ID of the project
    * @returns List of `User` object, will return empty list if no user found
    */
   async findUsersByProjectId(projectId: string): Promise<User[]> {
-    return await this.prisma.user.findMany({
+    return this.prisma.user.findMany({
       where: {
-        projectId: projectId
+        projectId
       }
     });
   }
 
   /**
-   * Find unique user using id for all project
+   * Find unique user using ID for all project
    *
-   * @param id uuid of the user as string
+   * @param id ID of the user
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserById(id: string): Promise<User> {
-    return await this.prisma.user.findFirstOrThrow({ where: { id: id } });
+    return this.prisma.user.findFirstOrThrow({ where: { id: id } });
   }
 
   /**
    * Find unique user for a project using email.
    *
+   * @param projectId project ID where the user belong to
+   * @param username username of the user
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByUsername(projectId: string, username: string): Promise<User> {
-    return await this.prisma.user.findFirstOrThrow({
+    return this.prisma.user.findFirstOrThrow({
       where: {
-        projectId: projectId,
-        username: username
+        projectId,
+        username
       }
     });
   }
@@ -95,13 +97,15 @@ export class UserService {
   /**
    * Find unique user for a project using email.
    *
+   * @param projectId project ID where the user belong to
+   * @param email email of the user
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByEmail(projectId: string, email: string): Promise<User> {
-    return await this.prisma.user.findFirstOrThrow({
+    return this.prisma.user.findFirstOrThrow({
       where: {
-        projectId: projectId,
-        email: email
+        projectId,
+        email
       }
     });
   }
@@ -109,7 +113,8 @@ export class UserService {
   /**
    * Generate reset token for a user and store it in the database.
    *
-   * @param params object includes: `projectId` and `email` as string
+   * @param projectId project ID where the user belong to
+   * @param email email of the user
    * @param resetCodePlain a string of reset code in plain text
    */
   async setResetToken(projectId: string, email: string, resetCodePlain: string): Promise<void> {
@@ -131,7 +136,8 @@ export class UserService {
   /**
    * Update user password after verifying user's reset code against the database
    *
-   * @param params object includes: `projectId` and `email` as string
+   * @param projectId project ID where the user belong to
+   * @param email email of the user
    * @param pwdPlain new password in plain text
    * @param resetCodePlain a string of reset code in plain text
    */
@@ -161,7 +167,7 @@ export class UserService {
   /**
    * Update user's role
    *
-   * @param id uuid of the user as string
+   * @param id ID of the user
    * @param roleToEdit role needs to edit in number representation, refer to `role.enum.ts`
    * @param addRole `true` for add new role to user, `false` for remove role from user
    */
