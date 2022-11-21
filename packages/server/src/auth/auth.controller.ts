@@ -3,24 +3,24 @@ import { AuthService } from './auth.service';
 import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
 
-@Controller('/login')
+@Controller('login')
 export class LoginController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/username')
+  @Post('username')
   @UsePipes(new UsernameLoginTransformPipe())
   async loginUsername(@Body() user: UsernameLoginDto): Promise<AccessToken> {
     return this.authService.validateUsername(user.projectId, user.username, user.password);
   }
 
-  @Post('/email')
+  @Post('email')
   @UsePipes(new EmailLoginTransformPipe())
   async loginEmail(@Body() user: EmailLoginDto): Promise<AccessToken> {
     return this.authService.validateEmail(user.projectId, user.email, user.password);
   }
 }
 
-@Controller('/signup')
+@Controller('signup')
 export class SignupController {
   constructor(private authService: AuthService) {}
 
