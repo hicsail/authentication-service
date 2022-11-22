@@ -4,7 +4,5 @@ services:
     container_name: user-integration-test
     ports:
       - 5433:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: local_test
+    env_file:
+      - packages/server/.env
