@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { default as axios } from 'axios';
 import * as bcrypt from 'bcrypt';
+import * as randomstring from 'randomstring';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
@@ -51,26 +53,34 @@ export class AuthService {
   /**
    *
    * @param projectId
-   * @param username
-   * @param password
-   * @returns
+   * @param email
    */
-  forgot(): void {
-    // TODO:
-    // 1. send email
+  forgotPassword(projectId: string, email: string): void {
+    const resetCodePlain = randomstring.generate(10);
+    this.userService.setResetToken(projectId, email, resetCodePlain);
+
+    const payload = {
+      to: email,
+      subject: 'BU SAIL Authentication Password Reset',
+      message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}`
+    };
+    const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
+
+    axios.post(sendEmailEndpoint, payload);
   }
 
   /**
    *
    * @param projectId
-   * @param username
+   * @param email
    * @param password
-   * @returns
+   * @param resetCode
    */
-  reset(): void {
-    // TODO:
-    // 1 Check credentials
-    // 2. Send email
+  async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<void> {
+    this.userService.updateUserPassword(projectId, email, password, resetCode);
+    const payload = { message: 'Password updated.' };
+
+    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
   }
 
   /**

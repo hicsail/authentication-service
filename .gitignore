@@ -30,7 +30,7 @@ lerna-debug.log*
 # Database config
 .env
 /packages/server/.env
-
+/packages/server/src/.env
 /packages/server/dist
 /packages/client/dist
 
