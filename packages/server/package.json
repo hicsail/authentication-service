@@ -19,6 +19,7 @@
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "docker:up": "docker-compose up -d && sleep 1",
     "docker:down": "docker-compose down",
+    "docker:restart": "npm run docker:down && npm run docker:up",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
