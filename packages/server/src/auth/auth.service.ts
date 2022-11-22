@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import axios from 'axios';
+import { default as axios } from 'axios'
 import * as bcrypt from 'bcrypt';
-import randomstring from 'randomstring';
+import * as randomstring from 'randomstring';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
@@ -56,10 +56,10 @@ export class AuthService {
    * @param email
    */
   forgotPassword(projectId: string, email: string): void {
-    const resetCode = randomstring.generate(10);
-    this.userService.setResetToken(projectId, email, resetCode);
+    const resetCodePlain = randomstring.generate(10);
+    this.userService.setResetToken(projectId, email, resetCodePlain);
 
-    const payload = { message: `${process.env.BASE_URL}/reset?code=${resetCode}` };
+    const payload = { message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}` };
     const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
 
     axios.post(sendEmailEndpoint, payload);
