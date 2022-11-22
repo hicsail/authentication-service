@@ -12,7 +12,8 @@ describe('HealthController', () => {
         {
           provide: HealthService,
           useValue: jest.fn()
-        }]
+        }
+      ]
     }).compile();
 
     healthController = app.get<HealthController>(HealthController);
