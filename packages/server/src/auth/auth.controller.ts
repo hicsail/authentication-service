@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { userInfo } from 'os';
 import { AuthService } from './auth.service';
-import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto } from './dto/auth.dto';
+import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto, ForgotDto, ResetDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
 
 @Controller('login')
@@ -36,12 +37,12 @@ export class RecoveryController {
   constructor(private authService: AuthService) {}
 
   @Post('forgot')
-  async forgotPassword(@Body('projectId') projectId: string, @Body('email') email: string): Promise<void> {
-    return this.authService.forgotPassword(projectId, email);
+  async forgotPassword(@Body() user: ForgotDto): Promise<void> {
+    return this.authService.forgotPassword(user.projectId, user.email);
   }
 
   @Post('reset')
-  async resetPassword(@Body('projectId') projectId: string, @Body('email') email: string, @Body('password') password: string, @Body('resetCode') resetCode: string): Promise<void> {
-    return this.authService.resetPassword(projectId, email, resetCode, password);
+  async resetPassword(@Body() user: ResetDto): Promise<void> {
+    return this.authService.resetPassword(user.projectId, user.email, user.resetCode, user.password);
   }
 }
