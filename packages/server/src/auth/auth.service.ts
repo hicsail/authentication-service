@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { default as axios } from 'axios'
+import { default as axios } from 'axios';
 import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
 import { PrismaService } from '../prisma/prisma.service';

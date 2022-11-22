@@ -1,5 +1,4 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
-import { userInfo } from 'os';
 import { AuthService } from './auth.service';
 import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto, ForgotDto, ResetDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
