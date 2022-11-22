@@ -50,6 +50,36 @@ export class EmailLoginDto {
   password: string;
 }
 
+export class ForgotDto {
+  @IsNotEmpty()
+  @IsString()
+  @Type(() => String)
+  projectId: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}
+
+export class ResetDto {
+  @IsNotEmpty()
+  @IsString()
+  @Type(() => String)
+  projectId: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  resetCode: string;
+}
+
 export class SignupTransformPipe implements PipeTransform {
   transform(body: UserSignup): UserSignupDto {
     const user = new UserSignupDto();
