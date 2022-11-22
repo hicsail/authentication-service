@@ -17,7 +17,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "docker:up": "docker-compose up -d && sleep 3",
+    "docker:up": "docker-compose up -d && sleep 1",
     "docker:down": "docker-compose down",
     "test": "jest",
     "test:watch": "jest --watch",
