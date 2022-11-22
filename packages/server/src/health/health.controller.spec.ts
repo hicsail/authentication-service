@@ -11,4 +11,8 @@ describe('HealthController', () => {
 
     healthController = app.get<HealthController>(HealthController);
   });
+
+  it('should be defined"', () => {
+    expect(healthController).toBeDefined();
+  });
 });
