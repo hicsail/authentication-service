@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap()
   .catch((e) => {
