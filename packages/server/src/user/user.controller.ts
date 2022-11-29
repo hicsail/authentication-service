@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Request, UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Role } from '../auth/enum/role.enum';
@@ -10,7 +9,7 @@ import { UserService } from './user.service';
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
-  constructor(private readonly userService: UserService, private jwtService: JwtService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('me')
   async getMyInfo(@Request() req): Promise<User> {
