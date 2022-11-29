@@ -96,12 +96,13 @@ describe('UserModule Integration Test', () => {
   it('Return requested users for a project', async () => {
     const req = { user: { projectId: randomProject.id } };
     const responseUsers = await userController.getAllUsersFromCurrentProject(req);
+    const matchUsers = dummyUsers.concat(dummyAdmins).filter((element) => {
+      return element.projectId === randomProject.id;
+    });
 
-    expect(responseUsers).toContainEqual(
-      dummyUsers.concat(dummyAdmins).filter((element) => {
-        return element.projectId === randomProject.id;
-      })
-    );
+    for (const user of matchUsers) {
+      expect(responseUsers).toContainEqual(user);
+    }
   });
 
   it('Return empty list for requesting a non-existing project', () => {
