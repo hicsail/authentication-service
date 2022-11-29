@@ -81,14 +81,14 @@ describe('UserModule Integration Test', () => {
     randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
-  it('Return requested user object', async () => {
+  it('Return requested user object (self)', async () => {
     const req = { user: { id: randomUser.id } };
     const responseUser = await userController.getMyInfo(req);
 
     expect(responseUser).toEqual(randomUser);
   });
 
-  it('Throw an error for requesting a non-existing user', async () => {
+  it('Throw an error for requesting a non-existing user (self)', async () => {
     const req = { user: { id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' } };
     expect(userController.getMyInfo(req)).rejects.toThrow(HttpException);
   });
@@ -108,5 +108,14 @@ describe('UserModule Integration Test', () => {
   it('Return empty list for requesting a non-existing project', () => {
     const req = { user: { projectId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' } };
     expect(userController.getAllUsersFromCurrentProject(req)).resolves.toEqual([]);
+  });
+
+  it('Return requested user object (other)', async () => {
+    const responseUser = await userController.getUserInfo(randomUser.id);
+    expect(responseUser).toEqual(randomUser);
+  });
+
+  it('Throw an erorr for requesting a non-existing user (other)', () => {
+    expect(userController.getUserInfo(randomUser.id)).rejects.toThrow(HttpException);
   });
 });
