@@ -1,5 +1,5 @@
 import { HttpException } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { Project, User } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
