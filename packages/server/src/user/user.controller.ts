@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Role } from '../auth/enum/role.enum';
@@ -12,13 +12,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
-  async getMyInfo(@Request() req): Promise<User> {
+  async getMyInfo(@Req() req): Promise<User> {
     return await this.userService.findUserById(req.user.id);
   }
 
   @Get()
   @Roles(Role.Admin)
-  async getAllUsersFromCurrentProject(@Request() req): Promise<User[]> {
+  async getAllUsersFromCurrentProject(@Req() req): Promise<User[]> {
     return await this.userService.findUsersByProjectId(req.user.projectId);
   }
 
