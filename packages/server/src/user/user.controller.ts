@@ -29,7 +29,11 @@ export class UserController {
   @Get(':id')
   @Roles(Role.Admin)
   async getUserInfo(@Param('id', new ParseUUIDPipe()) id: string): Promise<User> {
-    return await this.userService.findUserById(id);
+    try {
+      return await this.userService.findUserById(id);
+    } catch (error) {
+      throw new HttpException('User ID does not exist', HttpStatus.NOT_FOUND);
+    }
   }
 
   @Post(':id/add-role')
