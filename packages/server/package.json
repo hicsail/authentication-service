@@ -20,7 +20,7 @@
     "docker:up": "docker-compose up -d && sleep 1",
     "docker:down": "docker-compose down",
     "docker:restart": "npm run docker:down && npm run docker:up",
-    "test": "jest",
+    "test": "npm run docker:up && prisma migrate deploy && jest && npm run docker:down",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
