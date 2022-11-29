@@ -49,13 +49,13 @@ describe('UserModule Integration Test', () => {
       { projectId: dummyProjects[0].id, username: 'proj00-user1', email: 'user1@mail.com', password: '06!i68UKef87eCUs' },
       { projectId: dummyProjects[0].id, username: 'proj00-user2', email: 'user2@mail.com', password: 'V$fd5i9tu@LIHMa8' },
 
-      { projectId: dummyProjects[0].id, username: 'proj01-user3', password: 'n5I0!2UU6K%y1QEJ' },
-      { projectId: dummyProjects[0].id, username: 'proj01-user4', password: 'D02WuvmY!BG7Cmj8' },
-      { projectId: dummyProjects[0].id, username: 'proj01-user5', password: 'Uuq#EoM9*7Q$519^' },
+      { projectId: dummyProjects[1].id, username: 'proj01-user3', password: 'n5I0!2UU6K%y1QEJ' },
+      { projectId: dummyProjects[1].id, username: 'proj01-user4', password: 'D02WuvmY!BG7Cmj8' },
+      { projectId: dummyProjects[1].id, username: 'proj01-user5', password: 'Uuq#EoM9*7Q$519^' },
 
-      { projectId: dummyProjects[0].id, email: 'user6@mail.com', password: '1X9YrCjya483@bCE' },
-      { projectId: dummyProjects[0].id, email: 'user7@mail.com', password: '9wM#HB52MW^98Ni^' },
-      { projectId: dummyProjects[0].id, email: 'user8@mail.com', password: 'IhS4^F6X6DcfI4#W' }
+      { projectId: dummyProjects[2].id, email: 'user6@mail.com', password: '1X9YrCjya483@bCE' },
+      { projectId: dummyProjects[2].id, email: 'user7@mail.com', password: '9wM#HB52MW^98Ni^' },
+      { projectId: dummyProjects[2].id, email: 'user8@mail.com', password: 'IhS4^F6X6DcfI4#W' }
     ];
     await prisma.user.createMany({ data: dummyUsersInput });
     dummyUsers = await prisma.user.findMany({ where: { role: 0 } });
