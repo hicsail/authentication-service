@@ -75,4 +75,37 @@ describe('UserModule Integration Test', () => {
 
     await prisma.$disconnect();
   });
+
+  beforeEach(async () => {
+    randomProject = dummyProjects[Math.floor(Math.random() * dummyProjects.length)];
+    randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
+  });
+
+  it('Return requested user object', async () => {
+    const req = { user: { id: randomUser.id } };
+    const responseUser = await userController.getMyInfo(req);
+
+    expect(responseUser).toEqual(randomUser);
+  });
+
+  it('Throw an error for requesting a non-existing user', async () => {
+    const req = { user: { id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' } };
+    expect(userController.getMyInfo(req)).rejects.toThrow(HttpException);
+  });
+
+  it('Return requested users for a project', async () => {
+    const req = { user: { projectId: randomProject.id } };
+    const responseUsers = await userController.getAllUsersFromCurrentProject(req);
+
+    expect(responseUsers).toContainEqual(
+      dummyUsers.concat(dummyAdmins).filter((element) => {
+        return element.projectId === randomProject.id;
+      })
+    );
+  });
+
+  it('Return empty list for requesting a non-existing project', () => {
+    const req = { user: { projectId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' } };
+    expect(userController.getAllUsersFromCurrentProject(req)).resolves.toEqual([]);
+  });
 });
