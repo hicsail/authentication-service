@@ -108,7 +108,7 @@ describe('UserModule Integration Test', () => {
     }
   });
 
-  it('Return empty list for requesting a non-existing project', () => {
+  it('Return empty list for requesting a non-existing project', async () => {
     const req = { user: { projectId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' } };
     expect(userController.getAllUsersFromCurrentProject(req)).resolves.toEqual([]);
   });
@@ -118,8 +118,35 @@ describe('UserModule Integration Test', () => {
     expect(responseUser).toEqual(randomUser);
   });
 
-  it('Throw an erorr for requesting a non-existing user (other)', () => {
-    const id = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-    expect(userController.getUserInfo(id)).rejects.toThrow(HttpException);
+  it('Throw an erorr for requesting a non-existing user (other)', async () => {
+    const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+    expect(userController.getUserInfo(userId)).rejects.toThrow(HttpException);
+  });
+
+  it('Add new roles to user should success', async () => {
+    const randomNormalUser = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
+    const rolesToAdd = [parseInt('0001', 2) + parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
+
+    expect(userController.addRoleToUser(randomNormalUser.id, rolesToAdd[0] + rolesToAdd[1])).toBe(true);
+
+    const roles = (await prisma.user.findUnique({ where: { id: randomNormalUser.id } })).role;
+
+    for (const role of rolesToAdd.concat(randomNormalUser.role)) {
+      expect(roles & role).not.toBe(0);
+    }
+  });
+
+  it('Add duplicated roles to user should remain unchanged', async () => {
+    const randomAdmin = dummyAdmins[Math.floor(Math.random() * dummyAdmins.length)];
+    const rolesToAdd = randomAdmin.role;
+
+    expect(userController.addRoleToUser(randomAdmin.id, rolesToAdd)).toBe(true);
+    expect((await prisma.user.findUnique({ where: { id: randomAdmin.id } })).role).toBe(rolesToAdd);
+  });
+
+  it('Add roles to non-existing user should return false', async () => {
+    const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+    const rolesToAdd = [parseInt('0001', 2) + parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
+    expect(userController.addRoleToUser(userId, rolesToAdd[0] + rolesToAdd[1])).resolves.toBe(false);
   });
 });
