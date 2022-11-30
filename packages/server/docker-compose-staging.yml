@@ -5,13 +5,16 @@ services:
     ports:
         - 5432:5432
     volumes:
-        - postgres:/var/lib/postgresql/data
+        - db-data-auth:/var/lib/postgresql/data
     environment:
         POSTGRES_USER: postgres
   auth:
-    image: hicsail/auth
+    image: hicsail/auth:unstable
     restart: always
     depends_on:
       - postgres
     ports:
       - 3000:3000
+
+volumes:
+  db-data-auth:
