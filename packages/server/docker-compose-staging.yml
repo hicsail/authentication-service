@@ -8,6 +8,7 @@ services:
         - db-data-auth:/var/lib/postgresql/data
     environment:
         POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
   auth:
     image: hicsail/auth:unstable
     restart: always
