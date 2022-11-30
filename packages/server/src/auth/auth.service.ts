@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { default as axios } from 'axios';
 import * as bcrypt from 'bcrypt';
@@ -29,7 +29,7 @@ export class AuthService {
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
-    return null;
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
   /**
@@ -45,10 +45,10 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
-      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return { status: 201, accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
-    return null;
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
   /**

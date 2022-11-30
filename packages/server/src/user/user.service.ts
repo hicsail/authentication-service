@@ -157,8 +157,6 @@ export class UserService {
       }
     }
 
-    console.log(`resetCodePlain: ${resetCodePlain}\tuserToUpdate.resetCode: ${userToUpdate.resetCode}`)
-
     const isValid = (await bcrypt.compare(resetCodePlain, userToUpdate.resetCode));
 
     if (!isValid) {
