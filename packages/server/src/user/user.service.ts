@@ -103,12 +103,16 @@ export class UserService {
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByEmail(projectId: string, email: string): Promise<User> {
-    return this.prisma.user.findFirstOrThrow({
-      where: {
-        projectId,
-        email
-      }
-    });
+    try {
+      return this.prisma.user.findFirst({
+        where: {
+          projectId,
+          email
+        }
+      });
+    } catch (NotFoundError) {
+      return null;
+    }
   }
 
   /**
@@ -120,9 +124,6 @@ export class UserService {
    */
   async setResetToken(projectId: string, email: string, resetCodePlain: string): Promise<void> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
-
-    console.log(`resetCodePlain: ${resetCodePlain}`)
-
     const resetCodeHash = await bcrypt.hash(resetCodePlain, this.SALT_ROUNDS);
 
     await this.prisma.user.update({
@@ -146,7 +147,16 @@ export class UserService {
    * @returns UpdateStatus
    */
   async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<UpdateStatus> {
+
     const userToUpdate = await this.findUserByEmail(projectId, email);
+
+    if(!userToUpdate) {
+      return {
+        message: "Unauthorized",
+        status: 401
+      }
+    }
+
 
     const isActive = isFuture(userToUpdate.resetCodeExpiresAt);
 

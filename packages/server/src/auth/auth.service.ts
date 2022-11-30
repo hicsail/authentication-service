@@ -65,10 +65,8 @@ export class AuthService {
       subject: 'BU SAIL Authentication Password Reset',
       message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}`
     };
+
     const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
-
-    console.log(payload)
-
     axios.post(sendEmailEndpoint, payload);
   }
 
@@ -84,11 +82,13 @@ export class AuthService {
     const ok = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
     if(ok.status == 200) {
+
       const payload = {
         to: email,
         subject: 'Password Reset Successful',
         message: 'Password updated.'
       };
+
       const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
       axios.post(sendEmailEndpoint, payload);
     }
