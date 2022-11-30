@@ -125,23 +125,30 @@ describe('UserModule Integration Test', () => {
 
   it('Add new roles to user should success', async () => {
     const randomNormalUser = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
-    const rolesToAdd = [parseInt('0001', 2) + parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
+    const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
 
-    expect(userController.addRoleToUser(randomNormalUser.id, rolesToAdd[0] + rolesToAdd[1])).toBe(true);
+    const responseVal = await userController.addRoleToUser(randomNormalUser.id, rolesToAdd[0] + rolesToAdd[1]);
+    const userEdited = await prisma.user.findUnique({ where: { id: randomNormalUser.id } });
 
-    const roles = (await prisma.user.findUnique({ where: { id: randomNormalUser.id } })).role;
+    expect(responseVal).toBe(true);
 
     for (const role of rolesToAdd.concat(randomNormalUser.role)) {
-      expect(roles & role).not.toBe(0);
+      expect(userEdited.role & role).toBe(role);
     }
   });
 
-  it('Add duplicated roles to user should remain unchanged', async () => {
+  it('Add duplicated roles to user should keep original role', async () => {
     const randomAdmin = dummyAdmins[Math.floor(Math.random() * dummyAdmins.length)];
-    const rolesToAdd = randomAdmin.role;
+    const rolesToAdd = [randomAdmin.role, parseInt('1000', 2)];
 
-    expect(userController.addRoleToUser(randomAdmin.id, rolesToAdd)).toBe(true);
-    expect((await prisma.user.findUnique({ where: { id: randomAdmin.id } })).role).toBe(rolesToAdd);
+    const responseVal = await userController.addRoleToUser(randomAdmin.id, rolesToAdd[0] + rolesToAdd[1]);
+    const userEdited = await prisma.user.findUnique({ where: { id: randomAdmin.id } });
+
+    expect(responseVal).toBe(true);
+
+    for (const role of rolesToAdd) {
+      expect(userEdited.role & role).toBe(role);
+    }
   });
 
   it('Add roles to non-existing user should return false', async () => {
