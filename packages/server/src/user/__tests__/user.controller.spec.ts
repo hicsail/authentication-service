@@ -37,9 +37,9 @@ describe('UserModule Integration Test', () => {
 
     // adding dummy admin users
     const dummyAdminsInput = [
-      { projectId: dummyProjects[0].id, username: 'admin0', email: 'admin0@mail.com', password: bcrypt.hash('6pD$y38^6HzFcT6P', HASH_ROUNDS), role: 1 },
-      { projectId: dummyProjects[1].id, username: 'admin1', password: bcrypt.hash('a7kgFU*#26f5KgRP', HASH_ROUNDS), role: 1 },
-      { projectId: dummyProjects[2].id, email: 'admin2@mail.com', password: bcrypt.hash('kP15!YjF$5cLXUb%', HASH_ROUNDS), role: 1 }
+      { projectId: dummyProjects[0].id, username: 'admin0', email: 'admin0@mail.com', password: await bcrypt.hash('6pD$y38^6HzFcT6P', HASH_ROUNDS), role: 1 },
+      { projectId: dummyProjects[1].id, username: 'admin1', password: await bcrypt.hash('a7kgFU*#26f5KgRP', HASH_ROUNDS), role: 1 },
+      { projectId: dummyProjects[2].id, email: 'admin2@mail.com', password: await bcrypt.hash('kP15!YjF$5cLXUb%', HASH_ROUNDS), role: 1 }
     ];
     await prisma.user.createMany({ data: dummyAdminsInput });
     dummyAdmins = await prisma.user.findMany({ where: { role: 1 } });
@@ -48,17 +48,17 @@ describe('UserModule Integration Test', () => {
 
     // adding dummy normal users
     const dummyUsersInput = [
-      { projectId: dummyProjects[0].id, username: 'proj00-user0', email: 'user0@mail.com', password: bcrypt.hash('dz$d0I05s4!AmIkN', HASH_ROUNDS) },
-      { projectId: dummyProjects[0].id, username: 'proj00-user1', email: 'user1@mail.com', password: bcrypt.hash('06!i68UKef87eCUs', HASH_ROUNDS) },
-      { projectId: dummyProjects[0].id, username: 'proj00-user2', email: 'user2@mail.com', password: bcrypt.hash('V$fd5i9tu@LIHMa8', HASH_ROUNDS) },
+      { projectId: dummyProjects[0].id, username: 'proj00-user0', email: 'user0@mail.com', password: await bcrypt.hash('dz$d0I05s4!AmIkN', HASH_ROUNDS) },
+      { projectId: dummyProjects[0].id, username: 'proj00-user1', email: 'user1@mail.com', password: await bcrypt.hash('06!i68UKef87eCUs', HASH_ROUNDS) },
+      { projectId: dummyProjects[0].id, username: 'proj00-user2', email: 'user2@mail.com', password: await bcrypt.hash('V$fd5i9tu@LIHMa8', HASH_ROUNDS) },
 
-      { projectId: dummyProjects[1].id, username: 'proj01-user3', password: bcrypt.hash('n5I0!2UU6K%y1QEJ', HASH_ROUNDS) },
-      { projectId: dummyProjects[1].id, username: 'proj01-user4', password: bcrypt.hash('D02WuvmY!BG7Cmj8', HASH_ROUNDS) },
-      { projectId: dummyProjects[1].id, username: 'proj01-user5', password: bcrypt.hash('Uuq#EoM9*7Q$519^', HASH_ROUNDS) },
+      { projectId: dummyProjects[1].id, username: 'proj01-user3', password: await bcrypt.hash('n5I0!2UU6K%y1QEJ', HASH_ROUNDS) },
+      { projectId: dummyProjects[1].id, username: 'proj01-user4', password: await bcrypt.hash('D02WuvmY!BG7Cmj8', HASH_ROUNDS) },
+      { projectId: dummyProjects[1].id, username: 'proj01-user5', password: await bcrypt.hash('Uuq#EoM9*7Q$519^', HASH_ROUNDS) },
 
-      { projectId: dummyProjects[2].id, email: 'user6@mail.com', password: bcrypt.hash('1X9YrCjya483@bCE', HASH_ROUNDS) },
-      { projectId: dummyProjects[2].id, email: 'user7@mail.com', password: bcrypt.hash('9wM#HB52MW^98Ni^', HASH_ROUNDS) },
-      { projectId: dummyProjects[2].id, email: 'user8@mail.com', password: bcrypt.hash('IhS4^F6X6DcfI4#W', HASH_ROUNDS) }
+      { projectId: dummyProjects[2].id, email: 'user6@mail.com', password: await bcrypt.hash('1X9YrCjya483@bCE', HASH_ROUNDS) },
+      { projectId: dummyProjects[2].id, email: 'user7@mail.com', password: await bcrypt.hash('9wM#HB52MW^98Ni^', HASH_ROUNDS) },
+      { projectId: dummyProjects[2].id, email: 'user8@mail.com', password: await bcrypt.hash('IhS4^F6X6DcfI4#W', HASH_ROUNDS) }
     ];
     await prisma.user.createMany({ data: dummyUsersInput });
     dummyUsers = await prisma.user.findMany({ where: { role: 0 } });
