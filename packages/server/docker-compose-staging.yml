@@ -16,6 +16,8 @@ services:
       - postgres
     ports:
       - 3001:3000
+    env_file:
+      - ../../stack.env
 
 volumes:
   db-data-auth:
