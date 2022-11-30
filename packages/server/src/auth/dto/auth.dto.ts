@@ -77,7 +77,7 @@ export class ResetDto {
 
   @IsNotEmpty()
   @IsString()
-  resetCode: string;
+  code: string;
 }
 
 export class SignupTransformPipe implements PipeTransform {

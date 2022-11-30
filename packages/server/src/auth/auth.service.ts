@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
+import { UpdateStatus } from 'src/user/types/user.types';
 
 @Injectable()
 export class AuthService {
@@ -66,6 +67,8 @@ export class AuthService {
     };
     const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
 
+    console.log(payload)
+
     axios.post(sendEmailEndpoint, payload);
   }
 
@@ -75,12 +78,22 @@ export class AuthService {
    * @param email
    * @param password
    * @param resetCode
+   * @returns UpdateStatus
    */
-  async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<void> {
-    this.userService.updateUserPassword(projectId, email, password, resetCode);
-    const payload = { message: 'Password updated.' };
+  async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<UpdateStatus> {
+    const ok = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
-    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
+    if(ok.status == 200) {
+      const payload = {
+        to: email,
+        subject: 'Password Reset Successful',
+        message: 'Password updated.'
+      };
+      const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
+      axios.post(sendEmailEndpoint, payload);
+    }
+
+    return ok;
   }
 
   /**
