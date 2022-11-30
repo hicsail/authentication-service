@@ -119,6 +119,7 @@ describe('UserModule Integration Test', () => {
   });
 
   it('Throw an erorr for requesting a non-existing user (other)', () => {
-    expect(userController.getUserInfo(randomUser.id)).rejects.toThrow(HttpException);
+    const id = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+    expect(userController.getUserInfo(id)).rejects.toThrow(HttpException);
   });
 });
