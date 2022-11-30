@@ -9,7 +9,7 @@ RUN npm ci --omit=dev
 # Copy over the source
 COPY ../.. .
 
-# Expore the default port
+# Expose the default port
 EXPOSE 3000
 
 CMD ["npm", "run", "start:prod"]
