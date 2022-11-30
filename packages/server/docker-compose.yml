@@ -1,0 +1,17 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13
+    ports:
+        - 5432:5432
+    volumes:
+        - postgres:/var/lib/postgresql/data
+    environment:
+        POSTGRES_USER: postgres
+  auth:
+    image: hicsail/auth
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
