@@ -91,16 +91,12 @@ export class UserService {
       return null;
     }
 
-    try {
-      return this.prisma.user.findFirst({
-        where: {
-          projectId,
-          username
-        }
-      });
-    } catch (NotFoundError) {
-      return null;
-    }
+    return this.prisma.user.findFirst({
+      where: {
+        projectId,
+        username
+      }
+    });
   }
 
   /**
@@ -115,16 +111,12 @@ export class UserService {
       return null;
     }
 
-    try {
-      return this.prisma.user.findFirst({
-        where: {
-          projectId,
-          email
-        }
-      });
-    } catch (NotFoundError) {
-      return null;
-    }
+    return this.prisma.user.findFirst({
+      where: {
+        projectId,
+        email
+      }
+    });
   }
 
   /**
