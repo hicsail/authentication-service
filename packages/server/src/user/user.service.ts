@@ -87,12 +87,20 @@ export class UserService {
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByUsername(projectId: string, username: string): Promise<User> {
-    return this.prisma.user.findFirstOrThrow({
-      where: {
-        projectId,
-        username
-      }
-    });
+    if (projectId == null || username == null) {
+      return null;
+    }
+
+    try {
+      return this.prisma.user.findFirst({
+        where: {
+          projectId,
+          username
+        }
+      });
+    } catch (NotFoundError) {
+      return null;
+    }
   }
 
   /**
@@ -103,6 +111,10 @@ export class UserService {
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByEmail(projectId: string, email: string): Promise<User> {
+    if (projectId == null  || email == null) {
+      return null;
+    }
+
     try {
       return this.prisma.user.findFirst({
         where: {
