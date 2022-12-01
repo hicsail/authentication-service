@@ -1,11 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsDefined, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { PipeTransform } from '@nestjs/common';
 import { UserSignup } from '../types/auth.types';
 
 export class UserSignupDto {
   @IsNotEmpty()
   @IsString()
+  @IsDefined()
   @Type(() => String)
   projectId: string;
 
@@ -15,6 +16,7 @@ export class UserSignupDto {
   @IsEmail()
   email: string;
 
+  @IsDefined()
   @IsNotEmpty()
   @IsString()
   password: string;
@@ -23,13 +25,16 @@ export class UserSignupDto {
 export class UsernameLoginDto {
   @IsNotEmpty()
   @IsString()
+  @IsDefined()
   @Type(() => String)
   projectId: string;
 
+  @IsDefined()
   @IsNotEmpty()
   @IsString()
   username: string;
 
+  @IsDefined()
   @IsNotEmpty()
   @IsString()
   password: string;
@@ -38,13 +43,16 @@ export class UsernameLoginDto {
 export class EmailLoginDto {
   @IsNotEmpty()
   @IsString()
+  @IsDefined()
   @Type(() => String)
   projectId: string;
 
+  @IsDefined()
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  @IsDefined()
   @IsNotEmpty()
   @IsString()
   password: string;
@@ -77,7 +85,7 @@ export class ResetDto {
 
   @IsNotEmpty()
   @IsString()
-  resetCode: string;
+  code: string;
 }
 
 export class SignupTransformPipe implements PipeTransform {

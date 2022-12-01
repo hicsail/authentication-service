@@ -2,11 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { PrismaClient } from '@prisma/client';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ValidationPipe } from '@nestjs/common';
 const prisma = new PrismaClient();
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  await app.listen(3000);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(3001);
 }
 bootstrap()
   .catch((e) => {

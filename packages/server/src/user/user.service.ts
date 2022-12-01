@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { addHours, isFuture } from 'date-fns';
 import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { UpdateStatus } from './types/user.types';
 
 @Injectable()
 export class UserService {
@@ -83,10 +84,10 @@ export class UserService {
    *
    * @param projectId project ID where the user belong to
    * @param username username of the user
-   * @returns `User` object, or throw `NotFoundError` when not exist
+   * @returns `User` object or returns null if inputs are undefined or null
    */
   async findUserByUsername(projectId: string, username: string): Promise<User> {
-    return this.prisma.user.findFirstOrThrow({
+    return this.prisma.user.findFirst({
       where: {
         projectId,
         username
@@ -99,10 +100,10 @@ export class UserService {
    *
    * @param projectId project ID where the user belong to
    * @param email email of the user
-   * @returns `User` object, or throw `NotFoundError` when not exist
+   * @returns `User` object or returns null if inputs are undefined or null
    */
   async findUserByEmail(projectId: string, email: string): Promise<User> {
-    return this.prisma.user.findFirstOrThrow({
+    return this.prisma.user.findFirst({
       where: {
         projectId,
         email
@@ -119,7 +120,6 @@ export class UserService {
    */
   async setResetToken(projectId: string, email: string, resetCodePlain: string): Promise<void> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
-
     const resetCodeHash = await bcrypt.hash(resetCodePlain, this.SALT_ROUNDS);
 
     await this.prisma.user.update({
@@ -140,28 +140,54 @@ export class UserService {
    * @param email email of the user
    * @param pwdPlain new password in plain text
    * @param resetCodePlain a string of reset code in plain text
+   * @returns UpdateStatus
    */
-  async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<void> {
+  async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<UpdateStatus> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
 
-    // check expiration time and if reset code matches
-    if ((await bcrypt.compare(resetCodePlain, userToUpdate.resetCode)) && isFuture(userToUpdate.resetCodeExpiresAt)) {
-      const pwdHash = await bcrypt.hash(pwdPlain, this.SALT_ROUNDS);
-
-      await this.prisma.user.update({
-        where: {
-          id: userToUpdate.id
-        },
-        data: {
-          password: pwdHash,
-          updatedAt: new Date(),
-          resetCode: null,
-          resetCodeExpiresAt: null
-        }
-      });
-    } else {
-      throw new Error(`Password failed to be updated.`);
+    if (!userToUpdate) {
+      return {
+        message: 'Unauthorized',
+        status: 401
+      };
     }
+
+    const isActive = isFuture(userToUpdate.resetCodeExpiresAt);
+
+    if (!isActive) {
+      return {
+        message: 'Reset code has expired.',
+        status: 400
+      };
+    }
+
+    const isValid = await bcrypt.compare(resetCodePlain, userToUpdate.resetCode);
+
+    if (!isValid) {
+      return {
+        message: 'Invalid reset code.',
+        status: 400
+      };
+    }
+
+    const pwdHash = await bcrypt.hash(pwdPlain, this.SALT_ROUNDS);
+
+    await this.prisma.user.update({
+      where: {
+        id: userToUpdate.id
+      },
+      data: {
+        password: pwdHash,
+        updatedAt: new Date(),
+        resetCode: null,
+        resetCodeExpiresAt: null
+      }
+    });
+
+    return {
+      message: 'Password successfully updated.',
+      status: 200
+    };
   }
 
   /**
