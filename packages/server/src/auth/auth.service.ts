@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { default as axios } from 'axios';
 import * as bcrypt from 'bcrypt';
@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
+import { UpdateStatus } from '../user/types/user.types';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
    * @param projectId
    * @param username
    * @param password
-   * @returns JWT or null
+   * @returns JWT or 401 status code
    */
   async validateUsername(projectId: string, username: string, password: string): Promise<any> {
     const user = await this.userService.findUserByUsername(projectId, username);
@@ -28,7 +29,7 @@ export class AuthService {
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
-    return null;
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
   /**
@@ -37,7 +38,7 @@ export class AuthService {
    * @param projectId
    * @param username
    * @param password
-   * @returns JWT or null
+   * @returns JWT or 401 status code
    */
   async validateEmail(projectId: string, email: string, password: string): Promise<any> {
     const user = await this.userService.findUserByEmail(projectId, email);
@@ -47,7 +48,7 @@ export class AuthService {
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
-    return null;
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
   /**
@@ -64,8 +65,8 @@ export class AuthService {
       subject: 'BU SAIL Authentication Password Reset',
       message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}`
     };
-    const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
 
+    const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
     axios.post(sendEmailEndpoint, payload);
   }
 
@@ -75,12 +76,23 @@ export class AuthService {
    * @param email
    * @param password
    * @param resetCode
+   * @returns UpdateStatus
    */
-  async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<void> {
-    this.userService.updateUserPassword(projectId, email, password, resetCode);
-    const payload = { message: 'Password updated.' };
+  async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<UpdateStatus> {
+    const update = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
-    axios.post(process.env.NOTIFICATION_SERVICE_URL, payload);
+    if (update.status == 200) {
+      const payload = {
+        to: email,
+        subject: 'Password Reset Successful',
+        message: 'Password updated.'
+      };
+
+      const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
+      axios.post(sendEmailEndpoint, payload);
+    }
+
+    return update;
   }
 
   /**

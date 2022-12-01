@@ -1,4 +1,5 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { UpdateStatus } from '../user/types/user.types';
 import { AuthService } from './auth.service';
 import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto, ForgotDto, ResetDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
@@ -41,7 +42,7 @@ export class RecoveryController {
   }
 
   @Post('reset')
-  async resetPassword(@Body() user: ResetDto): Promise<void> {
-    return this.authService.resetPassword(user.projectId, user.email, user.resetCode, user.password);
+  async resetPassword(@Body() user: ResetDto): Promise<UpdateStatus> {
+    return this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
   }
 }

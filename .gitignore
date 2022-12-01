@@ -35,3 +35,6 @@ lerna-debug.log*
 /packages/client/dist
 
 /package-lock.json
+
+# Pre-commit hooks
+.husky
