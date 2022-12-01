@@ -81,8 +81,7 @@ export class AuthService {
   async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<UpdateStatus> {
     const ok = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
-    if(ok.status == 200) {
-
+    if (ok.status == 200) {
       const payload = {
         to: email,
         subject: 'Password Reset Successful',

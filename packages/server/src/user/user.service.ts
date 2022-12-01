@@ -147,16 +147,14 @@ export class UserService {
    * @returns UpdateStatus
    */
   async updateUserPassword(projectId: string, email: string, pwdPlain: string, resetCodePlain: string): Promise<UpdateStatus> {
-
     const userToUpdate = await this.findUserByEmail(projectId, email);
 
-    if(!userToUpdate) {
+    if (!userToUpdate) {
       return {
-        message: "Unauthorized",
+        message: 'Unauthorized',
         status: 401
-      }
+      };
     }
-
 
     const isActive = isFuture(userToUpdate.resetCodeExpiresAt);
 
@@ -164,16 +162,16 @@ export class UserService {
       return {
         message: 'Reset code has expired.',
         status: 400
-      }
+      };
     }
 
-    const isValid = (await bcrypt.compare(resetCodePlain, userToUpdate.resetCode));
+    const isValid = await bcrypt.compare(resetCodePlain, userToUpdate.resetCode);
 
     if (!isValid) {
       return {
         message: 'Invalid reset code.',
         status: 400
-      }
+      };
     }
 
     const pwdHash = await bcrypt.hash(pwdPlain, this.SALT_ROUNDS);
@@ -193,7 +191,7 @@ export class UserService {
     return {
       message: 'Password successfully updated.',
       status: 200
-    }
+    };
   }
 
   /**

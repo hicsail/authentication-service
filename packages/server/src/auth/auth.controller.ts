@@ -1,4 +1,4 @@
-import { Body, Query, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UpdateStatus } from 'src/user/types/user.types';
 import { AuthService } from './auth.service';
 import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto, ForgotDto, ResetDto } from './dto/auth.dto';
