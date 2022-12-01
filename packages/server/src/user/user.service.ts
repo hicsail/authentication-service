@@ -111,7 +111,7 @@ export class UserService {
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByEmail(projectId: string, email: string): Promise<User> {
-    if (projectId == null  || email == null) {
+    if (projectId == null || email == null) {
       return null;
     }
 

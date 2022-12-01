@@ -22,10 +22,7 @@ export class AuthService {
    * @returns JWT or null
    */
   async validateUsername(projectId: string, username: string, password: string): Promise<any> {
-    console.log(username)
     const user = await this.userService.findUserByUsername(projectId, username);
-
-    console.log(user)
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
@@ -45,8 +42,6 @@ export class AuthService {
    */
   async validateEmail(projectId: string, email: string, password: string): Promise<any> {
     const user = await this.userService.findUserByEmail(projectId, email);
-
-    console.log(user)
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
