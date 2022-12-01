@@ -22,8 +22,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config test/jest-e2e.json",
-    "docker:db": "docker-compose -f docker-compose.db.yml up -d",
-    "prepare": "cd ../.. && husky install packages/server/.husky && husky install packages/client/.husky"
+    "docker:db": "docker-compose -f docker-compose.db.yml up -d"
   },
   "dependencies": {
     "@golevelup/ts-jest": "^0.3.4",
