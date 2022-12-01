@@ -87,10 +87,6 @@ export class UserService {
    * @returns `User` object or returns null if inputs are undefined or null
    */
   async findUserByUsername(projectId: string, username: string): Promise<User> {
-    if (projectId == null || username == null) {
-      return null;
-    }
-
     return this.prisma.user.findFirst({
       where: {
         projectId,
@@ -107,10 +103,6 @@ export class UserService {
    * @returns `User` object or returns null if inputs are undefined or null
    */
   async findUserByEmail(projectId: string, email: string): Promise<User> {
-    if (projectId == null || email == null) {
-      return null;
-    }
-
     return this.prisma.user.findFirst({
       where: {
         projectId,
