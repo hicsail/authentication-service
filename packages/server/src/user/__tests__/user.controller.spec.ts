@@ -29,24 +29,21 @@ describe('UserModule Integration Test', () => {
 
     prisma = moduleRef.get(PrismaService);
 
+    const dummyProjectsInput = [{ name: 'dummy-project 01' }, { name: 'dummy-project 02' }, { name: 'dummy-project 03' }];
+
     // adding dummy projects
-    await prisma.project.createMany({ data: [{ name: 'dummy-project 01' }, { name: 'dummy-project 02' }, { name: 'dummy-project 03' }] });
-    dummyProjects = await prisma.project.findMany();
+    dummyProjects = [];
+    for (const projectInput of dummyProjectsInput) {
+      const project = await prisma.project.create({ data: projectInput });
+      dummyProjects.push(project);
+    }
+    console.log(`${dummyProjects.length} projects successfully created.`);
 
-    console.log('3 projects successfully created.');
-
-    // adding dummy admin users
     const dummyAdminsInput = [
       { projectId: dummyProjects[0].id, username: 'admin0', email: 'admin0@mail.com', password: await bcrypt.hash('6pD$y38^6HzFcT6P', HASH_ROUNDS), role: 1 },
       { projectId: dummyProjects[1].id, username: 'admin1', password: await bcrypt.hash('a7kgFU*#26f5KgRP', HASH_ROUNDS), role: 1 },
       { projectId: dummyProjects[2].id, email: 'admin2@mail.com', password: await bcrypt.hash('kP15!YjF$5cLXUb%', HASH_ROUNDS), role: 1 }
     ];
-    await prisma.user.createMany({ data: dummyAdminsInput });
-    dummyAdmins = await prisma.user.findMany({ where: { role: 1 } });
-
-    console.log('3 admins successfully created.');
-
-    // adding dummy normal users
     const dummyUsersInput = [
       { projectId: dummyProjects[0].id, username: 'proj00-user0', email: 'user0@mail.com', password: await bcrypt.hash('dz$d0I05s4!AmIkN', HASH_ROUNDS) },
       { projectId: dummyProjects[0].id, username: 'proj00-user1', email: 'user1@mail.com', password: await bcrypt.hash('06!i68UKef87eCUs', HASH_ROUNDS) },
@@ -60,10 +57,22 @@ describe('UserModule Integration Test', () => {
       { projectId: dummyProjects[2].id, email: 'user7@mail.com', password: await bcrypt.hash('9wM#HB52MW^98Ni^', HASH_ROUNDS) },
       { projectId: dummyProjects[2].id, email: 'user8@mail.com', password: await bcrypt.hash('IhS4^F6X6DcfI4#W', HASH_ROUNDS) }
     ];
-    await prisma.user.createMany({ data: dummyUsersInput });
-    dummyUsers = await prisma.user.findMany({ where: { role: 0 } });
 
-    console.log('9 users successfully created.');
+    // adding dummy admin users
+    dummyAdmins = [];
+    for (const adminInput of dummyAdminsInput) {
+      const admin = await prisma.user.create({ data: adminInput });
+      dummyAdmins.push(admin);
+    }
+    console.log(`${dummyAdmins.length} admins successfully created.`);
+
+    // adding dummy normal users
+    dummyUsers = [];
+    for (const userInput of dummyUsersInput) {
+      const user = await prisma.user.create({ data: userInput });
+      dummyUsers.push(user);
+    }
+    console.log(`${dummyUsers.length} users successfully created.`);
 
     // create controller and service objects
     userService = new UserService(prisma);
@@ -71,10 +80,11 @@ describe('UserModule Integration Test', () => {
   });
 
   afterAll(async () => {
-    const deleteProjects = prisma.project.deleteMany();
-    const deleteUsers = prisma.user.deleteMany();
+    const deleteProjects = prisma.project.deleteMany({ where: { id: { in: dummyProjects.map((project) => project.id) } } });
+    const deleteAdmins = prisma.user.deleteMany({ where: { id: { in: dummyAdmins.map((admin) => admin.id) } } });
+    const deleteUsers = prisma.user.deleteMany({ where: { id: { in: dummyUsers.map((user) => user.id) } } });
 
-    await prisma.$transaction([deleteProjects, deleteUsers]);
+    await prisma.$transaction([deleteProjects, deleteAdmins, deleteUsers]);
 
     await prisma.$disconnect();
   });
