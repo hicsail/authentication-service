@@ -79,9 +79,9 @@ export class AuthService {
    * @returns UpdateStatus
    */
   async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<UpdateStatus> {
-    const ok = await this.userService.updateUserPassword(projectId, email, password, resetCode);
+    const update = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
-    if (ok.status == 200) {
+    if (update.status == 200) {
       const payload = {
         to: email,
         subject: 'Password Reset Successful',
@@ -92,7 +92,7 @@ export class AuthService {
       axios.post(sendEmailEndpoint, payload);
     }
 
-    return ok;
+    return update;
   }
 
   /**
