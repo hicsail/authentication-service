@@ -84,7 +84,7 @@ export class UserService {
    *
    * @param projectId project ID where the user belong to
    * @param username username of the user
-   * @returns `User` object, or throw `NotFoundError` when not exist
+   * @returns `User` object or returns null if inputs are undefined or null
    */
   async findUserByUsername(projectId: string, username: string): Promise<User> {
     if (projectId == null || username == null) {
@@ -104,7 +104,7 @@ export class UserService {
    *
    * @param projectId project ID where the user belong to
    * @param email email of the user
-   * @returns `User` object, or throw `NotFoundError` when not exist
+   * @returns `User` object or returns null if inputs are undefined or null
    */
   async findUserByEmail(projectId: string, email: string): Promise<User> {
     if (projectId == null || email == null) {
