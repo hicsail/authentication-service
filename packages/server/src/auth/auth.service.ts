@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
-import { UpdateStatus } from 'src/user/types/user.types';
+import { UpdateStatus } from '../user/types/user.types';
 
 @Injectable()
 export class AuthService {
