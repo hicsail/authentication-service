@@ -45,6 +45,9 @@ describe('UserModule Integration Test (service)', () => {
     randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
+  /**
+   * Test cases for `createUser()` function
+   */
   it('Create new user with username and email', async () => {
     const createDate = new Date();
     const tempUserPasseword = randomstring.generate(Math.floor(Math.random() * (64 - 16) + 16));
@@ -106,6 +109,9 @@ describe('UserModule Integration Test (service)', () => {
     expect(userService.createUser(tempUserInput)).rejects.toThrow(Error);
   });
 
+  /**
+   * Test cases for `findAllUsers()` function
+   */
   it('Find all users should return all users regardless of project', async () => {
     const responseUsers = await userService.findAllUsers();
     for (const user of dummyAdmins.concat(dummyUsers)) {
@@ -113,6 +119,9 @@ describe('UserModule Integration Test (service)', () => {
     }
   });
 
+  /**
+   * Test cases for `findUserByUsername()` function
+   */
   it('Return requested user given valid username', async () => {
     const usersWithUsername = dummyAdmins.concat(dummyUsers).filter((user) => user.username);
     const randomUserWithUsername = usersWithUsername[Math.floor(Math.random() * usersWithUsername.length)];
@@ -139,6 +148,9 @@ describe('UserModule Integration Test (service)', () => {
     expect(userService.findUserByUsername(usersWithUsername[0].projectId, null)).resolves.toBe(null);
   });
 
+  /**
+   * Test cases for `findUserByEmail()` function
+   */
   it('Return requested user given valid email', async () => {
     const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
     const randomUserWithEmail = usersWithEmail[Math.floor(Math.random() * usersWithEmail.length)];
