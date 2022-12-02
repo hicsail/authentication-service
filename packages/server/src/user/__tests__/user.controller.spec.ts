@@ -116,4 +116,38 @@ describe('UserModule Integration Test', () => {
     const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
     expect(userController.addRoleToUser(userId, rolesToAdd[0] + rolesToAdd[1])).resolves.toBe(false);
   });
+
+  it('Remove roles from a user should success', async () => {
+    const tempUserInput = { projectId: randomProject.id, username: 'temp', email: 'temp@mail.com', password: 'passsword', role: parseInt('10101010', 2) };
+    const tempUser = await prisma.user.create({ data: tempUserInput });
+    const rolesToRemove = parseInt('10001010', 2);
+
+    const responseVal = await userController.removeRoleFromUser(tempUser.id, rolesToRemove);
+    const userEdited = await prisma.user.findUnique({ where: { id: tempUser.id } });
+
+    expect(responseVal).toBe(true);
+    expect(userEdited.role & rolesToRemove).toBe(0);
+
+    await prisma.user.delete({ where: { id: tempUser.id } });
+  });
+
+  it('Remove roles that user does not have should remain unchanged', async () => {
+    const tempUserInput = { projectId: randomProject.id, username: 'temp', email: 'temp@mail.com', password: 'password', role: parseInt('11010101', 2) };
+    const tempUser = await prisma.user.create({ data: tempUserInput });
+    const rolesToRemove = parseInt('10100011', 2);
+
+    const responseVal = await userController.removeRoleFromUser(tempUser.id, rolesToRemove);
+    const userEdited = await prisma.user.findUnique({ where: { id: tempUser.id } });
+
+    expect(responseVal).toBe(true);
+    expect(userEdited.role & rolesToRemove).toBe(0);
+
+    await prisma.user.delete({ where: { id: userEdited.id } });
+  });
+
+  it('Remove roles from non-existing user should return false', async () => {
+    const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+    const rolesToRemove = parseInt('10010101', 2);
+    expect(userController.removeRoleFromUser(userId, rolesToRemove)).resolves.toBe(false);
+  });
 });
