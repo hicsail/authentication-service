@@ -15,4 +15,4 @@ RUN npm run prisma:generate;
 # Expose the default port
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:deploy"]
