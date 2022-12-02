@@ -45,17 +45,13 @@ describe('UserModule Integration Test (service)', () => {
     randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
-  // TODO: Add test cases
-  it.todo('createUser()');
-  it('Create new user should success and have correct fields in database', async () => {
+  it('Create new user with username and email', async () => {
     const createDate = new Date();
-
     const tempUserPasseword = randomstring.generate(Math.floor(Math.random() * (64 - 16) + 16));
     const tempUserInput = { projectId: randomProject.id, username: 'temp', email: 'temp@mail.com', password: tempUserPasseword };
 
     const userCreated = await userService.createUser(tempUserInput);
 
-    expect(userCreated.projectId).toEqual(randomProject.id);
     expect(userCreated.username).toEqual(tempUserInput.username);
     expect(userCreated.email).toEqual(tempUserInput.email);
     expect(await bcrypt.compare(tempUserPasseword, userCreated.password)).toBe(true);
@@ -67,6 +63,50 @@ describe('UserModule Integration Test (service)', () => {
     await prisma.user.delete({ where: { id: userCreated.id } });
   });
 
+  it('Create new user with only username should have email as null', async () => {
+    const createDate = new Date();
+    const tempUserPasseword = randomstring.generate(Math.floor(Math.random() * (64 - 16) + 16));
+    const tempUserInput = { projectId: randomProject.id, username: 'temp', password: tempUserPasseword };
+
+    const userCreated = await userService.createUser(tempUserInput);
+
+    expect(userCreated.projectId).toEqual(randomProject.id);
+    expect(userCreated.username).toEqual(tempUserInput.username);
+    expect(userCreated.email).toBe(null);
+    expect(await bcrypt.compare(tempUserPasseword, userCreated.password)).toBe(true);
+    expect(userCreated.role).toBe(0);
+    expect(isEqual(userCreated.createdAt, userCreated.updatedAt)).toBe(true);
+    expect(isPast(userCreated.createdAt)).toBe(true);
+    expect(isBefore(createDate, userCreated.createdAt)).toBe(true);
+
+    await prisma.user.delete({ where: { id: userCreated.id } });
+  });
+
+  it('Create new user with only email should have username as null', async () => {
+    const createDate = new Date();
+    const tempUserPasseword = randomstring.generate(Math.floor(Math.random() * (64 - 16) + 16));
+    const tempUserInput = { projectId: randomProject.id, email: 'temp@mail.com', password: tempUserPasseword };
+
+    const userCreated = await userService.createUser(tempUserInput);
+
+    expect(userCreated.projectId).toEqual(randomProject.id);
+    expect(userCreated.username).toBe(null);
+    expect(userCreated.email).toEqual(tempUserInput.email);
+    expect(await bcrypt.compare(tempUserPasseword, userCreated.password)).toBe(true);
+    expect(userCreated.role).toBe(0);
+    expect(isEqual(userCreated.createdAt, userCreated.updatedAt)).toBe(true);
+    expect(isPast(userCreated.createdAt)).toBe(true);
+    expect(isBefore(createDate, userCreated.createdAt)).toBe(true);
+
+    await prisma.user.delete({ where: { id: userCreated.id } });
+  });
+
+  it('Create duplicated user should throw an erorr', async () => {
+    const tempUserInput = { projectId: randomUser.projectId, username: randomUser.username, email: randomUser.email, password: 'password' };
+    expect(userService.createUser(tempUserInput)).rejects.toThrow(Error);
+  });
+
+  // TODO: Add test cases
   it.todo('findAllUsers()');
 
   it.todo('findUserByUsername()');
