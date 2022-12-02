@@ -21,7 +21,7 @@
     "docker:up": "docker-compose -f docker-compose.db.yml up -d test-db && sleep 2",
     "docker:down": "docker-compose -f docker-compose.db.yml down",
     "docker:restart": "npm run docker:down && npm run docker:up",
-    "test": "npm run docker:up && dotenv -e .env.test -- prisma migrate deploy && jest && npm run docker:down",
+    "test": "npm run docker:up && dotenv -e .env.test -- npm run prisma:migrate && jest && npm run docker:down",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
