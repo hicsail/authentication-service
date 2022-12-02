@@ -113,7 +113,7 @@ describe('UserModule Integration Test', () => {
 
   it('Add roles to non-existing user should return false', async () => {
     const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-    const rolesToAdd = [parseInt('0001', 2) + parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
+    const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
     expect(userController.addRoleToUser(userId, rolesToAdd[0] + rolesToAdd[1])).resolves.toBe(false);
   });
 });
