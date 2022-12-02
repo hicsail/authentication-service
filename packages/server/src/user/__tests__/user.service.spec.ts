@@ -13,6 +13,9 @@ describe('UserModule Integration Test (service)', () => {
   let dummyAdmins: User[];
   let dummyUsers: User[];
 
+  let randomProject: Project;
+  let randomUser: User;
+
   beforeAll(async () => {
     userTestUtil = new UserTestUtil();
 
@@ -32,6 +35,21 @@ describe('UserModule Integration Test (service)', () => {
     await userTestUtil.tearDown();
   });
 
+  beforeEach(async () => {
+    randomProject = dummyProjects[Math.floor(Math.random() * dummyProjects.length)];
+    randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
+  });
+
   // TODO: Add test cases
-  it.todo('Add test cases');
+  it.todo('createUser()');
+
+  it.todo('findAllUsers()');
+
+  it.todo('findUserByUsername()');
+
+  it.todo('findUserByEmail()');
+
+  it.todo('setResetToken()');
+
+  it.todo('updateUserPassword()');
 });
