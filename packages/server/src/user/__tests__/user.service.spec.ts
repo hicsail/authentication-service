@@ -113,11 +113,59 @@ describe('UserModule Integration Test (service)', () => {
     }
   });
 
+  it('Return requested user given valid username', async () => {
+    const usersWithUsername = dummyAdmins.concat(dummyUsers).filter((user) => user.username);
+    const randomUserWithUsername = usersWithUsername[Math.floor(Math.random() * usersWithUsername.length)];
+
+    const responseUser = await userService.findUserByUsername(randomUserWithUsername.projectId, randomUserWithUsername.username);
+
+    expect(responseUser).toEqual(randomUserWithUsername);
+  });
+
+  it('Return null given valid project id but different username', async () => {
+    const usersFromDiffProjects = dummyAdmins.concat(dummyUsers).filter((user) => user.projectId !== randomProject.id);
+    const randomUsername = usersFromDiffProjects[Math.floor(Math.random() * usersFromDiffProjects.length)].username;
+
+    expect(userService.findUserByUsername(randomProject.id, randomUsername)).resolves.toBe(null);
+  });
+
+  it('Return null given valid username but different project id', async () => {
+    const randomProjectId = dummyProjects.filter((project) => project.id !== randomUser.projectId)[0].id;
+    expect(userService.findUserByUsername(randomProjectId, randomUser.username)).resolves.toBe(null);
+  });
+
+  it('Return null given null username for projects that require username', async () => {
+    const usersWithUsername = dummyAdmins.concat(dummyUsers).filter((user) => user.username);
+    expect(userService.findUserByUsername(usersWithUsername[0].projectId, null)).resolves.toBe(null);
+  });
+
+  it('Return requested user given valid email', async () => {
+    const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
+    const randomUserWithEmail = usersWithEmail[Math.floor(Math.random() * usersWithEmail.length)];
+
+    const responseUser = await userService.findUserByEmail(randomUserWithEmail.projectId, randomUserWithEmail.email);
+
+    expect(responseUser).toEqual(randomUserWithEmail);
+  });
+
+  it('Return null given valid project id but different email', async () => {
+    const usersFromDiffProjects = dummyAdmins.concat(dummyUsers).filter((user) => user.projectId !== randomProject.id);
+    const randomEmail = usersFromDiffProjects[Math.floor(Math.random() * usersFromDiffProjects.length)].email;
+
+    expect(userService.findUserByEmail(randomProject.id, randomEmail)).resolves.toBe(null);
+  });
+
+  it('Return null given valid email but different project id', async () => {
+    const randomProjectId = dummyProjects.filter((project) => project.id !== randomUser.projectId)[0].id;
+    expect(userService.findUserByEmail(randomProjectId, randomUser.email)).resolves.toBe(null);
+  });
+
+  it('Return null given null email for projects that require email', async () => {
+    const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
+    expect(userService.findUserByEmail(usersWithEmail[0].projectId, null)).resolves.toBe(null);
+  });
+
   // TODO: Add test cases
-  it.todo('findUserByUsername()');
-
-  it.todo('findUserByEmail()');
-
   it.todo('setResetToken()');
 
   it.todo('updateUserPassword()');
