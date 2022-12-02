@@ -25,12 +25,8 @@ export class UserTestUtil {
   }
 
   async tearDown(): Promise<void> {
-    const deleteProjects = this.prisma.project.deleteMany({ where: { id: { in: this.dummyProjects.map((project) => project.id) } } });
-    const deleteAdmins = this.prisma.user.deleteMany({ where: { id: { in: this.dummyAdmins.map((admin) => admin.id) } } });
-    const deleteUsers = this.prisma.user.deleteMany({ where: { id: { in: this.dummyUsers.map((user) => user.id) } } });
-
-    await this.prisma.$transaction([deleteProjects, deleteAdmins, deleteUsers]);
-    await this.prisma.$disconnect();
+    await this.prisma.user.deleteMany({ where: { projectId: { in: this.dummyProjects.map((project) => project.id) } } });
+    await this.prisma.project.deleteMany({ where: { id: { in: this.dummyProjects.map((project) => project.id) } } });
   }
 
   async createDummyProjects(): Promise<Project[]> {
