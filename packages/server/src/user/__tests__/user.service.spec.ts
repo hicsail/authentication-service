@@ -106,9 +106,14 @@ describe('UserModule Integration Test (service)', () => {
     expect(userService.createUser(tempUserInput)).rejects.toThrow(Error);
   });
 
-  // TODO: Add test cases
-  it.todo('findAllUsers()');
+  it('Find all users should return all users regardless of project', async () => {
+    const responseUsers = await userService.findAllUsers();
+    for (const user of dummyAdmins.concat(dummyUsers)) {
+      expect(responseUsers).toContainEqual(user);
+    }
+  });
 
+  // TODO: Add test cases
   it.todo('findUserByUsername()');
 
   it.todo('findUserByEmail()');
