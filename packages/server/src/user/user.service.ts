@@ -202,7 +202,7 @@ export class UserService {
 
     // Add a role: role OR roleToAdd
     // Remove a role: role XOR roleToRemove
-    const role = addRole ? userToUpdate.role | roleToEdit : userToUpdate.role ^ roleToEdit;
+    const role = addRole ? userToUpdate.role | roleToEdit : (userToUpdate.role & roleToEdit) ^ userToUpdate.role;
 
     await this.prisma.user.update({
       where: {
