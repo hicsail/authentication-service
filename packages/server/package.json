@@ -14,7 +14,8 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "prisma migrate deploy && node dist/main",
+    "start:prod": "node dist/main",
+    "start:deploy": "npm run prisma:migrate && npm run start:prod",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "docker:up": "docker-compose -f docker-compose.db.yml up -d test-db && sleep 2",
@@ -25,7 +26,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config test/jest-e2e.json",
-    "docker:db": "docker-compose -f docker-compose.db.yml up -d"
+    "docker:db": "docker-compose -f docker-compose.db.yml up -d",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
     "@golevelup/ts-jest": "^0.3.4",
