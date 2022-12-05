@@ -2,7 +2,7 @@ import { Project, User } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../user.service';
 import { UserTestUtil } from './utils/user.test.util';
-import { addMinutes, isAfter, isBefore, isEqual, isPast } from 'date-fns';
+import { addMinutes, isAfter, isBefore, isEqual, isPast, subDays, subHours, subMinutes } from 'date-fns';
 import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
 import { NotFoundError } from '@prisma/client/runtime';
@@ -178,7 +178,6 @@ describe('UserModule Integration Test (service)', () => {
     expect(userService.findUserByEmail(usersWithEmail[0].projectId, null)).resolves.toBe(null);
   });
 
-  it.todo('setResetToken()');
   it('Set reset code should store it in database and valid for approximately 1 hour', async () => {
     const setDate = new Date();
     const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
@@ -205,6 +204,122 @@ describe('UserModule Integration Test (service)', () => {
     expect(prisma.user.findFirstOrThrow({ where: { email } })).rejects.toThrow(NotFoundError);
   });
 
-  // TODO: Add test cases
-  it.todo('updateUserPassword()');
+  /**
+   * Test cases for `updateUserPassword()` function
+   */
+  it('Update password should success when all conditions are met', async () => {
+    const currentDate = new Date();
+    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+
+    const oldPassword = randomstring.generate(32);
+    const newPassword = randomstring.generate(32);
+    const resetCode = randomstring.generate(10);
+
+    const userToUpdate = await prisma.user.create({
+      data: {
+        projectId: projectsWithEmail[0].id,
+        username: 'temp-user',
+        email: 'temp.user0@mail.com',
+        password: await bcrypt.hash(oldPassword, HASH_ROUNDS),
+        createdAt: subDays(currentDate, 5),
+        updatedAt: subDays(currentDate, 5),
+        resetCode: await bcrypt.hash(resetCode, HASH_ROUNDS),
+        resetCodeExpiresAt: addMinutes(currentDate, 30)
+      }
+    });
+
+    const responseStatus = await userService.updateUserPassword(userToUpdate.projectId, userToUpdate.email, newPassword, resetCode);
+    const userUpdated = await prisma.user.findUnique({ where: { id: userToUpdate.id } });
+
+    expect(responseStatus.status).toBe(200);
+    expect(await bcrypt.compare(oldPassword, userUpdated.password)).toBe(false);
+    expect(await bcrypt.compare(newPassword, userUpdated.password)).toBe(true);
+    expect(isPast(userUpdated.updatedAt)).toBe(true);
+    expect(isBefore(currentDate, userUpdated.updatedAt)).toBe(true);
+    expect(userUpdated.resetCode).toBe(null);
+    expect(userUpdated.resetCodeExpiresAt).toBe(null);
+
+    for (const property of ['projectId', 'id', 'username', 'email', 'createdAt']) {
+      expect(userUpdated[property]).toEqual(userToUpdate[property]);
+    }
+
+    await prisma.user.delete({ where: { id: userToUpdate.id } });
+  });
+
+  it('Update password should fail when reset code is wrong', async () => {
+    const currentDate = new Date();
+    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+
+    const oldPassword = randomstring.generate(32);
+    const newPassword = randomstring.generate(32);
+    const resetCode = randomstring.generate(10);
+
+    const userToUpdate = await prisma.user.create({
+      data: {
+        projectId: projectsWithEmail[0].id,
+        username: 'temp-user',
+        email: 'temp.user1@mail.com',
+        password: await bcrypt.hash(oldPassword, HASH_ROUNDS),
+        createdAt: subDays(currentDate, 5),
+        updatedAt: subDays(currentDate, 5),
+        resetCode: await bcrypt.hash(resetCode, HASH_ROUNDS),
+        resetCodeExpiresAt: addMinutes(currentDate, 30)
+      }
+    });
+
+    const responseStatus = await userService.updateUserPassword(userToUpdate.projectId, userToUpdate.email, newPassword, 'xxxxxxxxxx');
+    const userUpdated = await prisma.user.findUnique({ where: { id: userToUpdate.id } });
+
+    expect(responseStatus.status).toBe(400);
+    expect(userUpdated).toEqual(userToUpdate);
+
+    await prisma.user.delete({ where: { id: userToUpdate.id } });
+  });
+
+  it('Update password should fail when reset code is expired', async () => {
+    const currentDate = new Date();
+    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+
+    const oldPassword = randomstring.generate(32);
+    const newPassword = randomstring.generate(32);
+    const resetCode = randomstring.generate(10);
+
+    const userToUpdate = await prisma.user.create({
+      data: {
+        projectId: projectsWithEmail[0].id,
+        username: 'temp-user',
+        email: 'temp.user2@mail.com',
+        password: await bcrypt.hash(oldPassword, HASH_ROUNDS),
+        createdAt: subDays(currentDate, 5),
+        updatedAt: subDays(currentDate, 5),
+        resetCode: await bcrypt.hash(resetCode, HASH_ROUNDS),
+        resetCodeExpiresAt: subMinutes(currentDate, 1)
+      }
+    });
+
+    const responseStatus = await userService.updateUserPassword(userToUpdate.projectId, userToUpdate.email, newPassword, resetCode);
+    const userUpdated = await prisma.user.findUnique({ where: { id: userToUpdate.id } });
+
+    expect(responseStatus.status).toBe(400);
+    expect(userUpdated).toEqual(userToUpdate);
+
+    await prisma.user.delete({ where: { id: userToUpdate.id } });
+  });
+
+  it('Update password for a non-existing user should fail', async () => {
+    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+    const email = 'temp.user3@mail.com';
+
+    const newPassword = randomstring.generate(32);
+    const resetCode = randomstring.generate(10);
+
+    const responseStatus = await userService.updateUserPassword(projectsWithEmail[0].id, email, newPassword, resetCode);
+
+    expect(responseStatus.status).toBe(401);
+    expect(prisma.user.findFirstOrThrow({ where: { projectId: projectsWithEmail[0].id, email } })).rejects.toThrow(NotFoundError);
+  });
 });
