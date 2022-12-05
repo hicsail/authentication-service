@@ -183,7 +183,7 @@ describe('UserModule Integration Test (service)', () => {
     const setDate = new Date();
     const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
     const randomUserWithEmail = usersWithEmail[Math.floor(Math.random() * usersWithEmail.length)];
-    const resetCode = Randomstring.generate(10);
+    const resetCode = randomstring.generate(10);
 
     await userService.setResetToken(randomUserWithEmail.projectId, randomUserWithEmail.email, resetCode);
     const userEdited = await prisma.user.findUnique({ where: { id: randomUserWithEmail.id } });
