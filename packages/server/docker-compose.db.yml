@@ -12,7 +12,7 @@ services:
     image: postgres:13
     container_name: integration-test
     ports:
-      - 5433:5432
+      - 5432:5432
     env_file:
       - .env.test
     volumes:
