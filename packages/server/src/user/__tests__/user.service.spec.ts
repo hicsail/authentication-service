@@ -2,9 +2,10 @@ import { Project, User } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../user.service';
 import { UserTestUtil } from './utils/user.test.util';
-import { isBefore, isEqual, isPast } from 'date-fns';
+import { addMinutes, isAfter, isBefore, isEqual, isPast } from 'date-fns';
 import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
+import { NotFoundError } from '@prisma/client/runtime';
 
 describe('UserModule Integration Test (service)', () => {
   let userTestUtil: UserTestUtil;
@@ -177,8 +178,33 @@ describe('UserModule Integration Test (service)', () => {
     expect(userService.findUserByEmail(usersWithEmail[0].projectId, null)).resolves.toBe(null);
   });
 
-  // TODO: Add test cases
   it.todo('setResetToken()');
+  it('Set reset code should store it in database and valid for approximately 1 hour', async () => {
+    const setDate = new Date();
+    const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
+    const randomUserWithEmail = usersWithEmail[Math.floor(Math.random() * usersWithEmail.length)];
+    const resetCode = Randomstring.generate(10);
 
+    await userService.setResetToken(randomUserWithEmail.projectId, randomUserWithEmail.email, resetCode);
+    const userEdited = await prisma.user.findUnique({ where: { id: randomUserWithEmail.id } });
+
+    expect(isBefore(addMinutes(setDate, 59), userEdited.resetCodeExpiresAt)).toBe(true);
+    expect(isAfter(addMinutes(setDate, 61), userEdited.resetCodeExpiresAt)).toBe(true);
+    expect(await bcrypt.compare(resetCode, userEdited.resetCode)).toBe(true);
+  });
+
+  it('Set reset code to a non-existing user should do nothing', async () => {
+    const usersWithoutEmail = dummyAdmins.concat(dummyUsers).filter((user) => !user.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+    const randomProjectId = projectsWithEmail[Math.floor(Math.random() * projectsWithEmail.length)].id;
+    const resetCode = Randomstring.generate(10);
+    const email = 'not.exist@mail.com';
+
+    await userService.setResetToken(randomProjectId, email, resetCode);
+
+    expect(prisma.user.findFirstOrThrow({ where: { email } })).rejects.toThrow(NotFoundError);
+  });
+
+  // TODO: Add test cases
   it.todo('updateUserPassword()');
 });
