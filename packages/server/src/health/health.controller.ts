@@ -8,7 +8,7 @@ export class HealthController {
 
   @Get('live')
   healthLive(@Res() res: Response): Response<void> {
-    return res.status(HttpStatus.NO_CONTENT).send();
+    return res.status(HttpStatus.OK).send('Healthy');
   }
 
   @Get('ready')
@@ -18,6 +18,6 @@ export class HealthController {
       return res.status(HttpStatus.SERVICE_UNAVAILABLE).send();
     }
 
-    return res.status(HttpStatus.NO_CONTENT).send();
+    return res.status(HttpStatus.OK).send('Database Ready');
   }
 }
