@@ -197,7 +197,7 @@ describe('UserModule Integration Test (service)', () => {
     const usersWithoutEmail = dummyAdmins.concat(dummyUsers).filter((user) => !user.email);
     const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
     const randomProjectId = projectsWithEmail[Math.floor(Math.random() * projectsWithEmail.length)].id;
-    const resetCode = Randomstring.generate(10);
+    const resetCode = randomstring.generate(10);
     const email = 'not.exist@mail.com';
 
     await userService.setResetToken(randomProjectId, email, resetCode);
