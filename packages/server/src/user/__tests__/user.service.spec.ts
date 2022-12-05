@@ -178,6 +178,9 @@ describe('UserModule Integration Test (service)', () => {
     expect(userService.findUserByEmail(usersWithEmail[0].projectId, null)).resolves.toBe(null);
   });
 
+  /**
+   * Test cases for `setResetToken()` function
+   */
   it('Set reset code should store it in database and valid for approximately 1 hour', async () => {
     const setDate = new Date();
     const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
@@ -193,8 +196,8 @@ describe('UserModule Integration Test (service)', () => {
   });
 
   it('Set reset code to a non-existing user should do nothing', async () => {
-    const usersWithoutEmail = dummyAdmins.concat(dummyUsers).filter((user) => !user.email);
-    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+    const adminsWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== adminsWithoutEmail[0].projectId);
     const randomProjectId = projectsWithEmail[Math.floor(Math.random() * projectsWithEmail.length)].id;
     const resetCode = randomstring.generate(10);
     const email = 'not.exist@mail.com';
@@ -209,8 +212,8 @@ describe('UserModule Integration Test (service)', () => {
    */
   it('Update password should success when all conditions are met', async () => {
     const currentDate = new Date();
-    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
-    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+    const adminsWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== adminsWithoutEmail[0].projectId);
 
     const oldPassword = randomstring.generate(32);
     const newPassword = randomstring.generate(32);
@@ -249,8 +252,8 @@ describe('UserModule Integration Test (service)', () => {
 
   it('Update password should fail when reset code is wrong', async () => {
     const currentDate = new Date();
-    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
-    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+    const adminsWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== adminsWithoutEmail[0].projectId);
 
     const oldPassword = randomstring.generate(32);
     const newPassword = randomstring.generate(32);
@@ -280,8 +283,8 @@ describe('UserModule Integration Test (service)', () => {
 
   it('Update password should fail when reset code is expired', async () => {
     const currentDate = new Date();
-    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
-    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+    const adminsWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== adminsWithoutEmail[0].projectId);
 
     const oldPassword = randomstring.generate(32);
     const newPassword = randomstring.generate(32);
@@ -310,8 +313,8 @@ describe('UserModule Integration Test (service)', () => {
   });
 
   it('Update password for a non-existing user should fail', async () => {
-    const usersWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
-    const projectsWithEmail = dummyProjects.filter((project) => project.id !== usersWithoutEmail[0].projectId);
+    const adminsWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+    const projectsWithEmail = dummyProjects.filter((project) => project.id !== adminsWithoutEmail[0].projectId);
     const email = 'temp.user3@mail.com';
 
     const newPassword = randomstring.generate(32);
