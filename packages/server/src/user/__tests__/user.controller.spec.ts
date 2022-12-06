@@ -44,7 +44,7 @@ describe('UserModule Integration Test', () => {
     randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
-  describe('Test cases for getMyInfo()', () => {
+  describe('Test cases for getMyInfo() API', () => {
     it('Return requested user object (self)', async () => {
       const req = { user: { id: randomUser.id } };
       const responseUser = await userController.getMyInfo(req);
@@ -58,7 +58,7 @@ describe('UserModule Integration Test', () => {
     });
   });
 
-  describe('Test cases for getAllUsersFromCurrentProject()', () => {
+  describe('Test cases for getAllUsersFromCurrentProject() API', () => {
     it('Return requested users for a project', async () => {
       const req = { user: { projectId: randomProject.id } };
       const responseUsers = await userController.getAllUsersFromCurrentProject(req);
