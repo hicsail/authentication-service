@@ -53,18 +53,18 @@ describe('UserModule Integration Test (service)', () => {
 
     let userCreated: User;
 
-    let skip: boolean;
+    let createTempUser: boolean;
 
     beforeEach(async () => {
       createDate = new Date();
       tempUserPasseword = randomstring.generate(Math.floor(Math.random() * (64 - 16) + 16));
       tempUserInput = { projectId: randomProject.id, username: 'temp', email: 'temp@mail.com', password: tempUserPasseword };
 
-      skip = false;
+      createTempUser = true;
     });
 
     afterEach(async () => {
-      if (skip) return;
+      if (!createTempUser) return;
 
       expect(userCreated.projectId).toEqual(randomProject.id);
       expect(await bcrypt.compare(tempUserPasseword, userCreated.password)).toBe(true);
@@ -100,7 +100,7 @@ describe('UserModule Integration Test (service)', () => {
     });
 
     it('Create duplicated user should throw an erorr', async () => {
-      skip = true;
+      createTempUser = false;
       tempUserInput = { projectId: randomUser.projectId, username: randomUser.username, email: randomUser.email, password: 'password' };
       expect(userService.createUser(tempUserInput)).rejects.toThrow(Error);
     });
