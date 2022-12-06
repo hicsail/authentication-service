@@ -106,7 +106,7 @@ describe('UserModule Integration Test', () => {
 
     it('Add duplicated roles to user should keep original role', async () => {
       const randomAdmin = dummyAdmins[Math.floor(Math.random() * dummyAdmins.length)];
-      const rolesToAdd = [randomAdmin.role, parseInt('1000', 2)];
+      const rolesToAdd = [randomAdmin.role, parseInt('1000', 2)]; // Add current roles and custom role '8'
 
       const responseVal = await userController.addRoleToUser(randomAdmin.id, rolesToAdd[0] + rolesToAdd[1]);
       const userEdited = await prisma.user.findUnique({ where: { id: randomAdmin.id } });
