@@ -106,14 +106,13 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  /**
-   * Test cases for `findAllUsers()` function
-   */
-  it('Find all users should return all users regardless of project', async () => {
-    const responseUsers = await userService.findAllUsers();
-    for (const user of dummyAdmins.concat(dummyUsers)) {
-      expect(responseUsers).toContainEqual(user);
-    }
+  describe('Test case for findAllUsers()', () => {
+    it('Find all users should return all users regardless of project', async () => {
+      const responseUsers = await userService.findAllUsers();
+      for (const user of dummyAdmins.concat(dummyUsers)) {
+        expect(responseUsers).toContainEqual(user);
+      }
+    });
   });
 
   /**
