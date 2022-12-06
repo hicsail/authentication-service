@@ -179,33 +179,32 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  /**
-   * Test cases for `setResetToken()` function
-   */
-  it('Set reset code should store it in database and valid for approximately 1 hour', async () => {
-    const setDate = new Date();
-    const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
-    const randomUserWithEmail = usersWithEmail[Math.floor(Math.random() * usersWithEmail.length)];
-    const resetCode = randomstring.generate(10);
+  describe('Test cases for setResetToken()', () => {
+    it('Set reset code should store it in database and valid for approximately 1 hour', async () => {
+      const setDate = new Date();
+      const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
+      const randomUserWithEmail = usersWithEmail[Math.floor(Math.random() * usersWithEmail.length)];
+      const resetCode = randomstring.generate(10);
 
-    await userService.setResetToken(randomUserWithEmail.projectId, randomUserWithEmail.email, resetCode);
-    const userEdited = await prisma.user.findUnique({ where: { id: randomUserWithEmail.id } });
+      await userService.setResetToken(randomUserWithEmail.projectId, randomUserWithEmail.email, resetCode);
+      const userEdited = await prisma.user.findUnique({ where: { id: randomUserWithEmail.id } });
 
-    expect(isBefore(addMinutes(setDate, 59), userEdited.resetCodeExpiresAt)).toBe(true);
-    expect(isAfter(addMinutes(setDate, 61), userEdited.resetCodeExpiresAt)).toBe(true);
-    expect(await bcrypt.compare(resetCode, userEdited.resetCode)).toBe(true);
-  });
+      expect(isBefore(addMinutes(setDate, 59), userEdited.resetCodeExpiresAt)).toBe(true);
+      expect(isAfter(addMinutes(setDate, 61), userEdited.resetCodeExpiresAt)).toBe(true);
+      expect(await bcrypt.compare(resetCode, userEdited.resetCode)).toBe(true);
+    });
 
-  it('Set reset code to a non-existing user should do nothing', async () => {
-    const adminsWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
-    const projectsWithEmail = dummyProjects.filter((project) => project.id !== adminsWithoutEmail[0].projectId);
-    const randomProjectId = projectsWithEmail[Math.floor(Math.random() * projectsWithEmail.length)].id;
-    const resetCode = randomstring.generate(10);
-    const email = 'not.exist@mail.com';
+    it('Set reset code to a non-existing user should do nothing', async () => {
+      const adminsWithoutEmail = dummyAdmins.filter((admin) => !admin.email);
+      const projectsWithEmail = dummyProjects.filter((project) => project.id !== adminsWithoutEmail[0].projectId);
+      const randomProjectId = projectsWithEmail[Math.floor(Math.random() * projectsWithEmail.length)].id;
+      const resetCode = randomstring.generate(10);
+      const email = 'not.exist@mail.com';
 
-    await userService.setResetToken(randomProjectId, email, resetCode);
+      await userService.setResetToken(randomProjectId, email, resetCode);
 
-    expect(prisma.user.findFirstOrThrow({ where: { email } })).rejects.toThrow(NotFoundError);
+      expect(prisma.user.findFirstOrThrow({ where: { email } })).rejects.toThrow(NotFoundError);
+    });
   });
 
   /**
