@@ -89,41 +89,40 @@ describe('UserModule Integration Test', () => {
     });
   });
 
-  /**
-   * Test cases for `addRoleToUser()` API
-   */
-  it('Add new roles to user should success', async () => {
-    const randomNormalUser = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
-    const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
+  describe('Test cases for addRoleToUser() API', () => {
+    it('Add new roles to user should success', async () => {
+      const randomNormalUser = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
+      const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
 
-    const responseVal = await userController.addRoleToUser(randomNormalUser.id, rolesToAdd[0] + rolesToAdd[1]);
-    const userEdited = await prisma.user.findUnique({ where: { id: randomNormalUser.id } });
+      const responseVal = await userController.addRoleToUser(randomNormalUser.id, rolesToAdd[0] + rolesToAdd[1]);
+      const userEdited = await prisma.user.findUnique({ where: { id: randomNormalUser.id } });
 
-    expect(responseVal).toBe(true);
+      expect(responseVal).toBe(true);
 
-    for (const role of rolesToAdd.concat(randomNormalUser.role)) {
-      expect(userEdited.role & role).toBe(role);
-    }
-  });
+      for (const role of rolesToAdd.concat(randomNormalUser.role)) {
+        expect(userEdited.role & role).toBe(role);
+      }
+    });
 
-  it('Add duplicated roles to user should keep original role', async () => {
-    const randomAdmin = dummyAdmins[Math.floor(Math.random() * dummyAdmins.length)];
-    const rolesToAdd = [randomAdmin.role, parseInt('1000', 2)];
+    it('Add duplicated roles to user should keep original role', async () => {
+      const randomAdmin = dummyAdmins[Math.floor(Math.random() * dummyAdmins.length)];
+      const rolesToAdd = [randomAdmin.role, parseInt('1000', 2)];
 
-    const responseVal = await userController.addRoleToUser(randomAdmin.id, rolesToAdd[0] + rolesToAdd[1]);
-    const userEdited = await prisma.user.findUnique({ where: { id: randomAdmin.id } });
+      const responseVal = await userController.addRoleToUser(randomAdmin.id, rolesToAdd[0] + rolesToAdd[1]);
+      const userEdited = await prisma.user.findUnique({ where: { id: randomAdmin.id } });
 
-    expect(responseVal).toBe(true);
+      expect(responseVal).toBe(true);
 
-    for (const role of rolesToAdd) {
-      expect(userEdited.role & role).toBe(role);
-    }
-  });
+      for (const role of rolesToAdd) {
+        expect(userEdited.role & role).toBe(role);
+      }
+    });
 
-  it('Add roles to non-existing user should return false', async () => {
-    const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-    const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
-    expect(userController.addRoleToUser(userId, rolesToAdd[0] + rolesToAdd[1])).resolves.toBe(false);
+    it('Add roles to non-existing user should return false', async () => {
+      const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+      const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
+      expect(userController.addRoleToUser(userId, rolesToAdd[0] + rolesToAdd[1])).resolves.toBe(false);
+    });
   });
 
   /**
