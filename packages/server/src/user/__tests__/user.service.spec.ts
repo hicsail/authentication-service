@@ -106,7 +106,7 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  describe('Test case for findAllUsers()', () => {
+  describe('Test cases for findAllUsers()', () => {
     it('Find all users should return all users regardless of project', async () => {
       const responseUsers = await userService.findAllUsers();
       for (const user of dummyAdmins.concat(dummyUsers)) {
@@ -115,33 +115,36 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  /**
-   * Test cases for `findUserByUsername()` function
-   */
-  it('Return requested user given valid username', async () => {
-    const usersWithUsername = dummyAdmins.concat(dummyUsers).filter((user) => user.username);
-    const randomUserWithUsername = usersWithUsername[Math.floor(Math.random() * usersWithUsername.length)];
+  describe('Test cases for findUserByUsername()', () => {
+    let usersWithUsername: User[];
 
-    const responseUser = await userService.findUserByUsername(randomUserWithUsername.projectId, randomUserWithUsername.username);
+    beforeAll(async () => {
+      usersWithUsername = dummyAdmins.concat(dummyUsers).filter((user) => user.username);
+    });
 
-    expect(responseUser).toEqual(randomUserWithUsername);
-  });
+    it('Return requested user given valid username', async () => {
+      const randomUserWithUsername = usersWithUsername[Math.floor(Math.random() * usersWithUsername.length)];
 
-  it('Return null given valid project id but different username', async () => {
-    const usersFromDiffProjects = dummyAdmins.concat(dummyUsers).filter((user) => user.projectId !== randomProject.id);
-    const randomUsername = usersFromDiffProjects[Math.floor(Math.random() * usersFromDiffProjects.length)].username;
+      const responseUser = await userService.findUserByUsername(randomUserWithUsername.projectId, randomUserWithUsername.username);
 
-    expect(userService.findUserByUsername(randomProject.id, randomUsername)).resolves.toBe(null);
-  });
+      expect(responseUser).toEqual(randomUserWithUsername);
+    });
 
-  it('Return null given valid username but different project id', async () => {
-    const randomProjectId = dummyProjects.filter((project) => project.id !== randomUser.projectId)[0].id;
-    expect(userService.findUserByUsername(randomProjectId, randomUser.username)).resolves.toBe(null);
-  });
+    it('Return null given valid project id but different username', async () => {
+      const usersFromDiffProjects = dummyAdmins.concat(dummyUsers).filter((user) => user.projectId !== randomProject.id);
+      const randomUsername = usersFromDiffProjects[Math.floor(Math.random() * usersFromDiffProjects.length)].username;
 
-  it('Return null given null username for projects that require username', async () => {
-    const usersWithUsername = dummyAdmins.concat(dummyUsers).filter((user) => user.username);
-    expect(userService.findUserByUsername(usersWithUsername[0].projectId, null)).resolves.toBe(null);
+      expect(userService.findUserByUsername(randomProject.id, randomUsername)).resolves.toBe(null);
+    });
+
+    it('Return null given valid username but different project id', async () => {
+      const randomProjectId = dummyProjects.filter((project) => project.id !== randomUser.projectId)[0].id;
+      expect(userService.findUserByUsername(randomProjectId, randomUser.username)).resolves.toBe(null);
+    });
+
+    it('Return null given null username for projects that require username', async () => {
+      expect(userService.findUserByUsername(usersWithUsername[0].projectId, null)).resolves.toBe(null);
+    });
   });
 
   /**
