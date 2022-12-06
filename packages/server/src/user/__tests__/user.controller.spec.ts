@@ -44,19 +44,18 @@ describe('UserModule Integration Test', () => {
     randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
-  /**
-   * Test cases for `getMyInfo()` API
-   */
-  it('Return requested user object (self)', async () => {
-    const req = { user: { id: randomUser.id } };
-    const responseUser = await userController.getMyInfo(req);
+  describe('Test cases for getMyInfo()', () => {
+    it('Return requested user object (self)', async () => {
+      const req = { user: { id: randomUser.id } };
+      const responseUser = await userController.getMyInfo(req);
 
-    expect(responseUser).toEqual(randomUser);
-  });
+      expect(responseUser).toEqual(randomUser);
+    });
 
-  it('Throw an error for requesting a non-existing user (self)', async () => {
-    const req = { user: { id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' } };
-    expect(userController.getMyInfo(req)).rejects.toThrow(HttpException);
+    it('Throw an error for requesting a non-existing user (self)', async () => {
+      const req = { user: { id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' } };
+      expect(userController.getMyInfo(req)).rejects.toThrow(HttpException);
+    });
   });
 
   /**
