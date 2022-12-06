@@ -77,17 +77,16 @@ describe('UserModule Integration Test', () => {
     });
   });
 
-  /**
-   * Test cases for `getUserInfo()` API
-   */
-  it('Return requested user object (other)', async () => {
-    const responseUser = await userController.getUserInfo(randomUser.id);
-    expect(responseUser).toEqual(randomUser);
-  });
+  describe('Test cases for getUserInfo() API', () => {
+    it('Return requested user object (other)', async () => {
+      const responseUser = await userController.getUserInfo(randomUser.id);
+      expect(responseUser).toEqual(randomUser);
+    });
 
-  it('Throw an erorr for requesting a non-existing user (other)', async () => {
-    const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-    expect(userController.getUserInfo(userId)).rejects.toThrow(HttpException);
+    it('Throw an erorr for requesting a non-existing user (other)', async () => {
+      const userId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+      expect(userController.getUserInfo(userId)).rejects.toThrow(HttpException);
+    });
   });
 
   /**
