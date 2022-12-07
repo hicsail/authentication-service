@@ -1,11 +1,11 @@
-version: '3'
 services:
-  db:
+  test-db:
     image: postgres:13
+    container_name: integration-test
     ports:
       - 5432:5432
-    environment:
-      POSTGRES_USER: postgres
+    env_file:
+      - .env.test
     volumes:
       - postgres:/var/lib/postgresql/data
 volumes:
