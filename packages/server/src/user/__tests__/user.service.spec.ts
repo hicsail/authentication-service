@@ -66,9 +66,7 @@ describe('UserModule Integration Test (service)', () => {
     afterEach(async () => {
       if (!createTempUser) return;
 
-      expect(userCreated.projectId).toEqual(randomProject.id);
       expect(await bcrypt.compare(tempUserPasseword, userCreated.password)).toBe(true);
-      expect(userCreated.role).toBe(0);
       expect(isEqual(userCreated.createdAt, userCreated.updatedAt)).toBe(true);
       expect(isPast(userCreated.createdAt)).toBe(true);
       expect(isBefore(createDate, userCreated.createdAt)).toBe(true);
