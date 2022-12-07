@@ -12,7 +12,7 @@ import { ProjectGuard } from './project/project.guard';
   providers: []
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer.apply(ProjectGuard).exclude('/(health|projects)(/.*)?').forRoutes('/');
   }
 }
