@@ -98,6 +98,7 @@ describe('UserModule Integration Test', () => {
 
       expect(responseVal).toBe(true);
 
+      expect(userEdited.role).toBe(randomUser.role + 6); // expect sum to be original role + added roles
       for (const role of rolesToAdd.concat(randomUser.role)) {
         expect(userEdited.role & role).toBe(role);
       }
@@ -115,6 +116,7 @@ describe('UserModule Integration Test', () => {
 
       expect(responseVal).toBe(true);
 
+      expect(userEdited.role).toBe(9);
       for (const role of rolesToAdd) {
         expect(userEdited.role & role).toBe(role);
       }
@@ -146,6 +148,7 @@ describe('UserModule Integration Test', () => {
       const userEdited = await prisma.user.findUnique({ where: { id: tempUser.id } });
 
       expect(responseVal).toBe(true);
+      expect(userEdited.role).toBe(32);
       expect(userEdited.role & rolesToRemove).toBe(0);
     });
 
@@ -156,6 +159,7 @@ describe('UserModule Integration Test', () => {
       const userEdited = await prisma.user.findUnique({ where: { id: tempUser.id } });
 
       expect(responseVal).toBe(true);
+      expect(userEdited.role).toBe(8);
       expect(userEdited.role & rolesToRemove).toBe(0);
     });
 
