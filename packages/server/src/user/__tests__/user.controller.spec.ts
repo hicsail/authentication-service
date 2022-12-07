@@ -91,17 +91,19 @@ describe('UserModule Integration Test', () => {
 
   describe('addRoleToUser() API', () => {
     it('Add new roles to user should success', async () => {
-      const randomNormalUser = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
-      const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
+      const rolesToAdd = [parseInt('0010', 2), parseInt('0100', 2)]; // Add custom role '2' and '4'
 
-      const responseVal = await userController.addRoleToUser(randomNormalUser.id, rolesToAdd[0] + rolesToAdd[1]);
-      const userEdited = await prisma.user.findUnique({ where: { id: randomNormalUser.id } });
+      const responseVal = await userController.addRoleToUser(randomUser.id, rolesToAdd[0] + rolesToAdd[1]);
+      const userEdited = await prisma.user.findUnique({ where: { id: randomUser.id } });
 
       expect(responseVal).toBe(true);
 
-      for (const role of rolesToAdd.concat(randomNormalUser.role)) {
+      for (const role of rolesToAdd.concat(randomUser.role)) {
         expect(userEdited.role & role).toBe(role);
       }
+
+      // restore roles so it won't interfere other test cases
+      await prisma.user.update({ where: { id: randomUser.id }, data: { role: randomUser.role } });
     });
 
     it('Add duplicated roles to user should keep original role', async () => {
