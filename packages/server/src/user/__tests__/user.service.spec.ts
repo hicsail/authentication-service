@@ -2,7 +2,7 @@ import { Project, User } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../user.service';
 import { UserTestUtil } from './utils/user.test.util';
-import { addMinutes, isAfter, isBefore, isEqual, isPast, subDays, subHours, subMinutes } from 'date-fns';
+import { addMinutes, isAfter, isBefore, isEqual, isPast, subDays, subMinutes } from 'date-fns';
 import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
 import { NotFoundError } from '@prisma/client/runtime';
@@ -46,7 +46,7 @@ describe('UserModule Integration Test (service)', () => {
     randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
-  describe('Test cases for createUser()', () => {
+  describe('createUser()', () => {
     let createDate: Date;
     let tempUserPasseword: string;
     let tempUserInput: any;
@@ -106,7 +106,7 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  describe('Test cases for findAllUsers()', () => {
+  describe('findAllUsers()', () => {
     it('Find all users should return all users regardless of project', async () => {
       const responseUsers = await userService.findAllUsers();
       for (const user of dummyAdmins.concat(dummyUsers)) {
@@ -115,7 +115,7 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  describe('Test cases for findUserByUsername()', () => {
+  describe('findUserByUsername()', () => {
     let usersWithUsername: User[];
 
     beforeAll(async () => {
@@ -147,7 +147,7 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  describe('Test cases for findUserByEmail()', () => {
+  describe('findUserByEmail()', () => {
     let usersWithEmail: User[];
 
     beforeAll(async () => {
@@ -179,7 +179,7 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  describe('Test cases for setResetToken()', () => {
+  describe('setResetToken()', () => {
     it('Set reset code should store it in database and valid for approximately 1 hour', async () => {
       const setDate = new Date();
       const usersWithEmail = dummyAdmins.concat(dummyUsers).filter((user) => user.email);
@@ -207,7 +207,7 @@ describe('UserModule Integration Test (service)', () => {
     });
   });
 
-  describe('Test cases for updateUserPassword()', () => {
+  describe('updateUserPassword()', () => {
     let projectsWithEmail: Project[];
 
     let currentDate: Date;

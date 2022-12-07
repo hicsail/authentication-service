@@ -44,7 +44,7 @@ describe('UserModule Integration Test', () => {
     randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
-  describe('Test cases for getMyInfo() API', () => {
+  describe('getMyInfo() API', () => {
     it('Return requested user object (self)', async () => {
       const req = { user: { id: randomUser.id } };
       const responseUser = await userController.getMyInfo(req);
@@ -58,7 +58,7 @@ describe('UserModule Integration Test', () => {
     });
   });
 
-  describe('Test cases for getAllUsersFromCurrentProject() API', () => {
+  describe('getAllUsersFromCurrentProject() API', () => {
     it('Return requested users for a project', async () => {
       const req = { user: { projectId: randomProject.id } };
       const responseUsers = await userController.getAllUsersFromCurrentProject(req);
@@ -77,7 +77,7 @@ describe('UserModule Integration Test', () => {
     });
   });
 
-  describe('Test cases for getUserInfo() API', () => {
+  describe('getUserInfo() API', () => {
     it('Return requested user object (other)', async () => {
       const responseUser = await userController.getUserInfo(randomUser.id);
       expect(responseUser).toEqual(randomUser);
@@ -89,7 +89,7 @@ describe('UserModule Integration Test', () => {
     });
   });
 
-  describe('Test cases for addRoleToUser() API', () => {
+  describe('addRoleToUser() API', () => {
     it('Add new roles to user should success', async () => {
       const randomNormalUser = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
       const rolesToAdd = [parseInt('0001', 2), parseInt('0100', 2)]; // Add admin role '1' and custom role '4'
@@ -125,7 +125,7 @@ describe('UserModule Integration Test', () => {
     });
   });
 
-  describe('Test cases for removeRoleFromUser() API', () => {
+  describe('removeRoleFromUser() API', () => {
     let tempUser: User;
 
     beforeEach(async () => {
