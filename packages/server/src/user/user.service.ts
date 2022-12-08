@@ -120,6 +120,11 @@ export class UserService {
    */
   async setResetToken(projectId: string, email: string, resetCodePlain: string): Promise<void> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
+
+    if (!userToUpdate) {
+      return;
+    }
+
     const resetCodeHash = await bcrypt.hash(resetCodePlain, this.SALT_ROUNDS);
 
     await this.prisma.user.update({
@@ -202,7 +207,7 @@ export class UserService {
 
     // Add a role: role OR roleToAdd
     // Remove a role: role XOR roleToRemove
-    const role = addRole ? userToUpdate.role | roleToEdit : userToUpdate.role ^ roleToEdit;
+    const role = addRole ? userToUpdate.role | roleToEdit : (userToUpdate.role & roleToEdit) ^ userToUpdate.role;
 
     await this.prisma.user.update({
       where: {

@@ -1,0 +1,8 @@
+services:
+  test:
+    image: postgres:14
+    container_name: user-integration-test
+    ports:
+      - 5433:5432
+    env_file:
+      - packages/server/.env.test

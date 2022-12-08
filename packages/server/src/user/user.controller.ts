@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Role } from '../auth/enum/role.enum';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
@@ -29,7 +29,11 @@ export class UserController {
   @Get(':id')
   @Roles(Role.Admin)
   async getUserInfo(@Param('id', new ParseUUIDPipe()) id: string): Promise<User> {
-    return await this.userService.findUserById(id);
+    try {
+      return await this.userService.findUserById(id);
+    } catch (error) {
+      throw new HttpException('User ID does not exist', HttpStatus.NOT_FOUND);
+    }
   }
 
   @Post(':id/add-role')
