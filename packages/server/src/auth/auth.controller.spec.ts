@@ -240,4 +240,16 @@ describe('LoginController', () => {
       await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
     });
   });
+
+  describe('/login/email incorrect projectId', () => {
+    const user: EmailLoginDto = {
+      projectId: 'incorrectprojectId',
+      email: validEmail,
+      password: validPassword
+    };
+
+    it('should reject with an error if the projectId is incorrect', async () => {
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+    });
+  });
 });
