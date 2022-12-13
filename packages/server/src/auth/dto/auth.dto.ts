@@ -10,9 +10,11 @@ export class UserSignupDto {
   @Type(() => String)
   projectId: string;
 
+  @IsDefined()
   @IsString()
   username: string;
 
+  @IsDefined()
   @IsEmail()
   email: string;
 

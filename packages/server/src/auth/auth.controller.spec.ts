@@ -48,7 +48,7 @@ describe('LoginController', () => {
     const moduleRef = await userTestUtil.setup();
 
     prismaService = moduleRef.get(PrismaService);
-    jwtService = new JwtService({});
+    jwtService = moduleRef.get(JwtService);
     userService = new UserService(prismaService);
     authService = new AuthService(userService, jwtService);
     loginController = new LoginController(authService);
@@ -105,7 +105,7 @@ describe('LoginController', () => {
   describe('/login/username ablate projectId', () => {
     it('should reject with an error if a projectId is not provided', async () => {
       const user: UsernameLoginDto = {
-        projectId: validProjectId,
+        projectId: undefined,
         username: validUsername,
         password: validPassword
       };
