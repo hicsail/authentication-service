@@ -214,4 +214,30 @@ describe('LoginController', () => {
       await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
     });
   });
+
+  describe('/login/email ablate password', () => {
+    it('should throw an error when the password is not provided', async () => {
+      const user: EmailLoginDto = {
+        projectId: validProjectId,
+        email: validEmail,
+        password: undefined
+      };
+
+      const loginController = new LoginController(authService);
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+    });
+  });
+
+  describe('/login/email ablate email', () => {
+    it('should throw an error if no username is provided', async () => {
+      const user: EmailLoginDto = {
+        projectId: validProjectId,
+        email: undefined,
+        password: validPassword
+      };
+
+      const loginController = new LoginController(authService);
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+    });
+  });
 });
