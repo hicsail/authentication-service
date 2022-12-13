@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { EmailLoginDto, UsernameLoginDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserTestUtil } from '../user/__tests__/utils/user.test.util';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 describe('LoginController', () => {
   let jwtAuthGuard: JwtAuthGuard;
@@ -199,6 +200,18 @@ describe('LoginController', () => {
       expect(await loginController.loginEmail(userInput)).toEqual(result);
 
       spy.mockRestore();
+    });
+  });
+  
+  describe('/login/email ablate projectId', () => {
+    it('should return an error if a projectId is not provided', async () => {
+      const user: EmailLoginDto = {
+        projectId: undefined,
+        email: 'test@example.com',
+        password: 'test'
+      };
+
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
     });
   });
 });
