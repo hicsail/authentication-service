@@ -83,7 +83,7 @@ describe('LoginController', () => {
     jest.clearAllMocks();
   });
 
-  describe('valid login case', () => {
+  describe('/login/username valid', () => {
     it('should return an AccessToken', async () => {
       const userInput: UsernameLoginDto = {
         projectId: validProjectId,
@@ -167,9 +167,9 @@ describe('LoginController', () => {
   describe('login/username incorrect username', () => {
     it('should return a access token', async () => {
       const userDto = new UsernameLoginDto();
-      userDto.projectId = '123';
+      userDto.projectId = validProjectId;
       userDto.username = 'incorrectusername';
-      userDto.password = 'password';
+      userDto.password = validPassword;
       const expectedResult = { accessToken: 'token' };
 
       const spy = jest.spyOn(authService, 'validateUsername').mockImplementation(() => Promise.resolve(expectedResult));
