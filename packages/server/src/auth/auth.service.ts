@@ -21,7 +21,7 @@ export class AuthService {
    * @returns JWT or 401 status code
    */
   async validateUsername(projectId: string, username: string, password: string): Promise<any> {
-    if(projectId != null) {
+    if (projectId != null) {
       const user = await this.userService.findUserByUsername(projectId, username);
 
       if (user && (await bcrypt.compare(password, user.password))) {
@@ -42,7 +42,7 @@ export class AuthService {
    * @returns JWT or 401 status code
    */
   async validateEmail(projectId: string, email: string, password: string): Promise<any> {
-    if(projectId != null) {
+    if (projectId != null) {
       const user = await this.userService.findUserByEmail(projectId, email);
 
       if (user && (await bcrypt.compare(password, user.password))) {
