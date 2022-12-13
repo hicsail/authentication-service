@@ -79,6 +79,10 @@ describe('LoginController', () => {
     await userTestUtil.tearDown();
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  })
+
   describe('valid login case', () => {
     it('should return an AccessToken', async () => {
 
@@ -92,49 +96,51 @@ describe('LoginController', () => {
         accessToken: 'valid-token'
       };
 
-      jest.spyOn(authService, 'validateUsername').mockImplementation(async () => result);
+      const spy = jest.spyOn(authService, 'validateUsername').mockImplementation(async () => result);
       expect(await loginController.loginUsername(userInput)).toEqual(result);
+
+      spy.mockRestore();
     });
   });
 
-  // describe('/login/username ablate projectId', () => {
-  //   it('should reject with an error if a projectId is not provided', async () => {
-  //     const user: UsernameLoginDto = {
-  //       projectId: validProjectId,
-  //       username: '',//validUsername,
-  //       password: ''//validPassword,
-  //     };
+  describe('/login/username ablate projectId', () => {
+    it('should reject with an error if a projectId is not provided', async () => {
+      const user: UsernameLoginDto = {
+        projectId: validProjectId,
+        username: validUsername,
+        password: validPassword
+      };
 
-  //     await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
-  //   });
-  // });
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+    });
+  });
 
-  // describe('/login/username ablate password', () => {
-  //   it('should throw an error when the password is not provided', async () => {
+  describe('/login/username ablate password', () => {
+    it('should throw an error when the password is not provided', async () => {
 
-  //     const user: UsernameLoginDto = {
-  //       projectId: '123',
-  //       username: 'john',
-  //       password: undefined
-  //     };
+      const user: UsernameLoginDto = {
+        projectId: '123',
+        username: 'john',
+        password: undefined
+      };
 
-  //     const loginController = new LoginController(authService);
-  //     await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
-  //   });
-  // });
+      const loginController = new LoginController(authService);
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+    });
+  });
 
-  // describe('/login/username ablate username', () => {
-  //   it('should throw an error if no username is provided', async () => {
-  //     const user: UsernameLoginDto = {
-  //       projectId: '12345',
-  //       username: undefined,
-  //       password: 'password'
-  //     };
+  describe('/login/username ablate username', () => {
+    it('should throw an error if no username is provided', async () => {
+      const user: UsernameLoginDto = {
+        projectId: '12345',
+        username: undefined,
+        password: 'password'
+      };
 
-  //     const loginController = new LoginController(authService);
-  //     await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
-  //   });
-  // });
+      const loginController = new LoginController(authService);
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+    });
+  });
 
   describe('/login/username incorrect projectId', () => {
     const user: UsernameLoginDto = {
@@ -148,15 +154,15 @@ describe('LoginController', () => {
     });
   });
 
-  // describe('/login/username incorrect password', () => {
-  //   const user: UsernameLoginDto = {
-  //     projectId: validProjectId,
-  //     username: validUsername,
-  //     password: 'incorrectPassword'
-  //   };
+  describe('/login/username incorrect password', () => {
+    const user: UsernameLoginDto = {
+      projectId: validProjectId,
+      username: validUsername,
+      password: 'incorrectPassword'
+    };
 
-  //   it('should reject with an error if the projectId is incorrect', async () => {
-  //     await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
-  //   });
-  // });
+    it('should reject with an error if the projectId is incorrect', async () => {
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+    });
+  });
 });
