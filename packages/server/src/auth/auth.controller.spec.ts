@@ -81,11 +81,10 @@ describe('LoginController', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-  })
+  });
 
   describe('valid login case', () => {
     it('should return an AccessToken', async () => {
-
       const userInput: UsernameLoginDto = {
         projectId: validProjectId,
         username: validUsername,
@@ -117,7 +116,6 @@ describe('LoginController', () => {
 
   describe('/login/username ablate password', () => {
     it('should throw an error when the password is not provided', async () => {
-
       const user: UsernameLoginDto = {
         projectId: '123',
         username: 'john',
