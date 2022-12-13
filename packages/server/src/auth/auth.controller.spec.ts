@@ -264,4 +264,19 @@ describe('LoginController', () => {
       await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
     });
   });
+
+  describe('login/username incorrect email', () => {
+    it('should return a access token', async () => {
+      const userDto = new EmailLoginDto();
+      userDto.projectId = validProjectId;
+      userDto.email = 'incorrectEmail';
+      userDto.password = validPassword;
+      const expectedResult = { accessToken: 'token' };
+
+      const spy = jest.spyOn(authService, 'validateEmail').mockImplementation(() => Promise.resolve(expectedResult));
+      expect(await loginController.loginEmail(userDto)).toBe(expectedResult);
+
+      spy.mockRestore();
+    });
+  });
 });
