@@ -4,7 +4,7 @@ import { PrismaService } from '../../src/prisma/prisma.service';
 import { UserService } from '../../src/user/user.service';
 import { LoginController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsernameLoginDto } from './dto/auth.dto';
+import { EmailLoginDto, UsernameLoginDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserTestUtil } from '../user/__tests__/utils/user.test.util';
 
@@ -82,6 +82,8 @@ describe('LoginController', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
+  // /login/username tests
 
   describe('/login/username valid', () => {
     it('should return an AccessToken', async () => {
@@ -174,6 +176,27 @@ describe('LoginController', () => {
 
       const spy = jest.spyOn(authService, 'validateUsername').mockImplementation(() => Promise.resolve(expectedResult));
       expect(await loginController.loginUsername(userDto)).toBe(expectedResult);
+
+      spy.mockRestore();
+    });
+  });
+
+  // /login/email tests
+
+  describe('/login/email valid', () => {
+    it('should return an AccessToken', async () => {
+      const userInput: EmailLoginDto = {
+        projectId: validProjectId,
+        email: validEmail,
+        password: validPassword
+      };
+
+      const result = {
+        accessToken: 'valid-token'
+      };
+
+      const spy = jest.spyOn(authService, 'validateEmail').mockImplementation(async () => result);
+      expect(await loginController.loginEmail(userInput)).toEqual(result);
 
       spy.mockRestore();
     });
