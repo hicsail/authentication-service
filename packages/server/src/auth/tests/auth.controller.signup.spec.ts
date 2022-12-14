@@ -82,7 +82,7 @@ describe('SignupController', () => {
   });
 
   describe('/signup incorrect projectId', () => {
-    it('should return a 400 bad request', async () => {
+    it('should return an error message', async () => {
       const user: UserSignupDto = {
         projectId: '0',
         username: 'test2',
