@@ -112,7 +112,7 @@ describe('LoginController', () => {
         password: validPassword
       };
 
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -125,7 +125,7 @@ describe('LoginController', () => {
       };
 
       const loginController = new LoginController(authService);
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -138,7 +138,7 @@ describe('LoginController', () => {
       };
 
       const loginController = new LoginController(authService);
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -150,7 +150,7 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -162,7 +162,7 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -210,7 +210,7 @@ describe('LoginController', () => {
         password: 'test'
       };
 
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -223,7 +223,7 @@ describe('LoginController', () => {
       };
 
       const loginController = new LoginController(authService);
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -236,7 +236,7 @@ describe('LoginController', () => {
       };
 
       const loginController = new LoginController(authService);
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -248,7 +248,7 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
     });
   });
 
@@ -260,7 +260,7 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
     });
   });
 
