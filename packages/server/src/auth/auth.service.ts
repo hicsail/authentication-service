@@ -45,8 +45,6 @@ export class AuthService {
     if (projectId != null && email != null && password != null) {
       const user = await this.userService.findUserByEmail(projectId, email);
 
-      console.log(user);
-
       if (user && (await bcrypt.compare(password, user.password))) {
         const payload = { id: user.id, projectId: user.projectId, role: user.role };
         return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
