@@ -59,9 +59,13 @@ export class AuthService {
    * @param projectId
    * @param email
    */
-  forgotPassword(projectId: string, email: string): void {
+  async forgotPassword(projectId: string, email: string): Promise<void> {
     const resetCodePlain = randomstring.generate(10);
-    this.userService.setResetToken(projectId, email, resetCodePlain);
+    const wasSet = await this.userService.setResetToken(projectId, email, resetCodePlain);
+    console.log(wasSet);
+    if (!wasSet) {
+      return;
+    }
 
     const payload = {
       to: email,

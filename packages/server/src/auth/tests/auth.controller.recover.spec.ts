@@ -78,4 +78,18 @@ describe('RecoveryController', () => {
       await expect(recoveryController.forgotPassword(user)).rejects.toThrowError('Project ID does not exist');
     });
   });
+
+  describe('/recover incorrect projectId', () => {
+    it('should return an error', async () => {
+      const user = {
+        projectId: 'incorrectProjectId',
+        email: validEmail
+      };
+
+      const spy = jest.spyOn(authService, 'forgotPassword').mockImplementation(async () => {
+        throw new Error('Project ID does not exist');
+      });
+      await expect(recoveryController.forgotPassword(user)).rejects.toThrowError('Project ID does not exist');
+    });
+  });
 });
