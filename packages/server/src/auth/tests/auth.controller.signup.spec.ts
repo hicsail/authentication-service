@@ -62,7 +62,6 @@ describe('SignupController', () => {
 
   describe('/signup valid', () => {
     it('should return an AccessToken', async () => {
-
       const userInput: UserSignupDto = {
         projectId: validProjectId,
         username: validUsername,
@@ -90,7 +89,9 @@ describe('SignupController', () => {
         password: validPassword
       };
 
-      const spy = jest.spyOn(authService, 'signup').mockImplementation(async () => { throw new Error('Project ID does not exist')});
+      const spy = jest.spyOn(authService, 'signup').mockImplementation(async () => {
+        throw new Error('Project ID does not exist');
+      });
       await expect(signupController.signup(user)).rejects.toThrowError('Project ID does not exist');
     });
   });
