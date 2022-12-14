@@ -19,6 +19,7 @@ describe('SignupController', () => {
   let validProjectId: string;
   let validUsername: string;
   let validEmail: string;
+  let validEmail2: string;
   let validPassword: string;
 
   let randomProject: Project;
@@ -48,6 +49,7 @@ describe('SignupController', () => {
     validProjectId = dummyProjects[0].id;
     validUsername = 'test';
     validEmail = 'test@gmail.com';
+    validEmail2 = 'test';
     validPassword = 'pw';
 
     validUser = await userService.createUser({
@@ -88,6 +90,19 @@ describe('SignupController', () => {
       expect(await signupController.signup(userInput)).toEqual(result);
 
       spy.mockRestore();
+    });
+  });
+
+  describe('/signup ablate projectId', () => {
+    it('should reject with an error if a projectId is not provided', async () => {
+      const user: UserSignupDto = {
+        projectId: undefined,
+        username: validUsername2,
+        email: validEmail,
+        password: validPassword2
+      };
+
+      await expect(signupController.signup(user)).rejects.toThrowError(Error('User already exist in the database.'));
     });
   });
 });
