@@ -30,7 +30,7 @@ export class AuthService {
       }
     }
 
-    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
   }
 
   /**
@@ -51,7 +51,7 @@ export class AuthService {
       }
     }
 
-    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
   }
 
   /**
@@ -62,7 +62,7 @@ export class AuthService {
   async forgotPassword(projectId: string, email: string): Promise<void> {
     const resetCodePlain = randomstring.generate(10);
     const wasSet = await this.userService.setResetToken(projectId, email, resetCodePlain);
-    console.log(wasSet);
+
     if (!wasSet) {
       return;
     }
@@ -123,7 +123,6 @@ export class AuthService {
       const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
       return resp;
     } catch (err) {
-      console.log(err);
       return err;
     }
   }
