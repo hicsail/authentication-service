@@ -1,13 +1,12 @@
 import { JwtService } from '@nestjs/jwt';
 import { Project, User } from '@prisma/client';
-import { PrismaService } from '../../src/prisma/prisma.service';
-import { UserService } from '../../src/user/user.service';
-import { LoginController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { EmailLoginDto, UsernameLoginDto } from './dto/auth.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { UserTestUtil } from '../user/__tests__/utils/user.test.util';
-import { BadRequestException } from '@nestjs/common/exceptions';
+import { PrismaService } from '../../prisma/prisma.service';
+import { UserService } from '../../user/user.service';
+import { LoginController } from '../auth.controller';
+import { AuthService } from '../auth.service';
+import { EmailLoginDto, UsernameLoginDto } from '../dto/auth.dto';
+import { JwtAuthGuard } from '../jwt-auth.guard';
+import { UserTestUtil } from '../../user/__tests__/utils/user.test.util';
 
 describe('LoginController', () => {
   let jwtAuthGuard: JwtAuthGuard;
@@ -202,7 +201,7 @@ describe('LoginController', () => {
       spy.mockRestore();
     });
   });
-  
+
   describe('/login/email ablate projectId', () => {
     it('should return an error if a projectId is not provided', async () => {
       const user: EmailLoginDto = {
