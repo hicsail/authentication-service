@@ -15,15 +15,14 @@ describe('SignupController', () => {
   let dummyAdmins: User[];
   let dummyUsers: User[];
 
-  let validUser: User;
+  // let validUser: User;
   let validProjectId: string;
   let validUsername: string;
   let validEmail: string;
-  let validEmail2: string;
   let validPassword: string;
 
-  let randomProject: Project;
-  let randomUser: User;
+  // let randomProject: Project;
+  // let randomUser: User;
 
   let signupController: SignupController;
   let authService: AuthService;
@@ -47,34 +46,23 @@ describe('SignupController', () => {
     dummyUsers = await userTestUtil.createDummyUsers();
 
     validProjectId = dummyProjects[0].id;
-    validUsername = 'test';
-    validEmail = 'test@gmail.com';
-    validEmail2 = 'test';
     validPassword = 'pw';
 
-    validUser = await userService.createUser({
-      projectId: validProjectId,
-      username: validUsername,
-      email: validEmail,
-      password: validPassword
-    });
-  });
-
-  beforeEach(async () => {
-    randomProject = dummyProjects[Math.floor(Math.random() * dummyProjects.length)];
-    randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
+    // randomProject = dummyProjects[Math.floor(Math.random() * dummyProjects.length)];
+    // randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
   afterAll(async () => {
     await userTestUtil.tearDown();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.clearAllMocks();
   });
 
   describe('/signup valid', () => {
     it('should return an AccessToken', async () => {
+
       const userInput: UserSignupDto = {
         projectId: validProjectId,
         username: validUsername,
@@ -93,16 +81,17 @@ describe('SignupController', () => {
     });
   });
 
-  describe('/signup ablate projectId', () => {
-    it('should reject with an error if a projectId is not provided', async () => {
+  describe('/signup incorrect projectId', () => {
+    it('should return a 400 bad request', async () => {
       const user: UserSignupDto = {
-        projectId: undefined,
-        username: validUsername2,
-        email: validEmail,
-        password: validPassword2
+        projectId: '0',
+        username: 'test2',
+        email: 'test2@gmail.com',
+        password: validPassword
       };
 
-      await expect(signupController.signup(user)).rejects.toThrowError(Error('User already exist in the database.'));
+      const spy = jest.spyOn(authService, 'signup').mockImplementation(async () => { throw new Error('Project ID does not exist')});
+      await expect(signupController.signup(user)).rejects.toThrowError('Project ID does not exist');
     });
   });
 });
