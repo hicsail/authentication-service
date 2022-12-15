@@ -21,16 +21,18 @@ export class AuthService {
    * @returns JWT or 401 status code
    */
   async validateUsername(projectId: string, username: string, password: string): Promise<any> {
-    if (projectId != null && username != null && password != null) {
-      const user = await this.userService.findUserByUsername(projectId, username);
-
-      if (user && (await bcrypt.compare(password, user.password))) {
-        const payload = { id: user.id, projectId: user.projectId, role: user.role };
-        return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
-      }
+    if (projectId == null || username == null || password == null) {
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     }
 
-    throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    const user = await this.userService.findUserByUsername(projectId, username);
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const payload = { id: user.id, projectId: user.projectId, role: user.role };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+    }
+
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
   /**
@@ -42,16 +44,18 @@ export class AuthService {
    * @returns JWT or 401 status code
    */
   async validateEmail(projectId: string, email: string, password: string): Promise<any> {
-    if (projectId != null && email != null && password != null) {
-      const user = await this.userService.findUserByEmail(projectId, email);
-
-      if (user && (await bcrypt.compare(password, user.password))) {
-        const payload = { id: user.id, projectId: user.projectId, role: user.role };
-        return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
-      }
+    if (projectId == null || email == null || password == null) {
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     }
 
-    throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    const user = await this.userService.findUserByEmail(projectId, email);
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const payload = { id: user.id, projectId: user.projectId, role: user.role };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+    }
+
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
   /**

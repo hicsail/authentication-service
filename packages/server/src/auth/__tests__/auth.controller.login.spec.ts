@@ -27,14 +27,10 @@ describe('LoginController', () => {
   let dummyAdmins: User[];
   let dummyUsers: User[];
 
-  let validUser: User;
   let validProjectId: string;
   let validUsername = 'test';
   let validEmail = 'test@example.com';
   let validPassword = 'pw';
-
-  let randomProject: Project;
-  let randomUser: User;
 
   let loginController: LoginController;
   let authService: AuthService;
@@ -59,22 +55,10 @@ describe('LoginController', () => {
       dummyUsers = await userTestUtil.createDummyUsers();
 
       validProjectId = dummyProjects[0].id;
-
-      validUser = await userService.createUser({
-        projectId: validProjectId,
-        username: validUsername,
-        email: validEmail,
-        password: validPassword
-      });
     }
     catch (error) {
       console.log(error);
     }
-  });
-
-  beforeEach(async () => {
-    randomProject = dummyProjects[Math.floor(Math.random() * dummyProjects.length)];
-    randomUser = dummyUsers.concat(dummyAdmins)[Math.floor(Math.random() * (dummyAdmins.length + dummyUsers.length))];
   });
 
   afterAll(async () => {
@@ -87,198 +71,169 @@ describe('LoginController', () => {
 
   // /login/username tests
 
-  describe('/login/username valid', () => {
-    it('should return an AccessToken', async () => {
-      const userInput: UsernameLoginDto = {
-        projectId: validProjectId,
-        username: validUsername,
-        password: validPassword
-      };
+  it('/login/username valid', async () => {
+    const userInput: UsernameLoginDto = {
+      projectId: validProjectId,
+      username: validUsername,
+      password: validPassword
+    };
 
-      const result = {
-        accessToken: 'valid-token'
-      };
+    const result = {
+      accessToken: 'valid-token'
+    };
 
-      const spy = jest.spyOn(authService, 'validateUsername').mockImplementation(async () => result);
-      expect(await loginController.loginUsername(userInput)).toEqual(result);
+    const spy = jest.spyOn(authService, 'validateUsername').mockImplementation(async () => result);
+    expect(await loginController.loginUsername(userInput)).toEqual(result);
 
-      spy.mockRestore();
-    });
+    spy.mockRestore();
   });
 
-  describe('/login/username ablate projectId', () => {
-    it('should reject with an error if a projectId is not provided', async () => {
-      const user: UsernameLoginDto = {
-        projectId: undefined,
-        username: validUsername,
-        password: validPassword
-      };
+  it('/login/username ablate projectId', async () => {
+    const user: UsernameLoginDto = {
+      projectId: undefined,
+      username: validUsername,
+      password: validPassword
+    };
 
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
-    });
+    await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
   });
 
-  describe('/login/username ablate password', () => {
-    it('should throw an error when the password is not provided', async () => {
-      const user: UsernameLoginDto = {
-        projectId: '123',
-        username: 'john',
-        password: undefined
-      };
+  it('/login/username ablate password', async () => {
+    const user: UsernameLoginDto = {
+      projectId: '123',
+      username: 'john',
+      password: undefined
+    };
 
-      const loginController = new LoginController(authService);
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
-    });
+    const loginController = new LoginController(authService);
+    await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
   });
 
-  describe('/login/username ablate username', () => {
-    it('should throw an error if no username is provided', async () => {
-      const user: UsernameLoginDto = {
-        projectId: '12345',
-        username: undefined,
-        password: 'password'
-      };
+  it('/login/username ablate username', async () => {
+    const user: UsernameLoginDto = {
+      projectId: '12345',
+      username: undefined,
+      password: 'password'
+    };
 
-      const loginController = new LoginController(authService);
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
-    });
+    const loginController = new LoginController(authService);
+    await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
   });
 
-  describe('/login/username incorrect projectId', () => {
+  it('/login/username incorrect projectId', async () => {
     const user: UsernameLoginDto = {
       projectId: 'incorrectprojectId',
       username: validUsername,
       password: validPassword
     };
 
-    it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
-    });
+    await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
   });
 
-  describe('/login/username incorrect password', () => {
+  it('/login/username incorrect password', async () => {
     const user: UsernameLoginDto = {
       projectId: validProjectId,
       username: validUsername,
       password: 'incorrectPassword'
     };
 
-    it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
-    });
+    await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
   });
 
-  describe('login/username incorrect username', () => {
-    it('should return a access token', async () => {
-      const userDto = new UsernameLoginDto();
-      userDto.projectId = validProjectId;
-      userDto.username = 'incorrectusername';
-      userDto.password = validPassword;
-      const expectedResult = { accessToken: 'token' };
+  it('login/username incorrect username', async () => {
+    const userDto = new UsernameLoginDto();
+    userDto.projectId = validProjectId;
+    userDto.username = 'incorrectusername';
+    userDto.password = validPassword;
+    const expectedResult = { accessToken: 'token' };
 
-      const spy = jest.spyOn(authService, 'validateUsername').mockImplementation(() => Promise.resolve(expectedResult));
-      expect(await loginController.loginUsername(userDto)).toBe(expectedResult);
+    const spy = jest.spyOn(authService, 'validateUsername').mockImplementation(() => Promise.resolve(expectedResult));
+    expect(await loginController.loginUsername(userDto)).toBe(expectedResult);
 
-      spy.mockRestore();
-    });
+    spy.mockRestore();
   });
 
   // /login/email tests
 
-  describe('/login/email valid', () => {
-    it('should return an AccessToken', async () => {
-      const userInput: EmailLoginDto = {
-        projectId: validProjectId,
-        email: validEmail,
-        password: validPassword
-      };
+  it('/login/email valid', async () => {
+    const userInput: EmailLoginDto = {
+      projectId: validProjectId,
+      email: validEmail,
+      password: validPassword
+    };
 
-      const result = {
-        accessToken: 'valid-token'
-      };
+    const result = {
+      accessToken: 'valid-token'
+    };
 
-      const spy = jest.spyOn(authService, 'validateEmail').mockImplementation(async () => result);
-      expect(await loginController.loginEmail(userInput)).toEqual(result);
+    const spy = jest.spyOn(authService, 'validateEmail').mockImplementation(async () => result);
+    expect(await loginController.loginEmail(userInput)).toEqual(result);
 
-      spy.mockRestore();
-    });
+    spy.mockRestore();
   });
 
-  describe('/login/email ablate projectId', () => {
-    it('should return an error if a projectId is not provided', async () => {
-      const user: EmailLoginDto = {
-        projectId: undefined,
-        email: 'test@example.com',
-        password: 'test'
-      };
+  it('/login/email ablate projectId', async () => {
+    const user: EmailLoginDto = {
+      projectId: undefined,
+      email: 'test@example.com',
+      password: 'test'
+    };
 
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
-    });
+    await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
   });
 
-  describe('/login/email ablate password', () => {
-    it('should throw an error when the password is not provided', async () => {
-      const user: EmailLoginDto = {
-        projectId: validProjectId,
-        email: validEmail,
-        password: undefined
-      };
+  it('/login/email ablate password', async () => {
+    const user: EmailLoginDto = {
+      projectId: validProjectId,
+      email: validEmail,
+      password: undefined
+    };
 
-      const loginController = new LoginController(authService);
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
-    });
+    const loginController = new LoginController(authService);
+    await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
   });
 
-  describe('/login/email ablate email', () => {
-    it('should throw an error if no username is provided', async () => {
-      const user: EmailLoginDto = {
-        projectId: validProjectId,
-        email: undefined,
-        password: validPassword
-      };
+  it('/login/email ablate email', async () => {
+    const user: EmailLoginDto = {
+      projectId: validProjectId,
+      email: undefined,
+      password: validPassword
+    };
 
-      const loginController = new LoginController(authService);
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
-    });
+    const loginController = new LoginController(authService);
+    await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
   });
 
-  describe('/login/email incorrect projectId', () => {
+  it('/login/email incorrect projectId', async () => {
     const user: EmailLoginDto = {
       projectId: 'incorrectprojectId',
       email: validEmail,
       password: validPassword
     };
 
-    it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
-    });
+    await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
   });
 
-  describe('/login/email incorrect password', () => {
-    console.log(dummyProjects[0].id)
+  it('/login/email incorrect password', async () => {
     const user: EmailLoginDto = {
       projectId: validProjectId,
       email: validEmail,
       password: 'incorrectPassword'
     };
 
-    it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
-    });
+    await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
   });
 
-  describe('login/username incorrect email', () => {
-    it('should return a access token', async () => {
-      const userDto = new EmailLoginDto();
-      userDto.projectId = validProjectId;
-      userDto.email = 'incorrectEmail';
-      userDto.password = validPassword;
-      const expectedResult = { accessToken: 'token' };
+  it('login/username incorrect email', async () => {
+    const userDto = new EmailLoginDto();
+    userDto.projectId = validProjectId;
+    userDto.email = 'incorrectEmail';
+    userDto.password = validPassword;
+    const expectedResult = { accessToken: 'token' };
 
-      const spy = jest.spyOn(authService, 'validateEmail').mockImplementation(() => Promise.resolve(expectedResult));
-      expect(await loginController.loginEmail(userDto)).toBe(expectedResult);
+    const spy = jest.spyOn(authService, 'validateEmail').mockImplementation(() => Promise.resolve(expectedResult));
+    expect(await loginController.loginEmail(userDto)).toBe(expectedResult);
 
-      spy.mockRestore();
-    });
+    spy.mockRestore();
   });
 });
