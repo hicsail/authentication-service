@@ -29,9 +29,9 @@ describe('LoginController', () => {
 
   let validUser: User;
   let validProjectId: string;
-  let validUsername: string;
-  let validEmail: string;
-  let validPassword: string;
+  let validUsername = 'test';
+  let validEmail = 'test@example.com';
+  let validPassword = 'pw';
 
   let randomProject: Project;
   let randomUser: User;
@@ -43,31 +43,33 @@ describe('LoginController', () => {
   let jwtService: JwtService;
 
   beforeAll(async () => {
-    userTestUtil = new UserTestUtil();
+    try {
+      userTestUtil = new UserTestUtil();
 
-    const moduleRef = await userTestUtil.setup();
+      const moduleRef = await userTestUtil.setup();
 
-    prismaService = moduleRef.get(PrismaService);
-    jwtService = moduleRef.get(JwtService);
-    userService = new UserService(prismaService);
-    authService = new AuthService(userService, jwtService);
-    loginController = new LoginController(authService);
+      prismaService = moduleRef.get(PrismaService);
+      jwtService = moduleRef.get(JwtService);
+      userService = new UserService(prismaService);
+      authService = new AuthService(userService, jwtService);
+      loginController = new LoginController(authService);
 
-    dummyProjects = await userTestUtil.createDummyProjects();
-    dummyAdmins = await userTestUtil.createDummyAdmins();
-    dummyUsers = await userTestUtil.createDummyUsers();
+      dummyProjects = await userTestUtil.createDummyProjects();
+      dummyAdmins = await userTestUtil.createDummyAdmins();
+      dummyUsers = await userTestUtil.createDummyUsers();
 
-    validProjectId = dummyProjects[0].id;
-    validUsername = 'test';
-    validEmail = 'test@gmail.com';
-    validPassword = 'pw';
+      validProjectId = dummyProjects[0].id;
 
-    validUser = await userService.createUser({
-      projectId: validProjectId,
-      username: validUsername,
-      email: validEmail,
-      password: validPassword
-    });
+      validUser = await userService.createUser({
+        projectId: validProjectId,
+        username: validUsername,
+        email: validEmail,
+        password: validPassword
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
   });
 
   beforeEach(async () => {
@@ -150,7 +152,7 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
     });
   });
 
@@ -162,7 +164,7 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginUsername(user)).rejects.toThrowError('Bad request');
+      await expect(loginController.loginUsername(user)).rejects.toThrowError('Unauthorized');
     });
   });
 
@@ -248,11 +250,12 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
     });
   });
 
   describe('/login/email incorrect password', () => {
+    console.log(dummyProjects[0].id)
     const user: EmailLoginDto = {
       projectId: validProjectId,
       email: validEmail,
@@ -260,7 +263,7 @@ describe('LoginController', () => {
     };
 
     it('should reject with an error if the projectId is incorrect', async () => {
-      await expect(loginController.loginEmail(user)).rejects.toThrowError('Bad request');
+      await expect(loginController.loginEmail(user)).rejects.toThrowError('Unauthorized');
     });
   });
 
