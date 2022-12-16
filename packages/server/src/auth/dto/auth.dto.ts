@@ -52,21 +52,25 @@ export class UsernameLoginDto {
   password: string;
 }
 
+@InputType()
 export class EmailLoginDto {
   @IsNotEmpty()
   @IsString()
   @IsDefined()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsEmail()
+  @Field()
   email: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 }
 

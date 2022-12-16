@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AccessToken } from './types/auth.types';
-import { UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
+import { EmailLoginDto, UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
 
 @Resolver()
 export class AuthResolver  {
@@ -13,6 +13,11 @@ export class AuthResolver  {
   @Mutation(() => AccessToken)
   async loginUsername(@Args('user') user: UsernameLoginDto): Promise<AccessToken> {
     return this.authService.validateUsername(user.projectId, user.username, user.password);
+  }
+
+  @Mutation(() => AccessToken)
+  async loginEmail(@Args('user') user: EmailLoginDto): Promise<AccessToken> {
+    return this.authService.validateEmail(user.projectId, user.email, user.password);
   }
 
   /**
