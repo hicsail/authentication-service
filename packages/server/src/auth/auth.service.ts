@@ -22,7 +22,7 @@ export class AuthService {
    */
   async validateUsername(projectId: string, username: string, password: string): Promise<any> {
     if (projectId == null || username == null || password == null) {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Bad request: project id, email and password all required.', HttpStatus.BAD_REQUEST);
     }
 
     const user = await this.userService.findUserByUsername(projectId, username);
@@ -96,7 +96,7 @@ export class AuthService {
   async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<UpdateStatus> {
     if (projectId == null || email == null || password == null || resetCode == null) {
       return {
-        message: 'Password unsuccessfully updated.',
+        message: 'Password unsuccessfully updated. Project id, email, password and reset code are all required.',
         status: 400
       };
     }
