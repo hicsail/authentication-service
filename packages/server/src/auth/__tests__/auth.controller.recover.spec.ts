@@ -90,7 +90,7 @@ describe('RecoveryController', () => {
     };
 
     expect(await recoveryController.resetPassword(user)).toEqual({
-      message: 'Password unsuccessfully updated.',
+      message: 'Password unsuccessfully updated. Project id, email, password and reset code are all required.',
       status: 400
     });
   });
@@ -104,7 +104,7 @@ describe('RecoveryController', () => {
     };
 
     expect(await recoveryController.resetPassword(user)).toEqual({
-      message: 'Password unsuccessfully updated.',
+      message: 'Password unsuccessfully updated. Project id, email, password and reset code are all required.',
       status: 400
     });
   });
@@ -118,7 +118,7 @@ describe('RecoveryController', () => {
     };
 
     expect(await recoveryController.resetPassword(user)).toEqual({
-      message: 'Password unsuccessfully updated.',
+      message: 'Password unsuccessfully updated. Project id, email, password and reset code are all required.',
       status: 400
     });
   });
@@ -132,7 +132,7 @@ describe('RecoveryController', () => {
     };
 
     expect(await recoveryController.resetPassword(user)).toEqual({
-      message: 'Password unsuccessfully updated.',
+      message: 'Password unsuccessfully updated. Project id, email, password and reset code are all required.',
       status: 400
     });
   });
