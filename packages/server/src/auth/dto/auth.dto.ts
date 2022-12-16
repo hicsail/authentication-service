@@ -2,6 +2,8 @@ import { Type } from 'class-transformer';
 import { IsDefined, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { PipeTransform } from '@nestjs/common';
 import { UserSignup } from '../types/auth.types';
+import { InputType, Field } from '@nestjs/graphql';
+
 
 export class UserSignupDto {
   @IsNotEmpty()
@@ -24,21 +26,25 @@ export class UserSignupDto {
   password: string;
 }
 
+@InputType()
 export class UsernameLoginDto {
   @IsNotEmpty()
   @IsString()
   @IsDefined()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   username: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 }
 

@@ -1,3 +1,5 @@
+import { ObjectType, Field } from '@nestjs/graphql';
+
 export type UserSignup = {
   projectId: string;
   username: string;
@@ -18,7 +20,9 @@ export type EmailLogin = {
   password: string;
 };
 
-export type AccessToken = {
+@ObjectType()
+export class AccessToken {
+  @Field()
   accessToken: string;
 };
 
