@@ -5,6 +5,7 @@ import { RecoveryController } from '../auth.controller';
 import { UserTestUtil } from '../../user/__tests__/utils/user.test.util';
 import { UserService } from '../../user/user.service';
 import { AuthService } from '../auth.service';
+import { ResetDto } from '../dto/auth.dto';
 
 describe('RecoveryController', () => {
   let userTestUtil: UserTestUtil;
@@ -13,6 +14,8 @@ describe('RecoveryController', () => {
 
   let validProjectId: string;
   let validEmail: string;
+  let validPassword: string;
+  let validResetCode: string;
 
   let recoveryController: RecoveryController;
   let prismaService: PrismaService;
@@ -35,6 +38,8 @@ describe('RecoveryController', () => {
 
     validProjectId = dummyProjects[0].id;
     validEmail = 'test@gmail.com';
+    validPassword = 'pw'
+    validResetCode = '123456';
   });
 
   afterAll(async () => {
@@ -45,7 +50,9 @@ describe('RecoveryController', () => {
     jest.clearAllMocks();
   });
 
-  it('/recover ablate projectId', async () => {
+  // recover/forgot
+
+  it('/recover/forgot ablate projectId', async () => {
     const user = {
       projectId: undefined,
       email: validEmail
@@ -54,7 +61,7 @@ describe('RecoveryController', () => {
     expect(await recoveryController.forgotPassword(user)).toBeUndefined();
   });
 
-  it('/recover ablate email', async () => {
+  it('/recover/forgot ablate email', async () => {
     const user = {
       projectId: validProjectId,
       email: undefined
@@ -63,12 +70,28 @@ describe('RecoveryController', () => {
     expect(await recoveryController.forgotPassword(user)).toBeUndefined();
   });
 
-  it('/recover incorrect projectId', async () => {
+  it('/recover/forgot incorrect projectId', async () => {
     const user = {
       projectId: 'incorrectProjectId',
       email: validEmail
     };
 
     expect(await recoveryController.forgotPassword(user)).toBeUndefined();
+  });
+
+  // recover/reset
+
+  it('/recover/password ablate projectId', async () => {
+    const user: ResetDto = {
+      projectId: undefined,
+      email: validEmail,
+      password: validPassword,
+      code: validResetCode
+    };
+
+    expect(await recoveryController.resetPassword(user)).toEqual({
+      message: 'Password unsuccessfully updated.',
+      status: 400
+    })
   });
 });

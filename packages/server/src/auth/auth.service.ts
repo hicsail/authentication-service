@@ -94,6 +94,12 @@ export class AuthService {
    * @returns UpdateStatus
    */
   async resetPassword(projectId: string, email: string, password: string, resetCode: string): Promise<UpdateStatus> {
+    if (projectId == null || email == null || password == null || resetCode == null) {
+      return {
+        message: 'Password unsuccessfully updated.',
+        status: 400
+      }
+    }
     const update = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
     if (update.status == 200) {
