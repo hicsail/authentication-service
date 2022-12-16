@@ -1,7 +1,7 @@
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AccessToken } from './types/auth.types';
-import { UsernameLoginDto } from './dto/auth.dto';
+import { UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
 
 @Resolver()
 export class AuthResolver  {
@@ -16,11 +16,10 @@ export class AuthResolver  {
   }
 
   /**
-   * Temporary so that the Apollo driver recognizes this package
-   * as a GraphQL package.
+   * Handle the signup process for a user
    */
-  @Query(() => String)
-  async test(): Promise<string> {
-    return 'test';
+  @Mutation(() => AccessToken)
+  async signup(@Args('user') user: UserSignupDto): Promise<AccessToken> {
+    return this.authService.signup(user);
   }
 }

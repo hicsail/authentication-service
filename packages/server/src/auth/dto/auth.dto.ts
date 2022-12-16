@@ -4,25 +4,29 @@ import { PipeTransform } from '@nestjs/common';
 import { UserSignup } from '../types/auth.types';
 import { InputType, Field } from '@nestjs/graphql';
 
-
+@InputType()
 export class UserSignupDto {
   @IsNotEmpty()
   @IsString()
   @IsDefined()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsDefined()
   @IsString()
+  @Field()
   username: string;
 
   @IsDefined()
   @IsEmail()
+  @Field()
   email: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 }
 
