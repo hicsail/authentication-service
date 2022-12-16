@@ -109,4 +109,18 @@ describe('RecoveryController', () => {
       status: 400
     })
   });
+
+  it('/recover/password password ', async () => {
+    const user: ResetDto = {
+      projectId: validProjectId,
+      email: validEmail,
+      password: undefined,
+      code: validResetCode
+    };
+
+    expect(await recoveryController.resetPassword(user)).toEqual({
+      message: 'Password unsuccessfully updated.',
+      status: 400
+    })
+  });
 });
