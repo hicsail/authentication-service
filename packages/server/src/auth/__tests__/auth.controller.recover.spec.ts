@@ -38,7 +38,7 @@ describe('RecoveryController', () => {
 
     validProjectId = dummyProjects[0].id;
     validEmail = 'test@gmail.com';
-    validPassword = 'pw'
+    validPassword = 'pw';
     validResetCode = '123456';
   });
 
@@ -92,9 +92,8 @@ describe('RecoveryController', () => {
     expect(await recoveryController.resetPassword(user)).toEqual({
       message: 'Password unsuccessfully updated.',
       status: 400
-    })
+    });
   });
-
 
   it('/recover/password ablate email', async () => {
     const user: ResetDto = {
@@ -107,7 +106,7 @@ describe('RecoveryController', () => {
     expect(await recoveryController.resetPassword(user)).toEqual({
       message: 'Password unsuccessfully updated.',
       status: 400
-    })
+    });
   });
 
   it('/recover/password ablate password', async () => {
@@ -121,7 +120,7 @@ describe('RecoveryController', () => {
     expect(await recoveryController.resetPassword(user)).toEqual({
       message: 'Password unsuccessfully updated.',
       status: 400
-    })
+    });
   });
 
   it('/recover/password ablate code', async () => {
@@ -135,7 +134,7 @@ describe('RecoveryController', () => {
     expect(await recoveryController.resetPassword(user)).toEqual({
       message: 'Password unsuccessfully updated.',
       status: 400
-    })
+    });
   });
 
   it('/recover/password incorrect projectId', async () => {
@@ -149,7 +148,7 @@ describe('RecoveryController', () => {
     expect(await recoveryController.resetPassword(user)).toEqual({
       message: 'Unauthorized',
       status: 401
-    })
+    });
   });
 
   it('/recover/password incorrect email', async () => {
@@ -163,7 +162,7 @@ describe('RecoveryController', () => {
     expect(await recoveryController.resetPassword(user)).toEqual({
       message: 'Unauthorized',
       status: 401
-    })
+    });
   });
 
   it('/recover/password incorrect code', async () => {
@@ -177,6 +176,6 @@ describe('RecoveryController', () => {
     expect(await recoveryController.resetPassword(user)).toEqual({
       message: 'Unauthorized',
       status: 401
-    })
+    });
   });
 });

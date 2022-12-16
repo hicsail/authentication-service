@@ -98,7 +98,7 @@ export class AuthService {
       return {
         message: 'Password unsuccessfully updated.',
         status: 400
-      }
+      };
     }
     const update = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
