@@ -165,4 +165,18 @@ describe('RecoveryController', () => {
       status: 401
     })
   });
+
+  it('/recover/password incorrect code', async () => {
+    const user: ResetDto = {
+      projectId: validProjectId,
+      email: validEmail,
+      password: validPassword,
+      code: 'incorrectCode'
+    };
+
+    expect(await recoveryController.resetPassword(user)).toEqual({
+      message: 'Unauthorized',
+      status: 401
+    })
+  });
 });
