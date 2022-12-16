@@ -74,14 +74,17 @@ export class EmailLoginDto {
   password: string;
 }
 
+@InputType()
 export class ForgotDto {
   @IsNotEmpty()
   @IsString()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsNotEmpty()
   @IsEmail()
+  @Field()
   email: string;
 }
 
