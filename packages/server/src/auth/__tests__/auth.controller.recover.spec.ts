@@ -110,12 +110,26 @@ describe('RecoveryController', () => {
     })
   });
 
-  it('/recover/password password ', async () => {
+  it('/recover/password ablate password', async () => {
     const user: ResetDto = {
       projectId: validProjectId,
       email: validEmail,
       password: undefined,
       code: validResetCode
+    };
+
+    expect(await recoveryController.resetPassword(user)).toEqual({
+      message: 'Password unsuccessfully updated.',
+      status: 400
+    })
+  });
+
+  it('/recover/password ablate code', async () => {
+    const user: ResetDto = {
+      projectId: validProjectId,
+      email: validEmail,
+      password: validPassword,
+      code: undefined
     };
 
     expect(await recoveryController.resetPassword(user)).toEqual({
