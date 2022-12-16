@@ -137,4 +137,18 @@ describe('RecoveryController', () => {
       status: 400
     })
   });
+
+  it('/recover/password incorrect projectId', async () => {
+    const user: ResetDto = {
+      projectId: 'incorrectProjectId',
+      email: validEmail,
+      password: validPassword,
+      code: validResetCode
+    };
+
+    expect(await recoveryController.resetPassword(user)).toEqual({
+      message: 'Unauthorized',
+      status: 401
+    })
+  });
 });
