@@ -1,4 +1,44 @@
 import { Project } from '@prisma/client';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsDefined, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import JSON from 'graphql-type-json';
+
+/**
+ * Input type for making a new project
+ */
+@InputType()
+export class ProjectCreateInput implements Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+  @IsNotEmpty()
+  @IsString()
+  @IsDefined()
+  @Field()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsDefined()
+  @Field()
+  description: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  logo: string | null;
+
+  @IsOptional()
+  @Field(() => JSON, { nullable: true })
+  muiTheme: any;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  homePage: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  redirectUrl: string | null;
+}
 
 export class ProjectIdentifier {
   id: string;
