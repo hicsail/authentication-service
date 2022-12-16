@@ -45,7 +45,7 @@ export class AuthService {
    */
   async validateEmail(projectId: string, email: string, password: string): Promise<any> {
     if (projectId == null || email == null || password == null) {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Bad request: project id, email and password all required.', HttpStatus.BAD_REQUEST);
     }
 
     const user = await this.userService.findUserByEmail(projectId, email);
