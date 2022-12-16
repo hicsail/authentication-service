@@ -50,4 +50,36 @@ export class ProjectIdentifier {
  * Project type and is partial to allow changing only some of the settings
  * at a time.
  */
-export type ConfigurableProjectSettings = Partial<Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+@InputType()
+export class ConfigurableProjectSettings implements Partial<Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @Field({ nullable: true })
+  name: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @Field({ nullable: true })
+  description: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  logo: string | null;
+
+  @IsOptional()
+  @Field(() => JSON, { nullable: true })
+  muiTheme: any;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  homePage: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  redirectUrl: string | null;
+}
