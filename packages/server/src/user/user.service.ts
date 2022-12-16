@@ -118,11 +118,11 @@ export class UserService {
    * @param email email of the user
    * @param resetCodePlain a string of reset code in plain text
    */
-  async setResetToken(projectId: string, email: string, resetCodePlain: string): Promise<void> {
+  async setResetToken(projectId: string, email: string, resetCodePlain: string): Promise<boolean> {
     const userToUpdate = await this.findUserByEmail(projectId, email);
 
     if (!userToUpdate) {
-      return;
+      return false;
     }
 
     const resetCodeHash = await bcrypt.hash(resetCodePlain, this.SALT_ROUNDS);
@@ -136,6 +136,8 @@ export class UserService {
         resetCodeExpiresAt: addHours(new Date(), 1) // TODO: change default expiration time
       }
     });
+
+    return true;
   }
 
   /**
