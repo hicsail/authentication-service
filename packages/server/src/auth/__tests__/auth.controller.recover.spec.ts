@@ -69,8 +69,6 @@ describe('RecoveryController', () => {
       email: validEmail
     };
 
-    console.log(validEmail);
-
     expect(await recoveryController.forgotPassword(user)).toBeUndefined();
   });
 });
