@@ -64,6 +64,10 @@ export class AuthService {
    * @param email
    */
   async forgotPassword(projectId: string, email: string): Promise<void> {
+    if (projectId == null || email == null) {
+      return;
+    }
+
     const resetCodePlain = randomstring.generate(10);
     const wasSet = await this.userService.setResetToken(projectId, email, resetCodePlain);
 

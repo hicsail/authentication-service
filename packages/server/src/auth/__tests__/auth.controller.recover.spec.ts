@@ -1,27 +1,23 @@
 import { JwtService } from '@nestjs/jwt';
-import { Project, User } from '@prisma/client';
+import { Project } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import { UserService } from '../../user/user.service';
 import { RecoveryController } from '../auth.controller';
-import { AuthService } from '../auth.service';
 import { UserTestUtil } from '../../user/__tests__/utils/user.test.util';
+import { UserService } from '../../user/user.service';
+import { AuthService } from '../auth.service';
 
 describe('RecoveryController', () => {
   let userTestUtil: UserTestUtil;
 
   let dummyProjects: Project[];
-  let dummyAdmins: User[];
-  let dummyUsers: User[];
 
-  // let validUser: User;
   let validProjectId: string;
   let validEmail: string;
-  let validPassword: string;
 
   let recoveryController: RecoveryController;
-  let authService: AuthService;
-  let userService: UserService;
   let prismaService: PrismaService;
+  let userService: UserService;
+  let authService: AuthService;
   let jwtService: JwtService;
 
   beforeAll(async () => {
@@ -36,11 +32,9 @@ describe('RecoveryController', () => {
     recoveryController = new RecoveryController(authService);
 
     dummyProjects = await userTestUtil.createDummyProjects();
-    dummyAdmins = await userTestUtil.createDummyAdmins();
-    dummyUsers = await userTestUtil.createDummyUsers();
 
     validProjectId = dummyProjects[0].id;
-    validPassword = 'pw';
+    validEmail = 'test@gmail.com';
   });
 
   afterAll(async () => {
@@ -51,45 +45,32 @@ describe('RecoveryController', () => {
     jest.clearAllMocks();
   });
 
-  describe('/recover ablate projectId', () => {
-    it('should return an error', async () => {
-      const user = {
-        projectId: undefined,
-        email: validEmail
-      };
+  it('/recover ablate projectId', async () => {
+    const user = {
+      projectId: undefined,
+      email: validEmail
+    };
 
-      const spy = jest.spyOn(authService, 'forgotPassword').mockImplementation(async () => {
-        throw new Error('Project ID does not exist');
-      });
-      await expect(recoveryController.forgotPassword(user)).rejects.toThrowError('Project ID does not exist');
-    });
+    expect(await recoveryController.forgotPassword(user)).toBeUndefined();
   });
 
-  describe('/recover ablate email', () => {
-    it('should return an error', async () => {
-      const user = {
-        projectId: validProjectId,
-        email: undefined
-      };
+  it('/recover ablate email', async () => {
+    const user = {
+      projectId: validProjectId,
+      email: undefined
+    };
 
-      const spy = jest.spyOn(authService, 'forgotPassword').mockImplementation(async () => {
-        throw new Error('Project ID does not exist');
-      });
-      await expect(recoveryController.forgotPassword(user)).rejects.toThrowError('Project ID does not exist');
-    });
+    expect(await recoveryController.forgotPassword(user)).toBeUndefined();
   });
 
-  describe('/recover incorrect projectId', () => {
-    it('should return an error', async () => {
-      const user = {
-        projectId: 'incorrectProjectId',
-        email: validEmail
-      };
+  it('/recover incorrect projectId', async () => {
+    const user = {
+      projectId: 'incorrectProjectId',
+      email: validEmail
+    };
 
-      const spy = jest.spyOn(authService, 'forgotPassword').mockImplementation(async () => {
-        throw new Error('Project ID does not exist');
-      });
-      await expect(recoveryController.forgotPassword(user)).rejects.toThrowError('Project ID does not exist');
-    });
+    console.log(validEmail);
+
+    expect(await recoveryController.forgotPassword(user)).toBeUndefined();
   });
 });

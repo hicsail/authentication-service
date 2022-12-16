@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { Project, User } from '@prisma/client';
+import { Project } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../../user/user.service';
 import { LoginController } from '../auth.controller';
@@ -24,13 +24,11 @@ describe('LoginController', () => {
   let userTestUtil: UserTestUtil;
 
   let dummyProjects: Project[];
-  let dummyAdmins: User[];
-  let dummyUsers: User[];
 
   let validProjectId: string;
-  let validUsername = 'test';
-  let validEmail = 'test@example.com';
-  let validPassword = 'pw';
+  const validUsername = 'test';
+  const validEmail = 'test@example.com';
+  const validPassword = 'pw';
 
   let loginController: LoginController;
   let authService: AuthService;
@@ -51,12 +49,8 @@ describe('LoginController', () => {
       loginController = new LoginController(authService);
 
       dummyProjects = await userTestUtil.createDummyProjects();
-      dummyAdmins = await userTestUtil.createDummyAdmins();
-      dummyUsers = await userTestUtil.createDummyUsers();
-
       validProjectId = dummyProjects[0].id;
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
   });
