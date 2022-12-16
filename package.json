@@ -25,5 +25,11 @@
     "url": "https://github.com/hicsail/authentication-service/issues"
   },
   "homepage": "https://github.com/hicsail/authentication-service#readme",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@nestjs/apollo": "^10.1.7",
+    "@nestjs/graphql": "^10.1.7",
+    "apollo-server-express": "^3.11.1",
+    "graphql": "^16.6.0"
+  }
 }
