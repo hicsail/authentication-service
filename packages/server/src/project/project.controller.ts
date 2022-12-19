@@ -1,6 +1,6 @@
 import { Controller, Post, Get, Body, Param, Put } from '@nestjs/common';
-import { Prisma, Project } from '@prisma/client';
-import { ProjectIdentifier, ConfigurableProjectSettings } from './dto/project.dto';
+import { Project } from '@prisma/client';
+import { ProjectIdentifier, ConfigurableProjectSettings, ProjectCreateInput } from './dto/project.dto';
 import { ProjectService } from './project.service';
 
 @Controller('/projects')
@@ -8,7 +8,7 @@ export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
   @Post()
-  createProject(@Body() newProject: Prisma.ProjectCreateInput): Promise<Project> {
+  createProject(@Body() newProject: ProjectCreateInput): Promise<Project> {
     return this.projectService.createProject(newProject);
   }
 

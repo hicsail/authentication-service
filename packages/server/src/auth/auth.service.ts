@@ -82,7 +82,7 @@ export class AuthService {
     };
 
     const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
-    axios.post(sendEmailEndpoint, payload);
+    return axios.post(sendEmailEndpoint, payload);
   }
 
   /**

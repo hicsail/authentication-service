@@ -2,91 +2,113 @@ import { Type } from 'class-transformer';
 import { IsDefined, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { PipeTransform } from '@nestjs/common';
 import { UserSignup } from '../types/auth.types';
+import { InputType, Field } from '@nestjs/graphql';
 
+@InputType()
 export class UserSignupDto {
   @IsNotEmpty()
   @IsString()
   @IsDefined()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsDefined()
   @IsString()
+  @Field()
   username: string;
 
   @IsDefined()
   @IsEmail()
+  @Field()
   email: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 }
 
+@InputType()
 export class UsernameLoginDto {
   @IsNotEmpty()
   @IsString()
   @IsDefined()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   username: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 }
 
+@InputType()
 export class EmailLoginDto {
   @IsNotEmpty()
   @IsString()
   @IsDefined()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsEmail()
+  @Field()
   email: string;
 
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 }
 
+@InputType()
 export class ForgotDto {
   @IsNotEmpty()
   @IsString()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsNotEmpty()
   @IsEmail()
+  @Field()
   email: string;
 }
 
+@InputType()
 export class ResetDto {
   @IsNotEmpty()
   @IsString()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsNotEmpty()
   @IsEmail()
+  @Field()
   email: string;
 
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 
   @IsNotEmpty()
   @IsString()
+  @Field()
   code: string;
 }
 
