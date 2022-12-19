@@ -4,7 +4,7 @@ import { AccessToken } from './types/auth.types';
 import { EmailLoginDto, ForgotDto, ResetDto, UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
 
 @Resolver()
-export class AuthResolver  {
+export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   /** Login via username */

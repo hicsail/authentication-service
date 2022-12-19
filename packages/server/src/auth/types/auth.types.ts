@@ -24,7 +24,7 @@ export type EmailLogin = {
 export class AccessToken {
   @Field()
   accessToken: string;
-};
+}
 
 export type ValidatedUser = {
   id: string;
