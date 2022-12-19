@@ -1,15 +1,15 @@
-import React, {createContext, FC, useContext, useEffect, useState} from "react";
-import {ThemeType} from "../theme/theme.provider";
+import React, { createContext, FC, useContext, useEffect, useState } from 'react';
+import { ThemeType } from '../theme/theme.provider';
 
 export interface Settings {
   theme: ThemeType;
 }
 
 const defaultSettings: Settings = {
-  theme: 'light',
-}
+  theme: 'light'
+};
 
-export interface SettingsContextProps{
+export interface SettingsContextProps {
   settings: Settings;
   setSettings: (settings: Settings) => void;
 }
@@ -33,17 +33,16 @@ export const SettingsProvider: FC<SettingsProviderProps> = (props) => {
     saveSettings(settings);
   }, [settings]);
 
-  return <SettingsContext.Provider value={{settings, setSettings}} {...props} />;
+  return <SettingsContext.Provider value={{ settings, setSettings }} {...props} />;
 };
-
 
 const saveSettings = (settings: Settings) => {
   localStorage.setItem('settings', JSON.stringify(settings));
-}
+};
 
 const restoreSettings = (): Settings => {
   const settings = localStorage.getItem('settings');
   return settings ? JSON.parse(settings) : defaultSettings;
-}
+};
 
 export const useSettings = () => useContext(SettingsContext);

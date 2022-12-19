@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "prettier": "prettier -l \"src/**/*.ts\"",
-    "prettier:fix": "prettier -wl \"src/**/*.ts\"",
+    "prettier": "prettier -l \"src/**/*.ts(x)\"",
+    "prettier:fix": "prettier -wl \"src/**/*.ts(x)\"",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
@@ -13,9 +13,14 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/lab": "^5.0.0-alpha.112",
     "@mui/material": "^5.11.0",
+    "formik": "^2.2.9",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.5.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",

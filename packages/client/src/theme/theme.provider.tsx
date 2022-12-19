@@ -3,7 +3,7 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { themeLight } from './theme.light';
 import { themeDark } from './theme.dark';
-import {useSettings} from "../context/settings";
+import { useSettings } from '../context/settings';
 
 export type ThemeType = 'light' | 'dark';
 
@@ -12,12 +12,16 @@ export interface ThemeProviderProps {
 }
 
 export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
-  const { settings: { theme } } = useSettings();
+  const {
+    settings: { theme }
+  } = useSettings();
 
   const selectedTheme = theme === 'light' ? themeLight : themeDark;
 
-  return (<MuiThemeProvider theme={selectedTheme}>
-    <CssBaseline />
-    {children}
-  </MuiThemeProvider>)
+  return (
+    <MuiThemeProvider theme={selectedTheme}>
+      <CssBaseline />
+      {children}
+    </MuiThemeProvider>
+  );
 };
