@@ -88,22 +88,27 @@ export class ForgotDto {
   email: string;
 }
 
+@InputType()
 export class ResetDto {
   @IsNotEmpty()
   @IsString()
   @Type(() => String)
+  @Field()
   projectId: string;
 
   @IsNotEmpty()
   @IsEmail()
+  @Field()
   email: string;
 
   @IsNotEmpty()
   @IsString()
+  @Field()
   password: string;
 
   @IsNotEmpty()
   @IsString()
+  @Field()
   code: string;
 }
 

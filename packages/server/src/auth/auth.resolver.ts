@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AccessToken } from './types/auth.types';
-import { EmailLoginDto, ForgotDto, UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
+import { EmailLoginDto, ForgotDto, ResetDto, UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
 
 @Resolver()
 export class AuthResolver  {
@@ -29,6 +29,17 @@ export class AuthResolver  {
   @Mutation(() => Boolean)
   async forgotPassword(@Args('user') user: ForgotDto): Promise<boolean> {
     await this.authService.forgotPassword(user.projectId, user.email);
+
+    // GraphQL needs something to return
+    return true;
+  }
+
+  /** Reset password */
+  @Mutation(() => Boolean)
+  async resetPassword(@Args('user') user: ResetDto): Promise<boolean> {
+    await this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
+
+    // GraphQL needs something to return
     return true;
   }
 }
