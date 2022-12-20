@@ -16,6 +16,10 @@ generates:
       baseTypesPath: graphql.ts
       extension: .ts
     plugins:
+      - add:
+          content: '/* Generated File DO NOT EDIT. */'
+      - add:
+          content: '/* tslint:disable */'
       - typescript-operations
       - typescript-react-apollo
 hooks:
