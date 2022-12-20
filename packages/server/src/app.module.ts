@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { HealthModule } from './health/health.module';
-import { AppController } from './app.controller';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectModule } from './project/project.module';
@@ -19,9 +18,7 @@ import { join } from 'path';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'dist/schema.gql')
     })
-  ],
-  controllers: [AppController],
-  providers: []
+  ]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

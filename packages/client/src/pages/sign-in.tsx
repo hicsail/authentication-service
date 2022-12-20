@@ -49,7 +49,7 @@ export const SignIn = () => {
           validationSchema={LoginValidation}
           initialValues={{ email: '', password: '' }}
           onSubmit={async ({ email, password }, form) => {
-            const { errors } = await loginEmail({ variables: { email, password, projectId: project.id } });
+            const { errors } = await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
             if (errors) {
               form.setSubmitting(false);
             }
