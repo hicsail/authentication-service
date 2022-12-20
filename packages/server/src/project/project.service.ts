@@ -42,6 +42,13 @@ export class ProjectService {
   }
 
   /**
+   * Get all projects
+   */
+  async getAllProjects(): Promise<Project[]> {
+    return this.prisma.project.findMany();
+  }
+
+  /**
    * Get detailed information on a project.
    *
    * @param id The ID of the project to get
