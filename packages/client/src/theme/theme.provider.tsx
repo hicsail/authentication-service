@@ -3,7 +3,7 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { themeLight } from './theme.light';
 import { themeDark } from './theme.dark';
-import { useSettings } from '../context/settings';
+import { useSettings } from '../context/settings.context';
 
 export type ThemeType = 'light' | 'dark';
 

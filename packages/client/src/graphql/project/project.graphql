@@ -1,0 +1,9 @@
+query getProject($id: String!) {
+  getProject(id: $id) {
+    id
+    name
+    logo
+    muiTheme
+    redirectUrl
+  }
+}

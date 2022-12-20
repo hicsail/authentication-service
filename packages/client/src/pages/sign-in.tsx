@@ -1,9 +1,12 @@
-import { Box, Button, Container, Grid, Link, Typography } from '@mui/material';
+import { Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '../components/forms/text-input';
 import { PasswordInput } from '../components/forms/password-input';
 import { SubmitButton } from '../components/forms/submit-button';
+import { useLoginEmailMutation } from '../graphql/auth/auth';
+import { useEffect } from 'react';
+import { useProject } from '../context/project.context';
 
 const LoginValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -11,27 +14,53 @@ const LoginValidation = Yup.object().shape({
 });
 
 export const SignIn = () => {
+  const [loginEmail, { data }] = useLoginEmailMutation();
+  const { project } = useProject();
+  useEffect(() => {
+    if (data && project) {
+      window.location.replace(`${project.redirectUrl}?token=${data.loginEmail.accessToken}`);
+    }
+  }, [data]);
+
   return (
-    <Container component="main" maxWidth="sm">
+    <Container
+      component="main"
+      maxWidth="sm"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}
+    >
       <Box
         sx={{
-          marginTop: 8,
+          mb: 10,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center'
         }}
       >
-        <Typography component="h1" variant="h5">
-          Sign in
+        {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
+        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+          {project?.name || 'Sign in'}
         </Typography>
-        <Formik validationSchema={LoginValidation} initialValues={{ email: '', password: '' }} onSubmit={console.log}>
+        <Formik
+          validationSchema={LoginValidation}
+          initialValues={{ email: '', password: '' }}
+          onSubmit={async ({ email, password }, form) => {
+            const { errors } = await loginEmail({ variables: { email, password, projectId: project.id } });
+            if (errors) {
+              form.setSubmitting(false);
+            }
+          }}
+        >
           <Form>
             <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
             <PasswordInput name="password" label="Password" fullWidth autoComplete="current-password" required margin="normal" />
-            <SubmitButton fullWidth variant="contained" color="primary">
+            <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
               Sign In
             </SubmitButton>
-
             <Grid container>
               <Grid item xs>
                 <Button>
