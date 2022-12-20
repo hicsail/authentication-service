@@ -1,0 +1,9 @@
+mutation loginEmail($projectId: String! $email: String!, $password: String!) {
+  loginEmail(user: {
+    projectId: $projectId
+    email: $email
+    password: $password
+  }) {
+    accessToken
+  }
+}

@@ -1,0 +1,23 @@
+overwrite: true
+schema: https://test-auth.sail.codes/graphql
+documents: src/graphql/**/*.graphql
+generates:
+  src/graphql/graphql.ts:
+    plugins:
+      - add:
+          content: '/* Generated File DO NOT EDIT. */'
+      - add:
+          content: '/* tslint:disable */'
+      - typescript
+  src/graphql/:
+    documents: src/graphql/**/*.graphql
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: graphql.ts
+      extension: .ts
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+hooks:
+  afterAllFileWrite:
+    - npm run prettier:fix
