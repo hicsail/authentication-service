@@ -1,0 +1,7 @@
+version: '3'
+services:
+  auth-client:
+    image: hicsail/auth-client:unstable
+    restart: always
+    ports:
+      - 3002:80
