@@ -1,7 +1,16 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AccessToken } from './types/auth.types';
-import { EmailLoginDto, EmailLoginTransformPipe, ForgotDto, ForgotPasswordTransformPipe, ResetDto, ResetPasswordTransformPipe, UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
+import {
+  EmailLoginDto,
+  EmailLoginTransformPipe,
+  ForgotDto,
+  ForgotPasswordTransformPipe,
+  ResetDto,
+  ResetPasswordTransformPipe,
+  UsernameLoginDto,
+  UserSignupDto
+} from './dto/auth.dto';
 import { UsePipes } from '@nestjs/common';
 
 @Resolver()
