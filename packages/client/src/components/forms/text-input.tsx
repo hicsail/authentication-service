@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { FormControl, TextField, TextFieldProps } from '@mui/material';
+import { FormControl, TextField, TextFieldProps, Typography } from '@mui/material';
 import { useFormikContext } from 'formik';
 
 export type TextInputProps = TextFieldProps & {
@@ -16,7 +16,8 @@ export const TextInput: FC<TextInputProps> = (props) => {
         onBlur={handleBlur}
         value={values[props.name]}
         disabled={props.disabled || isSubmitting}
-        error={touched[props.name] && Boolean(errors[props.name])}
+        error={!!errors[props.name]}
+        helperText={(touched[props.name] && errors[props.name]) as string}
       />
     </FormControl>
   );

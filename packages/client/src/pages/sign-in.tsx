@@ -1,11 +1,11 @@
-import { Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '../components/forms/text-input';
 import { PasswordInput } from '../components/forms/password-input';
 import { SubmitButton } from '../components/forms/submit-button';
 import { useLoginEmailMutation } from '../graphql/auth/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProject } from '../context/project.context';
 
 const LoginValidation = Yup.object().shape({
@@ -14,13 +14,21 @@ const LoginValidation = Yup.object().shape({
 });
 
 export const SignIn = () => {
-  const [loginEmail, { data }] = useLoginEmailMutation();
+  const [loginEmail, { data, error }] = useLoginEmailMutation();
+  const [errorText, setErrorText] = useState('');
   const { project } = useProject();
+
   useEffect(() => {
     if (data && project) {
       window.location.replace(`${project.redirectUrl}?token=${data.loginEmail.accessToken}`);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      setErrorText('Invalid email or password');
+    }
+  }, [error]);
 
   return (
     <Container
@@ -43,14 +51,17 @@ export const SignIn = () => {
         <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
           {project?.name || 'Sign in'}
         </Typography>
+        {errorText && (
+          <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
+            {errorText}
+          </Alert>
+        )}
         <Formik
           validationSchema={LoginValidation}
           initialValues={{ email: '', password: '' }}
-          onSubmit={async ({ email, password }, form) => {
-            const { errors } = await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
-            if (errors) {
-              form.setSubmitting(false);
-            }
+          onSubmit={async ({ email, password }) => {
+            setErrorText('');
+            await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
           }}
         >
           <Form>
