@@ -1,7 +1,8 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AccessToken } from './types/auth.types';
-import { EmailLoginDto, ForgotDto, ResetDto, UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
+import { EmailLoginDto, EmailLoginTransformPipe, ForgotDto, ForgotPasswordTransformPipe, ResetDto, ResetPasswordTransformPipe, UsernameLoginDto, UserSignupDto } from './dto/auth.dto';
+import { UsePipes } from '@nestjs/common';
 
 @Resolver()
 export class AuthResolver {
@@ -15,6 +16,7 @@ export class AuthResolver {
 
   /** Login via email */
   @Mutation(() => AccessToken)
+  @UsePipes(new EmailLoginTransformPipe())
   async loginEmail(@Args('user') user: EmailLoginDto): Promise<AccessToken> {
     return this.authService.validateEmail(user.projectId, user.email, user.password);
   }
@@ -27,6 +29,7 @@ export class AuthResolver {
 
   /** Forgot password */
   @Mutation(() => Boolean)
+  @UsePipes(new ForgotPasswordTransformPipe())
   async forgotPassword(@Args('user') user: ForgotDto): Promise<boolean> {
     await this.authService.forgotPassword(user.projectId, user.email);
 
@@ -36,6 +39,7 @@ export class AuthResolver {
 
   /** Reset password */
   @Mutation(() => Boolean)
+  @UsePipes(new ResetPasswordTransformPipe())
   async resetPassword(@Args('user') user: ResetDto): Promise<boolean> {
     await this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
 
