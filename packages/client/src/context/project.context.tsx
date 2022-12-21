@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, ThemeProvider, createTheme, useTheme } from '@mui/material';
+import { Backdrop, CircularProgress, ThemeProvider, createTheme, useTheme, Alert } from '@mui/material';
 import React, { createContext, FC, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ProjectModel } from '../graphql/graphql';
@@ -20,7 +20,7 @@ export const ProjectProvider: FC<ProjectProviderProps> = ({ children, ...props }
   const theme = useTheme();
   const id = new URLSearchParams(search).get('projectId') || '';
   const redirectUrl = new URLSearchParams(search).get('redirectUrl') || '';
-  const { data } = useGetProjectQuery({
+  const { data, called, loading } = useGetProjectQuery({
     variables: {
       id
     },
@@ -39,7 +39,17 @@ export const ProjectProvider: FC<ProjectProviderProps> = ({ children, ...props }
   return (
     <ProjectContext.Provider value={{ project }} {...props}>
       <Backdrop open={!project} sx={{ backgroundColor: (theme) => theme.palette.background.default, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <CircularProgress color="primary" />
+        {loading && <CircularProgress color="primary" />}
+        {!loading && !project && id && (
+          <Alert severity="error" variant="outlined">
+            Invalid Project Id
+          </Alert>
+        )}
+        {!id && (
+          <Alert severity="error" variant="outlined">
+            Missing Project Id
+          </Alert>
+        )}
       </Backdrop>
       <ThemeProvider
         theme={createTheme({
