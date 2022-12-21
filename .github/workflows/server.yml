@@ -32,6 +32,11 @@ jobs:
         run: npm run build
       - name: Test
         run: npm run pretest && npm run test:cov && npm run posttest
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./packages/server/coverage/lcov.info
+          fail_ci_if_error: false
       - name: Verify Docker Image
         uses: docker/build-push-action@v3
         if: github.ref != 'refs/heads/main'
