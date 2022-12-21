@@ -28,14 +28,12 @@ export const SignIn = () => {
       maxWidth="sm"
       sx={{
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh'
+        justifyContent: 'center'
       }}
     >
       <Box
         sx={{
-          mb: 10,
+          mt: 10,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center'

@@ -21,12 +21,7 @@ export interface SettingsProviderProps {
 }
 
 export const SettingsProvider: FC<SettingsProviderProps> = (props) => {
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
-
-  useEffect(() => {
-    // Restore settings from local storage
-    setSettings(restoreSettings());
-  }, []);
+  const [settings, setSettings] = useState<Settings>(restoreSettings());
 
   useEffect(() => {
     // Save settings to local storage
