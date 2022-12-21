@@ -6,7 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 const prisma = new PrismaClient();
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: false });
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3001);
 }
