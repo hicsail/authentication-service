@@ -118,7 +118,7 @@ export class SignupTransformPipe implements PipeTransform {
 
     user.projectId = body.projectId.toString();
     user.username = body.username.toString();
-    user.email = body.email.toString();
+    user.email = body.email.toString().toLowerCase();
     user.password = body.password;
 
     return user;
@@ -142,8 +142,32 @@ export class EmailLoginTransformPipe implements PipeTransform {
     const user = new UserSignupDto();
 
     user.projectId = body.projectId.toString();
-    user.email = body.email;
+    user.email = body.email.toLowerCase();
     user.password = body.password;
+
+    return user;
+  }
+}
+
+export class ForgotPasswordTransformPipe implements PipeTransform {
+  transform(body: any): ForgotDto {
+    const user = new ForgotDto();
+
+    user.projectId = body.projectId.toString();
+    user.email = body.email.toLowerCase();
+
+    return user;
+  }
+}
+
+export class ResetPasswordTransformPipe implements PipeTransform {
+  transform(body: any): ResetDto {
+    const user = new ResetDto();
+
+    user.projectId = body.projectId.toString();
+    user.email = body.email.toLowerCase();
+    user.password = body.password;
+    user.code = body.code;
 
     return user;
   }

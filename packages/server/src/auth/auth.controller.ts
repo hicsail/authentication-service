@@ -1,7 +1,18 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UpdateStatus } from '../user/types/user.types';
 import { AuthService } from './auth.service';
-import { UsernameLoginTransformPipe, EmailLoginTransformPipe, SignupTransformPipe, UserSignupDto, EmailLoginDto, UsernameLoginDto, ForgotDto, ResetDto } from './dto/auth.dto';
+import {
+  UsernameLoginTransformPipe,
+  EmailLoginTransformPipe,
+  SignupTransformPipe,
+  UserSignupDto,
+  EmailLoginDto,
+  UsernameLoginDto,
+  ForgotDto,
+  ResetDto,
+  ResetPasswordTransformPipe,
+  ForgotPasswordTransformPipe
+} from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
 
 @Controller('login')
@@ -37,11 +48,13 @@ export class RecoveryController {
   constructor(private authService: AuthService) {}
 
   @Post('forgot')
+  @UsePipes(new ForgotPasswordTransformPipe())
   async forgotPassword(@Body() user: ForgotDto): Promise<void> {
     return this.authService.forgotPassword(user.projectId, user.email);
   }
 
   @Post('reset')
+  @UsePipes(new ResetPasswordTransformPipe())
   async resetPassword(@Body() user: ResetDto): Promise<UpdateStatus> {
     return this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
   }
