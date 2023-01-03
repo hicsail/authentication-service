@@ -7,6 +7,7 @@ import { SubmitButton } from '../components/forms/submit-button';
 import { useLoginEmailMutation } from '../graphql/auth/auth';
 import { useEffect, useState } from 'react';
 import { useProject } from '../context/project.context';
+import { useNavigate } from 'react-router-dom';
 
 const LoginValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -17,6 +18,7 @@ export const SignIn = () => {
   const [loginEmail, { data, error }] = useLoginEmailMutation();
   const [errorText, setErrorText] = useState('');
   const { project } = useProject();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data && project) {
@@ -57,6 +59,8 @@ export const SignIn = () => {
           </Alert>
         )}
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           validationSchema={LoginValidation}
           initialValues={{ email: '', password: '' }}
           onSubmit={async ({ email, password }) => {
@@ -70,20 +74,28 @@ export const SignIn = () => {
             <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
               Sign In
             </SubmitButton>
-            <Grid container>
-              <Grid item xs>
-                <Button>
-                  <Typography variant="body2">Forgot password?</Typography>
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button>
-                  <Typography variant="body2">Don't have an account? Sign up</Typography>
-                </Button>
-              </Grid>
-            </Grid>
           </Form>
         </Formik>
+        <Grid container>
+          <Grid item xs>
+            <Button
+              onClick={() => {
+                navigate('/forgot-password');
+              }}
+            >
+              <Typography variant="body2">Forgot password?</Typography>
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => {
+                navigate('/sign-up');
+              }}
+            >
+              <Typography variant="body2">Don't have an account? Sign up</Typography>
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
     </Container>
   );

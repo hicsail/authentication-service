@@ -4,11 +4,11 @@ import * as Yup from 'yup';
 import { TextInput } from '../components/forms/text-input';
 import { PasswordInput } from '../components/forms/password-input';
 import { SubmitButton } from '../components/forms/submit-button';
-import { useLoginEmailMutation } from '../graphql/auth/auth';
 import { useSignUpEmailMutation } from '../graphql/auth/auth';
 
 import { useEffect, useState } from 'react';
 import { useProject } from '../context/project.context';
+import { useNavigate } from 'react-router-dom';
 
 const LoginValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -17,21 +17,27 @@ const LoginValidation = Yup.object().shape({
 });
 
 export const SignUp = () => {
-  //   const [loginEmail, { data, error }] = useLoginEmailMutation();
   const [signUpEmail, { data, error }] = useSignUpEmailMutation();
 
   const [errorText, setErrorText] = useState('');
   const { project } = useProject();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data && project) {
-      window.location.replace(`${project.redirectUrl}?token=${data.signup.accessToken}`);
+      window.location.replace(`${project.redirectUrl}?projectId=${project.id}&token=${data.signup.accessToken}`);
     }
   }, [data]);
 
   useEffect(() => {
     if (error) {
-      setErrorText('Invalid email or password');
+      if (error.message.includes('User already exist in the database')) {
+        setErrorText('User already exist in the database');
+      } else if (error.message.includes('status code 500')) {
+        setErrorText('Server error. Try again later.');
+      } else {
+        setErrorText('Invalid email or password');
+      }
     }
   }, [error]);
 
@@ -62,11 +68,12 @@ export const SignUp = () => {
           </Alert>
         )}
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           validationSchema={LoginValidation}
           initialValues={{ email: '', username: '', password: '' }}
           onSubmit={async ({ email, username, password }) => {
             setErrorText('');
-            // await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
             await signUpEmail({ variables: { email, username, password, projectId: project?.id || '' } });
           }}
         >
@@ -78,15 +85,19 @@ export const SignUp = () => {
             <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
               Sign Up
             </SubmitButton>
-            <Grid container>
-              <Grid item>
-                <Button>
-                  <Typography variant="body2">Already have an account? Sign in</Typography>
-                </Button>
-              </Grid>
-            </Grid>
           </Form>
         </Formik>
+        <Grid container>
+          <Grid item>
+            <Button
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              <Typography variant="body2">Already have an account? Sign in</Typography>
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
     </Container>
   );
