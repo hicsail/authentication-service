@@ -6,6 +6,7 @@ import { SignIn } from './pages/sign-in';
 import { GraphqlProvider } from './graphql/graphql-provider';
 import { ProjectProvider } from './context/project.context';
 import { Layout } from './layouts/layout';
+import { SignUp } from './pages/sign-up';
 
 export const App: FC = () => (
   <GraphqlProvider>
@@ -16,6 +17,7 @@ export const App: FC = () => (
             <Layout>
               <Routes>
                 <Route path="/" element={<SignIn />} />
+                <Route path="/sign-up" element={<SignUp />} />
               </Routes>
             </Layout>
           </ProjectProvider>

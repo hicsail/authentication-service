@@ -1,9 +1,11 @@
-mutation loginEmail($projectId: String! $email: String!, $password: String!) {
-  loginEmail(user: {
-    projectId: $projectId
-    email: $email
-    password: $password
-  }) {
+mutation loginEmail($projectId: String!, $email: String!, $password: String!) {
+  loginEmail(user: { projectId: $projectId, email: $email, password: $password }) {
+    accessToken
+  }
+}
+
+mutation signUpEmail($projectId: String!, $email: String!, $username: String!, $password: String!) {
+  signup(user: { projectId: $projectId, email: $email, username: $username, password: $password }) {
     accessToken
   }
 }
