@@ -9,7 +9,10 @@ export type GetProjectQueryVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
-export type GetProjectQuery = { __typename?: 'Query'; getProject: { __typename?: 'ProjectModel'; id: string; name: string; logo: string; muiTheme: any; redirectUrl: string } };
+export type GetProjectQuery = {
+  __typename?: 'Query';
+  getProject: { __typename?: 'ProjectModel'; id: string; name: string; logo?: string | null; muiTheme: any; redirectUrl?: string | null };
+};
 
 export const GetProjectDocument = gql`
   query getProject($id: String!) {

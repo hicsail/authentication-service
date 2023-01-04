@@ -93,14 +93,14 @@ export type ProjectCreateInput = {
 export type ProjectModel = {
   __typename?: 'ProjectModel';
   createdAt: Scalars['DateTime'];
-  deletedAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  homePage: Scalars['String'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  homePage?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  logo: Scalars['String'];
+  logo?: Maybe<Scalars['String']>;
   muiTheme: Scalars['JSON'];
   name: Scalars['String'];
-  redirectUrl: Scalars['String'];
+  redirectUrl?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 

@@ -1,4 +1,3 @@
-import { Project } from '@prisma/client';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
 
@@ -8,27 +7,27 @@ import JSON from 'graphql-type-json';
  * but does need to be updated if the database schema changes.
  */
 @ObjectType()
-export class ProjectModel implements Project {
+export class ProjectModel {
   @Field(() => ID)
   id: string;
 
   @Field()
   name: string;
 
-  @Field()
-  description: string;
+  @Field({ nullable: true })
+  description?: string;
 
-  @Field()
-  logo: string | null;
+  @Field({ nullable: true })
+  logo?: string;
 
   @Field(() => JSON)
   muiTheme: any;
 
-  @Field()
-  homePage: string;
+  @Field({ nullable: true })
+  homePage?: string;
 
-  @Field()
-  redirectUrl: string;
+  @Field({ nullable: true })
+  redirectUrl?: string;
 
   @Field()
   createdAt: Date;
@@ -36,6 +35,6 @@ export class ProjectModel implements Project {
   @Field()
   updatedAt: Date;
 
-  @Field()
-  deletedAt: Date | null;
+  @Field({ nullable: true })
+  deletedAt?: Date;
 }
