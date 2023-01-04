@@ -28,7 +28,8 @@
     "docker:db": "docker-compose -f docker-compose.db.yml up -d",
     "docker:test": "docker-compose -f docker-compose.test.yml up -d",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate deploy"
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@golevelup/ts-jest": "^0.3.4",
