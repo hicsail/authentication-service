@@ -4,31 +4,40 @@ import * as Yup from 'yup';
 import { TextInput } from '../components/forms/text-input';
 import { PasswordInput } from '../components/forms/password-input';
 import { SubmitButton } from '../components/forms/submit-button';
-import { useLoginEmailMutation } from '../graphql/auth/auth';
+import { useSignUpEmailMutation } from '../graphql/auth/auth';
+
 import { useEffect, useState } from 'react';
 import { useProject } from '../context/project.context';
 import { useNavigate } from 'react-router-dom';
 
-const LoginValidation = Yup.object().shape({
+const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
+  username: Yup.string().required('Required'),
   password: Yup.string().required('Required')
 });
 
-export const SignIn = () => {
-  const [loginEmail, { data, error }] = useLoginEmailMutation();
+export const SignUp = () => {
+  const [signUpEmail, { data, error }] = useSignUpEmailMutation();
+
   const [errorText, setErrorText] = useState('');
   const { project } = useProject();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (data && project) {
-      window.location.replace(`${project.redirectUrl}?token=${data.loginEmail.accessToken}`);
+      window.location.replace(`${project.redirectUrl}?projectId=${project.id}&token=${data.signup.accessToken}`);
     }
   }, [data]);
 
   useEffect(() => {
     if (error) {
-      setErrorText('Invalid email or password');
+      if (error.message.includes('User already exist in the database')) {
+        setErrorText('User already exist in the database');
+      } else if (error.message.includes('status code 500')) {
+        setErrorText('Server error. Try again later.');
+      } else {
+        setErrorText('Invalid email or password');
+      }
     }
   }, [error]);
 
@@ -51,7 +60,7 @@ export const SignIn = () => {
       >
         {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
         <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          {project?.name || 'Sign in'}
+          {project?.name || 'Sign up'}
         </Typography>
         {errorText && (
           <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
@@ -61,38 +70,31 @@ export const SignIn = () => {
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
-          validationSchema={LoginValidation}
-          initialValues={{ email: '', password: '' }}
-          onSubmit={async ({ email, password }) => {
+          validationSchema={SignUpValidation}
+          initialValues={{ email: '', username: '', password: '' }}
+          onSubmit={async ({ email, username, password }) => {
             setErrorText('');
-            await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
+            await signUpEmail({ variables: { email, username, password, projectId: project?.id || '' } });
           }}
         >
           <Form>
             <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
+            <TextInput autoFocus fullWidth name="username" label="username" margin="normal" required />
+
             <PasswordInput name="password" label="Password" fullWidth autoComplete="current-password" required margin="normal" />
             <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
-              Sign In
+              Sign Up
             </SubmitButton>
           </Form>
         </Formik>
         <Grid container>
-          <Grid item xs>
-            <Button
-              onClick={() => {
-                navigate('/forgot-password');
-              }}
-            >
-              <Typography variant="body2">Forgot password?</Typography>
-            </Button>
-          </Grid>
           <Grid item>
             <Button
               onClick={() => {
-                navigate('/sign-up');
+                navigate('/');
               }}
             >
-              <Typography variant="body2">Don't have an account? Sign up</Typography>
+              <Typography variant="body2">Already have an account? Sign in</Typography>
             </Button>
           </Grid>
         </Grid>
