@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { useProject } from '../context/project.context';
 import { useNavigate } from 'react-router-dom';
 
-const LoginValidation = Yup.object().shape({
+const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
   username: Yup.string().required('Required'),
   password: Yup.string().required('Required')
@@ -70,7 +70,7 @@ export const SignUp = () => {
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
-          validationSchema={LoginValidation}
+          validationSchema={SignUpValidation}
           initialValues={{ email: '', username: '', password: '' }}
           onSubmit={async ({ email, username, password }) => {
             setErrorText('');

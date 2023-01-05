@@ -21,10 +21,6 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('data returned', data);
-  }, [data]);
-
-  useEffect(() => {
     if (error) {
       if (error.message.includes('status code 500')) {
         setErrorText('Server error. Try again later.');
