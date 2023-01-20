@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
-  username: Yup.string().required('Required'),
+  username: Yup.string(),
   password: Yup.string().required('Required')
 });
 

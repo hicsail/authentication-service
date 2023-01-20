@@ -16,6 +16,7 @@ export type LoginEmailMutation = { __typename?: 'Mutation'; loginEmail: { __type
 export type SignUpEmailMutationVariables = Types.Exact<{
   projectId: Types.Scalars['String'];
   email: Types.Scalars['String'];
+  username?: Types.InputMaybe<Types.Scalars['String']>;
   password: Types.Scalars['String'];
 }>;
 
@@ -73,8 +74,8 @@ export type LoginEmailMutationHookResult = ReturnType<typeof useLoginEmailMutati
 export type LoginEmailMutationResult = Apollo.MutationResult<LoginEmailMutation>;
 export type LoginEmailMutationOptions = Apollo.BaseMutationOptions<LoginEmailMutation, LoginEmailMutationVariables>;
 export const SignUpEmailDocument = gql`
-  mutation signUpEmail($projectId: String!, $email: String!, $password: String!) {
-    signup(user: { projectId: $projectId, email: $email, password: $password }) {
+  mutation signUpEmail($projectId: String!, $email: String!, $username: String, $password: String!) {
+    signup(user: { projectId: $projectId, email: $email, username: $username, password: $password }) {
       accessToken
     }
   }
@@ -96,6 +97,7 @@ export type SignUpEmailMutationFn = Apollo.MutationFunction<SignUpEmailMutation,
  *   variables: {
  *      projectId: // value for 'projectId'
  *      email: // value for 'email'
+ *      username: // value for 'username'
  *      password: // value for 'password'
  *   },
  * });
