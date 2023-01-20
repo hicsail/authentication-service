@@ -4,8 +4,8 @@ mutation loginEmail($projectId: String!, $email: String!, $password: String!) {
   }
 }
 
-mutation signUpEmail($projectId: String!, $email: String!, $username: String!, $password: String!) {
-  signup(user: { projectId: $projectId, email: $email, username: $username, password: $password }) {
+mutation signUpEmail($projectId: String!, $email: String!, $password: String!) {
+  signup(user: { projectId: $projectId, email: $email, password: $password }) {
     accessToken
   }
 }

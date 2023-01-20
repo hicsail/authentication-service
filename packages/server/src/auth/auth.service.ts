@@ -20,16 +20,18 @@ export class AuthService {
    * @param password
    * @returns JWT or 401 status code
    */
-  async validateUsername(projectId: string, username: string, password: string): Promise<any> {
-    if (projectId == null || username == null || password == null) {
+  async validateUsername(projectId: string, password: string, username?: string): Promise<any> {
+    if (projectId == null || password == null) {
       throw new HttpException('Bad request: project id, email and password all required.', HttpStatus.BAD_REQUEST);
     }
 
-    const user = await this.userService.findUserByUsername(projectId, username);
+    if (username) {
+      const user = await this.userService.findUserByUsername(projectId, username);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { id: user.id, projectId: user.projectId, role: user.role };
-      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      if (user && (await bcrypt.compare(password, user.password))) {
+        const payload = { id: user.id, projectId: user.projectId, role: user.role };
+        return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      }
     }
 
     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);

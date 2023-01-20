@@ -125,7 +125,6 @@ export type UserSignupDto = {
   email: Scalars['String'];
   password: Scalars['String'];
   projectId: Scalars['String'];
-  username: Scalars['String'];
 };
 
 export type UsernameLoginDto = {
