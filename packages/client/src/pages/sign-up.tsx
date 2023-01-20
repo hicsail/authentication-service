@@ -74,10 +74,6 @@ export const SignUp = () => {
           initialValues={{ email: '', username: undefined, password: '' }}
           onSubmit={async ({ email, username, password }) => {
             setErrorText('');
-            // var signUpDetails = { email, password, projectId: project?.id || ''}
-            // if(username){
-            //     signUpDetails = {... signUpDetails ,username}
-            // }
             await signUpEmail({ variables: { email, password, username, projectId: project?.id || '' } });
           }}
         >
