@@ -116,8 +116,8 @@ export class SignupTransformPipe implements PipeTransform {
     const user = new UserSignupDto();
 
     user.projectId = body.projectId.toString();
-    user.username = body.username.toString();
-    user.email = body.email.toString().toLowerCase();
+    user.username = body.username?.toString();
+    user.email = body.email?.toString().toLowerCase();
     user.password = body.password;
 
     return user;

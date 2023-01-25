@@ -2,10 +2,10 @@ import { ObjectType, Field } from '@nestjs/graphql';
 
 export type UserSignup = {
   projectId: string;
-  username: string;
-  email: string;
   method: string;
   password: string;
+  email?: string;
+  username?: string;
 };
 
 export type UsernameLogin = {

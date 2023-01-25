@@ -8,6 +8,7 @@ import {
   ForgotPasswordTransformPipe,
   ResetDto,
   ResetPasswordTransformPipe,
+  SignupTransformPipe,
   UsernameLoginDto,
   UserSignupDto
 } from './dto/auth.dto';
@@ -32,6 +33,7 @@ export class AuthResolver {
 
   /** Signup logic */
   @Mutation(() => AccessToken)
+  @UsePipes(new SignupTransformPipe())
   async signup(@Args('user') user: UserSignupDto): Promise<AccessToken> {
     return this.authService.signup(user);
   }
