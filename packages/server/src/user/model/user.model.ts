@@ -21,9 +21,6 @@ export class UserModel {
   email?: string;
 
   @Field()
-  password: string;
-
-  @Field()
   role: number;
 
   @Field()
@@ -34,9 +31,6 @@ export class UserModel {
 
   @Field({ nullable: true })
   deletedAt: Date;
-
-  @Field({ nullable: true })
-  resetCode: string;
 
   @Field({ nullable: true })
   resetCodeExpiresAt: Date;
