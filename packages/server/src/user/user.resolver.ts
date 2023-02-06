@@ -7,7 +7,7 @@ import { User } from '@prisma/client';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => UserModel)
+  @Query(() => [UserModel])
   async users(@Args('projectId', { type: () => ID }) projectId: string): Promise<UserModel[]> {
     return this.userService.findAllUsers();
   }
