@@ -1,5 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
-import JSON from 'graphql-type-json';
+import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 
 /**
  * This is a model which adds the needed annotations to the Prisma Project
@@ -20,7 +19,7 @@ export class UserModel {
   @Field({ nullable: true })
   email?: string;
 
-  @Field()
+  @Field(() => Int)
   role: number;
 
   @Field()
