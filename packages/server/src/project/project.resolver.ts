@@ -2,6 +2,7 @@ import { Mutation, Args, Resolver, Query } from '@nestjs/graphql';
 import { ConfigurableProjectSettings, ProjectCreateInput } from './dto/project.dto';
 import { ProjectService } from './project.service';
 import { ProjectModel } from './model/project.model';
+import { UserModel } from '../user/model/user.model';
 
 @Resolver()
 export class ProjectResolver {
@@ -25,5 +26,10 @@ export class ProjectResolver {
   @Mutation(() => ProjectModel)
   updateProject(@Args('id') id: string, @Args('settings') settings: ConfigurableProjectSettings): Promise<ProjectModel> {
     return this.projectService.updateProject(id, settings);
+  }
+
+  @Query(() => [UserModel])
+  projectUsers(@Args('projectId') projectId: string): Promise<UserModel[]> {
+    return this.projectService.getProjectUsers(projectId);
   }
 }
