@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Project } from '@prisma/client';
+import { Prisma, Project, User } from '@prisma/client';
 import { ConfigurableProjectSettings, ProjectIdentifier } from './dto/project.dto';
 
 @Injectable()
@@ -99,5 +99,24 @@ export class ProjectService {
       }
     });
     return projectCount > 0;
+  }
+  /**
+   * For a given project return a list of users
+   *
+   * @param projectId The project id to check
+   * @returns A list of users belonging to the given project
+   * @throws Will throw a NotFoundException error if the project does not exist
+   */
+  async getProjectUsers(projectId: string): Promise<User[]> {
+    const projectExists = await this.exists(projectId);
+    if (!projectExists) {
+      throw new NotFoundException();
+    }
+
+    return this.prisma.user.findMany({
+      where: {
+        projectId: projectId
+      }
+    });
   }
 }
