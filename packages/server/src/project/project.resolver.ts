@@ -1,10 +1,10 @@
-import { Mutation, Args, Resolver, Query } from '@nestjs/graphql';
+import { Mutation, Args, Resolver, Query, ResolveField, Parent } from '@nestjs/graphql';
 import { ConfigurableProjectSettings, ProjectCreateInput } from './dto/project.dto';
 import { ProjectService } from './project.service';
 import { ProjectModel } from './model/project.model';
 import { UserModel } from '../user/model/user.model';
 
-@Resolver()
+@Resolver(() => ProjectModel)
 export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}
 
@@ -31,5 +31,11 @@ export class ProjectResolver {
   @Query(() => [UserModel])
   projectUsers(@Args('projectId') projectId: string): Promise<UserModel[]> {
     return this.projectService.getProjectUsers(projectId);
+  }
+
+  @ResolveField(() => [UserModel])
+  async users(@Parent() project: ProjectModel) {
+    const { id } = project;
+    return this.projectService.getProjectUsers(id);
   }
 }
