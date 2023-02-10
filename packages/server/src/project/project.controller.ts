@@ -30,7 +30,6 @@ export class ProjectController {
 
   @Get(':id/users')
   projectUsers(@Param('id') id: string): Promise<UserModel[]> {
-    // return this.projectService.getProjectUsers(id);
     return this.projectService.getProjectUsers(id);
   }
 }
