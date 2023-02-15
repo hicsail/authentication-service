@@ -5,12 +5,13 @@ import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
-import { AccessToken } from './types/auth.types';
+import { AccessToken, PublicKey } from './types/auth.types';
 import { UpdateStatus } from '../user/types/user.types';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService) {}
+  constructor(private userService: UserService, private jwtService: JwtService, private configService: ConfigService) {}
 
   /**
    * Validate login using username.
@@ -139,5 +140,14 @@ export class AuthService {
     } catch (err) {
       return err;
     }
+  }
+
+  /**
+   * Get Public Key
+   *
+   * @returns Public Key
+   */
+  publicKey(): string {
+    return this.configService.get('PUBLIC_KEY');
   }
 }

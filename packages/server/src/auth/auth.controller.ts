@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UpdateStatus } from '../user/types/user.types';
 import { AuthService } from './auth.service';
 import {
@@ -13,7 +13,7 @@ import {
   ResetPasswordTransformPipe,
   ForgotPasswordTransformPipe
 } from './dto/auth.dto';
-import { AccessToken } from './types/auth.types';
+import { AccessToken, PublicKey } from './types/auth.types';
 
 @Controller('login')
 export class LoginController {
@@ -57,5 +57,15 @@ export class RecoveryController {
   @UsePipes(new ResetPasswordTransformPipe())
   async resetPassword(@Body() user: ResetDto): Promise<UpdateStatus> {
     return this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
+  }
+}
+
+@Controller('public-key')
+export class PublicKeyController {
+  constructor(private authService: AuthService) {}
+
+  @Get()
+  publicKey(): string {
+    return this.authService.publicKey();
   }
 }

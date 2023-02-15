@@ -1,6 +1,6 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { AccessToken } from './types/auth.types';
+import { AccessToken, PublicKey } from './types/auth.types';
 import {
   EmailLoginDto,
   EmailLoginTransformPipe,
@@ -13,6 +13,9 @@ import {
   UserSignupDto
 } from './dto/auth.dto';
 import { UsePipes } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: `${__dirname}/../../.env` });
 
 @Resolver()
 export class AuthResolver {
@@ -56,5 +59,11 @@ export class AuthResolver {
 
     // GraphQL needs something to return
     return true;
+  }
+
+  /** Return Public Key */
+  @Query(() => String)
+  publicKey(): string {
+    return this.authService.publicKey();
   }
 }

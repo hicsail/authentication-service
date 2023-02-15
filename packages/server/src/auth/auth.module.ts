@@ -7,6 +7,7 @@ import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { JwtStrategy } from './jwt.strategy';
     JwtModule.register({
       secret: process.env.SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRATION }
-    })
+    }),
+    ConfigService
   ],
   controllers: [LoginController, SignupController, RecoveryController],
   providers: [AuthResolver, AuthService, PrismaService, JwtStrategy],
