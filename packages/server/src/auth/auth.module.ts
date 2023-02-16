@@ -5,19 +5,32 @@ import { AuthResolver } from './auth.resolver';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
-    JwtModule.register({
-      secret: process.env.SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRATION }
-    }),
-    ConfigModule.forRoot()
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const options: JwtModuleOptions = {
+          privateKey: configService.get('PRIVATE_KEY'),
+          publicKey: configService.get('PUBLIC_KEY_1'),
+          signOptions: {
+            expiresIn: configService.get('JWT_EXPIRATION'),
+            issuer: 'Microservices',
+            algorithm: 'RS256'
+          }
+        };
+        return options;
+      },
+      inject: [ConfigService]
+    })
   ],
   controllers: [LoginController, SignupController, RecoveryController],
   providers: [AuthResolver, AuthService, PrismaService, JwtStrategy],
