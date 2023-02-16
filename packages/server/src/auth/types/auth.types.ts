@@ -26,12 +26,6 @@ export class AccessToken {
   accessToken: string;
 }
 
-@ObjectType()
-export class PublicKey {
-  @Field()
-  publicKey: string;
-}
-
 export type ValidatedUser = {
   id: string;
   projectId: string;

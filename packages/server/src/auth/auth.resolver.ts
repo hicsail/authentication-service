@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { AccessToken, PublicKey } from './types/auth.types';
+import { AccessToken } from './types/auth.types';
 import {
   EmailLoginDto,
   EmailLoginTransformPipe,
@@ -62,8 +62,8 @@ export class AuthResolver {
   }
 
   /** Return Public Key */
-  @Query(() => String)
-  publicKey(): string {
+  @Query(() => [String])
+  publicKey(): string[] {
     return this.authService.publicKey();
   }
 }

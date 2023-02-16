@@ -13,7 +13,7 @@ import {
   ResetPasswordTransformPipe,
   ForgotPasswordTransformPipe
 } from './dto/auth.dto';
-import { AccessToken, PublicKey } from './types/auth.types';
+import { AccessToken } from './types/auth.types';
 
 @Controller('login')
 export class LoginController {
@@ -65,7 +65,7 @@ export class PublicKeyController {
   constructor(private authService: AuthService) {}
 
   @Get()
-  publicKey(): string {
+  publicKey(): string[] {
     return this.authService.publicKey();
   }
 }

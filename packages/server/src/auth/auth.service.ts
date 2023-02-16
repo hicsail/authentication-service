@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
 import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
-import { AccessToken, PublicKey } from './types/auth.types';
+import { AccessToken } from './types/auth.types';
 import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 
@@ -143,11 +143,14 @@ export class AuthService {
   }
 
   /**
-   * Get Public Key
+   * Get Public Keys
    *
-   * @returns Public Key
+   * @returns List of Public Keys
    */
-  publicKey(): string {
-    return this.configService.get('PUBLIC_KEY');
+  publicKey(): string[] {
+    const publicKeys: string[] = [];
+    publicKeys.push(this.configService.get('PUBLIC_KEY_1'));
+    publicKeys.push(this.configService.get('PUBLIC_KEY_2'));
+    return publicKeys;
   }
 }
