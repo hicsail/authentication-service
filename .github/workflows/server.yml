@@ -1,6 +1,8 @@
 name: server
 on:
   push:
+    paths:
+      - 'packages/server/**'
     branches:
       - main
   pull_request:

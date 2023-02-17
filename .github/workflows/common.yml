@@ -1,6 +1,8 @@
 name: common
 on:
   push:
+    paths:
+      - 'packages/common/**'
     branches:
       - main
   pull_request:
