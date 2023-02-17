@@ -1,5 +1,6 @@
 import { Controller, Post, Get, Body, Param, Put } from '@nestjs/common';
-import { Project } from '@prisma/client';
+import { Project, User } from '@prisma/client';
+import { UserModel } from 'src/user/model/user.model';
 import { ProjectIdentifier, ConfigurableProjectSettings, ProjectCreateInput } from './dto/project.dto';
 import { ProjectService } from './project.service';
 
@@ -25,5 +26,10 @@ export class ProjectController {
   @Put(':id')
   updateProject(@Param('id') id: string, @Body() settings: ConfigurableProjectSettings): Promise<Project> {
     return this.projectService.updateProject(id, settings);
+  }
+
+  @Get(':id/users')
+  projectUsers(@Param('id') id: string): Promise<UserModel[]> {
+    return this.projectService.getProjectUsers(id);
   }
 }
