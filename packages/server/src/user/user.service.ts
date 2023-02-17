@@ -24,7 +24,7 @@ export class UserService {
       where: {
         AND: {
           projectId: newUser.projectId,
-          OR: [{ username: newUser.username }, { email: newUser.email }]
+          OR: [newUser.username && { username: newUser.username }, { email: newUser.email }]
         }
       }
     });

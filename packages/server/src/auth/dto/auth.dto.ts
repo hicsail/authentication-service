@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDefined, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsDefined, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PipeTransform } from '@nestjs/common';
 import { UserSignup } from '../types/auth.types';
 import { InputType, Field } from '@nestjs/graphql';
@@ -14,11 +14,6 @@ export class UserSignupDto {
   projectId: string;
 
   @IsDefined()
-  @IsString()
-  @Field()
-  username: string;
-
-  @IsDefined()
   @IsEmail()
   @Field()
   email: string;
@@ -28,6 +23,11 @@ export class UserSignupDto {
   @IsString()
   @Field()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  username?: string;
 }
 
 @InputType()
@@ -39,7 +39,6 @@ export class UsernameLoginDto {
   @Field()
   projectId: string;
 
-  @IsDefined()
   @IsNotEmpty()
   @IsString()
   @Field()
@@ -117,8 +116,8 @@ export class SignupTransformPipe implements PipeTransform {
     const user = new UserSignupDto();
 
     user.projectId = body.projectId.toString();
-    user.username = body.username.toString();
-    user.email = body.email.toString().toLowerCase();
+    user.username = body.username?.toString();
+    user.email = body.email?.toString().toLowerCase();
     user.password = body.password;
 
     return user;
@@ -127,7 +126,7 @@ export class SignupTransformPipe implements PipeTransform {
 
 export class UsernameLoginTransformPipe implements PipeTransform {
   transform(body: any): UsernameLoginDto {
-    const user = new UserSignupDto();
+    const user = new UsernameLoginDto();
 
     user.projectId = body.projectId.toString();
     user.username = body.username;

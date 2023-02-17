@@ -1,9 +1,19 @@
-mutation loginEmail($projectId: String! $email: String!, $password: String!) {
-  loginEmail(user: {
-    projectId: $projectId
-    email: $email
-    password: $password
-  }) {
+mutation loginEmail($projectId: String!, $email: String!, $password: String!) {
+  loginEmail(user: { projectId: $projectId, email: $email, password: $password }) {
     accessToken
   }
+}
+
+mutation signUpEmail($projectId: String!, $email: String!, $password: String!, $username: String) {
+  signup(user: { projectId: $projectId, email: $email, password: $password, username: $username }) {
+    accessToken
+  }
+}
+
+mutation forgotPassword($projectId: String!, $email: String!) {
+  forgotPassword(user: { projectId: $projectId, email: $email })
+}
+
+mutation resetPassword($projectId: String!, $email: String!, $code: String!, $password: String!) {
+  resetPassword(user: { projectId: $projectId, email: $email, code: $code, password: $password })
 }
