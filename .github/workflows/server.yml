@@ -50,7 +50,7 @@ jobs:
       - name: Build & Push Docker Build
         uses: docker/build-push-action@v4
         with:
-          context: ./packages/client-admin
+          context: ./packages/server
           push: ${{ github.event_name != 'pull_request' }}
           tags: hicsail/auth:unstable
       - name: Push to Staging
