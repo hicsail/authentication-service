@@ -1,5 +1,6 @@
 name: common
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'packages/common/**'
