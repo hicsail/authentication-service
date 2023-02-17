@@ -1,4 +1,4 @@
-name: client
+name: admin-client
 on:
   push:
     branches:
@@ -37,9 +37,9 @@ jobs:
       - name: Build & Push Docker Build
         uses: docker/build-push-action@v4
         with:
-          context: ./packages/client
+          context: ./packages/client-admin
           push: ${{ github.event_name != 'pull_request' }}
-          tags: hicsail/auth-client:unstable
+          tags: hicsail/auth-admin-client:unstable
       - name: Push to Staging
         uses: fjogeleit/http-request-action@v1
         if: github.ref == 'refs/heads/main'
