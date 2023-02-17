@@ -4,9 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "prettier": "prettier -l \"src/**/*.ts(x)\"",
+    "prettier:fix": "prettier -wl \"src/**/*.ts(x)\"",
+    "start:dev": "vite",
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "introspection": "graphql-codegen --config graphql-codegen.yml"
   },
   "dependencies": {
     "react": "^18.2.0",

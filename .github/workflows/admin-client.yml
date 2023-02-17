@@ -1,9 +1,13 @@
 name: admin-client
 on:
   push:
+    paths:
+      - 'packages/client-admin/**'
     branches:
       - main
   pull_request:
+    paths:
+      - 'packages/client-admin/**'
     branches:
       - main
 
