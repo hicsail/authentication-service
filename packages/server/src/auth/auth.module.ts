@@ -7,11 +7,13 @@ import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { ProjectModule } from '../project/project.module';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
+    ProjectModule,
     JwtModule.register({
       secret: process.env.SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRATION }
