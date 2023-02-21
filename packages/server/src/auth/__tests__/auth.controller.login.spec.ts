@@ -7,6 +7,7 @@ import { AuthService } from '../auth.service';
 import { EmailLoginDto, UsernameLoginDto } from '../dto/auth.dto';
 import { JwtAuthGuard } from '../jwt-auth.guard';
 import { UserTestUtil } from '../../user/__tests__/utils/user.test.util';
+import { ProjectService } from '../../project/project.service';
 
 describe('LoginController', () => {
   let jwtAuthGuard: JwtAuthGuard;
@@ -33,6 +34,7 @@ describe('LoginController', () => {
   let loginController: LoginController;
   let authService: AuthService;
   let userService: UserService;
+  let projectService: ProjectService;
   let prismaService: PrismaService;
   let jwtService: JwtService;
 
@@ -45,7 +47,8 @@ describe('LoginController', () => {
       prismaService = moduleRef.get(PrismaService);
       jwtService = moduleRef.get(JwtService);
       userService = new UserService(prismaService);
-      authService = new AuthService(userService, jwtService);
+      projectService = new ProjectService(prismaService);
+      authService = new AuthService(userService, jwtService, projectService);
       loginController = new LoginController(authService);
 
       dummyProjects = await userTestUtil.createDummyProjects();

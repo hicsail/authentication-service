@@ -6,6 +6,7 @@ import { UserTestUtil } from '../../user/__tests__/utils/user.test.util';
 import { UserService } from '../../user/user.service';
 import { AuthService } from '../auth.service';
 import { ResetDto } from '../dto/auth.dto';
+import { ProjectService } from '../../project/project.service';
 
 describe('RecoveryController', () => {
   let userTestUtil: UserTestUtil;
@@ -20,6 +21,7 @@ describe('RecoveryController', () => {
   let recoveryController: RecoveryController;
   let prismaService: PrismaService;
   let userService: UserService;
+  let projectService: ProjectService;
   let authService: AuthService;
   let jwtService: JwtService;
 
@@ -31,7 +33,8 @@ describe('RecoveryController', () => {
     prismaService = moduleRef.get(PrismaService);
     jwtService = moduleRef.get(JwtService);
     userService = new UserService(prismaService);
-    authService = new AuthService(userService, jwtService);
+    projectService = new ProjectService(prismaService);
+    authService = new AuthService(userService, jwtService, projectService);
     recoveryController = new RecoveryController(authService);
 
     dummyProjects = await userTestUtil.createDummyProjects();
