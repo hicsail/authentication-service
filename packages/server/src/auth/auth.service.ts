@@ -70,14 +70,14 @@ export class AuthService {
     }
 
     const resetCodePlain = randomstring.generate(10);
-    const link = `${process.env.BASE_URL}/reset?code=${resetCodePlain}`;
-    const project = await this.projectService.getProject(projectId);
     const wasSet = await this.userService.setResetToken(projectId, email, resetCodePlain);
 
     if (!wasSet) {
       return;
     }
 
+    const link = `${process.env.BASE_URL}/reset?code=${resetCodePlain}`;
+    const project = await this.projectService.getProject(projectId);
     const payload = {
       to: email,
       subject: 'Password Reset',
