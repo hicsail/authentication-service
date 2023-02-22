@@ -1,14 +1,14 @@
-name: server
+name: admin-client
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'packages/server/**'
+      - 'packages/client-admin/**'
     branches:
       - main
   pull_request:
     paths:
-      - 'packages/server/**'
+      - 'packages/client-admin/**'
     branches:
       - main
 
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/server
+        working-directory: packages/client
     steps:
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
@@ -31,17 +31,8 @@ jobs:
         run: npm install
       - name: Check Formatting
         run: npm run prettier
-      - name: Check Linting
-        run: npm run lint
       - name: Build
         run: npm run build
-      - name: Test
-        run: npm run pretest && npm run test:cov && npm run posttest
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./packages/server/coverage/lcov.info
-          fail_ci_if_error: false
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         if: github.ref == 'refs/heads/main'
@@ -51,13 +42,13 @@ jobs:
       - name: Build & Push Docker Build
         uses: docker/build-push-action@v4
         with:
-          context: ./packages/server
+          context: ./packages/client-admin
           push: ${{ github.event_name != 'pull_request' }}
-          tags: hicsail/auth:unstable
+          tags: hicsail/auth-admin-client:unstable
       - name: Push to Staging
         uses: fjogeleit/http-request-action@v1
         if: github.ref == 'refs/heads/main'
         with:
           method: "POST"
-          url: ${{ secrets.PORTAINER_WEBHOOK }}
+          url: ${{ secrets.PORTAINER_WEBHOOK_CLIENT }}
           preventFailureOnNoResponse: true

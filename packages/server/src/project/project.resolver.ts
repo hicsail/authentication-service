@@ -34,8 +34,7 @@ export class ProjectResolver {
   }
 
   @ResolveField(() => [UserModel])
-  async users(@Parent() project: ProjectModel) {
-    const { id } = project;
+  async users(@Parent() { id }: ProjectModel): Promise<UserModel[]> {
     return this.projectService.getProjectUsers(id);
   }
 }

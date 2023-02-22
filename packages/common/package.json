@@ -1,0 +1,38 @@
+{
+  "name": "@hicsail/nestjs-auth",
+  "version": "0.0.1",
+  "description": "A package that contains nestjs auth guards and modules",
+  "main": "dist",
+  "types": "dist",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hicsail/authentication-service.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "test": "jest --coverage",
+    "prettier": "prettier -l \"src/**/*.ts\"",
+    "prettier:fix": "prettier -l -w \"src/**/*.ts\"",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "lint:fix": "tslint -p tsconfig.json -c tslint.json --fix"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^8.0.0 || ^9.0.0",
+    "@nestjs/core": "^8.0.0 || ^9.0.0",
+    "@nestjs/config": "^2.3.1"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^9.3.9",
+    "@nestjs/core": "^9.3.9",
+    "@nestjs/config": "^2.3.1",
+    "@types/jest": "28.1.8",
+    "@types/node": "^18.0.0",
+    "jest": "28.1.3",
+    "prettier": "^2.3.2",
+    "typescript": "^4.9.5"
+  }
+}

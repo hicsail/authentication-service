@@ -6,6 +6,7 @@ import { SignupController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import { UserSignupDto } from '../dto/auth.dto';
 import { UserTestUtil } from '../../user/__tests__/utils/user.test.util';
+import { ProjectService } from '../../project/project.service';
 
 describe('SignupController', () => {
   let userTestUtil: UserTestUtil;
@@ -19,6 +20,7 @@ describe('SignupController', () => {
 
   let signupController: SignupController;
   let authService: AuthService;
+  let projectService: ProjectService;
   let userService: UserService;
   let prismaService: PrismaService;
   let jwtService: JwtService;
@@ -31,7 +33,8 @@ describe('SignupController', () => {
     prismaService = moduleRef.get(PrismaService);
     jwtService = moduleRef.get(JwtService);
     userService = new UserService(prismaService);
-    authService = new AuthService(userService, jwtService);
+    projectService = new ProjectService(prismaService);
+    authService = new AuthService(userService, jwtService, projectService);
     signupController = new SignupController(authService);
 
     dummyProjects = await userTestUtil.createDummyProjects();

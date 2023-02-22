@@ -9,10 +9,11 @@ import { AccessToken } from './types/auth.types';
 import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 
+
 @Injectable()
 export class AuthService {
   constructor(private userService: UserService, private jwtService: JwtService, private configService: ConfigService) {}
-
+  
   /**
    * Validate login using username.
    *
@@ -77,10 +78,17 @@ export class AuthService {
       return;
     }
 
+    const link = `${process.env.BASE_URL}/reset?code=${resetCodePlain}`;
+    const project = await this.projectService.getProject(projectId);
     const payload = {
       to: email,
-      subject: 'BU SAIL Authentication Password Reset',
-      message: `${process.env.BASE_URL}/reset?code=${resetCodePlain}`
+      subject: 'Password Reset',
+      message: link,
+      template: 'auth/passwordReset',
+      templateData: {
+        link,
+        project
+      }
     };
 
     const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;

@@ -9,6 +9,7 @@ import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
+import { ProjectModule } from '../project/project.module';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { ConfigService } from '@nestjs/config';
         return options;
       },
       inject: [ConfigService]
-    })
+    ProjectModule,
   ],
   controllers: [LoginController, SignupController, RecoveryController],
   providers: [AuthResolver, AuthService, PrismaService, JwtStrategy],
