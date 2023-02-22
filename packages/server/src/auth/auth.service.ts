@@ -8,12 +8,12 @@ import { UserSignupDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
 import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
-
+import { ProjectService } from '../project/project.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService, private configService: ConfigService) {}
-  
+  constructor(private userService: UserService, private jwtService: JwtService, private readonly projectService: ProjectService, private configService: ConfigService) {}
+
   /**
    * Validate login using username.
    *
@@ -160,6 +160,7 @@ export class AuthService {
     const publicKeys: string[] = [];
     publicKeys.push(this.configService.get('PUBLIC_KEY_1'));
     publicKeys.push(this.configService.get('PUBLIC_KEY_2'));
+    console.log(publicKeys);
     return publicKeys;
   }
 }
