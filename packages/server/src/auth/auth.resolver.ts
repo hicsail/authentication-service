@@ -13,9 +13,6 @@ import {
   UserSignupDto
 } from './dto/auth.dto';
 import { UsePipes } from '@nestjs/common';
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: `${__dirname}/../../.env` });
 
 @Resolver()
 export class AuthResolver {

@@ -1,5 +1,5 @@
 {
-  "name": "@hicsail/nestjs-auth",
+  "name": "authentication-service",
   "version": "0.0.1",
   "description": "A package that contains nestjs auth guards and modules",
   "main": "dist",

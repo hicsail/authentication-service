@@ -160,7 +160,6 @@ export class AuthService {
     const publicKeys: string[] = [];
     publicKeys.push(this.configService.get('PUBLIC_KEY_1'));
     publicKeys.push(this.configService.get('PUBLIC_KEY_2'));
-    console.log(publicKeys);
     return publicKeys;
   }
 }

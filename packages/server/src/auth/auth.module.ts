@@ -15,7 +15,7 @@ import { ProjectModule } from '../project/project.module';
   imports: [
     UserModule,
     PassportModule,
-    ConfigModule,
+    ConfigModule.forRoot({ isGlobal: true }),
     ProjectModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -25,7 +25,7 @@ import { ProjectModule } from '../project/project.module';
           publicKey: configService.get('PUBLIC_KEY_1'),
           signOptions: {
             expiresIn: configService.get('JWT_EXPIRATION'),
-            issuer: 'Microservices',
+            issuer: 'https://sail.bu.edu',
             algorithm: 'RS256'
           }
         };
