@@ -31,7 +31,7 @@ import { ProjectModule } from '../project/project.module';
         return options;
       },
       inject: [ConfigService]
-    ProjectModule,
+    })
   ],
   controllers: [LoginController, SignupController, RecoveryController],
   providers: [AuthResolver, AuthService, PrismaService, JwtStrategy],
