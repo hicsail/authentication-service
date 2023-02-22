@@ -16,6 +16,7 @@ import { ProjectModule } from '../project/project.module';
     UserModule,
     PassportModule,
     ConfigModule,
+    ProjectModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
