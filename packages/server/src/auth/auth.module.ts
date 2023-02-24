@@ -15,7 +15,6 @@ import { ProjectModule } from '../project/project.module';
   imports: [
     UserModule,
     PassportModule,
-    ConfigModule.forRoot({ isGlobal: true }),
     ProjectModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
