@@ -31,7 +31,6 @@ const saveToken = (token: Token) => {
 
 const restoreToken = (): Token => {
   var token = localStorage.getItem('token');
-
   return token ? JSON.parse(token) : { token: '' };
 };
 
