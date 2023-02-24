@@ -50,5 +50,5 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           method: "POST"
-          url: ${{ secrets.PORTAINER_WEBHOOK_CLIENT }}
+          url: ${{ secrets.PORTAINER_WEBHOOK }}
           preventFailureOnNoResponse: true
