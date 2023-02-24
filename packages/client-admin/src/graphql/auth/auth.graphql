@@ -1,0 +1,3 @@
+mutation forgotPassword($projectId: String!, $email: String!) {
+  forgotPassword(user: { projectId: $projectId, email: $email })
+}

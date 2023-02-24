@@ -2,16 +2,16 @@ import { Body, Controller, Get, Post, UsePipes, ValidationPipe } from '@nestjs/c
 import { UpdateStatus } from '../user/types/user.types';
 import { AuthService } from './auth.service';
 import {
-  UsernameLoginTransformPipe,
-  EmailLoginTransformPipe,
-  SignupTransformPipe,
-  UserSignupDto,
   EmailLoginDto,
-  UsernameLoginDto,
+  EmailLoginTransformPipe,
   ForgotDto,
+  ForgotPasswordTransformPipe,
   ResetDto,
   ResetPasswordTransformPipe,
-  ForgotPasswordTransformPipe
+  SignupTransformPipe,
+  UsernameLoginDto,
+  UsernameLoginTransformPipe,
+  UserSignupDto
 } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
 

@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { Project } from '@prisma/client';
 

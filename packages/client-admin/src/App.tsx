@@ -1,10 +1,25 @@
-import { useState } from 'react';
+import { GraphqlProvider } from '@graphql/graphql-provider';
+import { SettingsProvider } from '@context/settings.context';
+import { ThemeProvider } from '@theme/theme.provider';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { TestPage } from '@pages/test';
+import { Layout } from '@layouts/layout';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Admin Client</h1>
-    </div>
+    <GraphqlProvider>
+      <SettingsProvider>
+        <ThemeProvider>
+          <Router>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<TestPage />} />
+              </Routes>
+            </Layout>
+          </Router>
+        </ThemeProvider>
+      </SettingsProvider>
+    </GraphqlProvider>
   );
 }
 

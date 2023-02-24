@@ -1,7 +1,7 @@
-import { Controller, Post, Get, Body, Param, Put } from '@nestjs/common';
-import { Project, User } from '@prisma/client';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Project } from '@prisma/client';
 import { UserModel } from 'src/user/model/user.model';
-import { ProjectIdentifier, ConfigurableProjectSettings, ProjectCreateInput } from './dto/project.dto';
+import { ConfigurableProjectSettings, ProjectCreateInput, ProjectIdentifier } from './dto/project.dto';
 import { ProjectService } from './project.service';
 
 @Controller('/projects')

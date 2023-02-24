@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { PrismaClient } from '@prisma/client';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
+
 const prisma = new PrismaClient();
 
 async function bootstrap(): Promise<void> {

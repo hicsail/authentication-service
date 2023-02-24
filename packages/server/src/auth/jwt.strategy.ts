@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ValidatedUser } from './types/auth.types';
 import * as dotenv from 'dotenv';
 import { ConfigService } from '@nestjs/config';
