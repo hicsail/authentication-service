@@ -1,0 +1,34 @@
+version: '3'
+services:
+  auth-frontend:
+    image: hicsail/auth-client:unstable
+    restart: always
+    ports:
+      - 3002:80
+    env_file:
+      - ../stack.env
+  auth-admin:
+    image: hicsail/auth-admin-client:unstable
+    restart: always
+    ports:
+      - 3004:80
+    env_file:
+      - ../stack.env
+  auth-backend:
+    image: hicsail/auth:unstable
+    restart: always
+    ports:
+      - 3001:3001
+    env_file:
+      - ../stack.env
+  auth-postgres:
+    image: postgres:13
+    restart: always
+    ports:
+      - 5434:5432
+    volumes:
+      - auth-staging:/var/lib/postgresql/data
+    env_file:
+      - ../stack.env
+volumes:
+  auth-staging: ~
