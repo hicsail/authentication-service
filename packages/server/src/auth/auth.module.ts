@@ -5,8 +5,10 @@ import { AuthResolver } from './auth.resolver';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { ProjectModule } from '../project/project.module';
 
 @Module({
@@ -14,9 +16,21 @@ import { ProjectModule } from '../project/project.module';
     UserModule,
     PassportModule,
     ProjectModule,
-    JwtModule.register({
-      secret: process.env.SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRATION }
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const options: JwtModuleOptions = {
+          privateKey: configService.get('PRIVATE_KEY'),
+          publicKey: configService.get('PUBLIC_KEY_1'),
+          signOptions: {
+            expiresIn: configService.get('JWT_EXPIRATION'),
+            issuer: 'https://sail.bu.edu',
+            algorithm: 'RS256'
+          }
+        };
+        return options;
+      },
+      inject: [ConfigService]
     })
   ],
   controllers: [LoginController, SignupController, RecoveryController],

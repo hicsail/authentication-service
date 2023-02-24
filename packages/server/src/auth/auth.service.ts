@@ -7,11 +7,12 @@ import { UserService } from '../user/user.service';
 import { UserSignupDto } from './dto/auth.dto';
 import { AccessToken } from './types/auth.types';
 import { UpdateStatus } from '../user/types/user.types';
+import { ConfigService } from '@nestjs/config';
 import { ProjectService } from '../project/project.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService, private readonly projectService: ProjectService) {}
+  constructor(private userService: UserService, private jwtService: JwtService, private readonly projectService: ProjectService, private configService: ConfigService) {}
 
   /**
    * Validate login using username.
@@ -53,6 +54,7 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
+
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -147,5 +149,17 @@ export class AuthService {
     } catch (err) {
       return err;
     }
+  }
+
+  /**
+   * Get Public Keys
+   *
+   * @returns List of Public Keys
+   */
+  publicKey(): string[] {
+    const publicKeys: string[] = [];
+    publicKeys.push(this.configService.get('PUBLIC_KEY_1'));
+    publicKeys.push(this.configService.get('PUBLIC_KEY_2'));
+    return publicKeys;
   }
 }
