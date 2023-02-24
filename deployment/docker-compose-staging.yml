@@ -23,6 +23,7 @@ services:
       - ../stack.env
   auth-postgres:
     image: postgres:13
+    container_name: auth-postgres-staging
     restart: always
     ports:
       - 5434:5432
