@@ -1,5 +1,6 @@
 export enum Paths {
+  AUTH_CALLBACK = '/auth/callback',
   HOME = '/',
-  TEST = '/test',
   USER_LIST = '/users',
+
 }
