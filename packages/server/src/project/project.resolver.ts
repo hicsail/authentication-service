@@ -1,4 +1,4 @@
-import { Mutation, Args, Resolver, Query, ResolveField, Parent } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { ConfigurableProjectSettings, ProjectCreateInput } from './dto/project.dto';
 import { ProjectService } from './project.service';
 import { ProjectModel } from './model/project.model';

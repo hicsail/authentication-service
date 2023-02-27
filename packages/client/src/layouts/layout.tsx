@@ -1,7 +1,7 @@
-import { DarkMode, LightMode, GitHub } from '@mui/icons-material';
+import { DarkMode, GitHub, LightMode } from '@mui/icons-material';
 import { AppBar, Avatar, Box, IconButton, Toolbar, Typography } from '@mui/material';
 import React, { FC } from 'react';
-import { useSettings } from '../context/settings.context';
+import { useSettings } from '@context/settings.context';
 
 export interface LayoutProps {
   children: React.ReactNode;

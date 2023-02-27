@@ -1,8 +1,8 @@
-import { Backdrop, CircularProgress, ThemeProvider, createTheme, useTheme, Alert } from '@mui/material';
+import { Alert, Backdrop, CircularProgress, createTheme, ThemeProvider, useTheme } from '@mui/material';
 import React, { createContext, FC, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ProjectModel } from '../graphql/graphql';
-import { useGetProjectQuery } from '../graphql/project/project';
+import { ProjectModel } from '@graphql/graphql';
+import { useGetProjectQuery } from '@graphql/project/project';
 
 export interface ProjectContextProps {
   project?: ProjectModel;

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { LoginController, SignupController, RecoveryController } from './auth.controller';
+import { LoginController, RecoveryController, SignupController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,8 +7,7 @@ import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
-import { ConfigModule } from '@nestjs/config';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from '../project/project.module';
 
 @Module({

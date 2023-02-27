@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsDefined, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PipeTransform } from '@nestjs/common';
 import { UserSignup } from '../types/auth.types';
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class UserSignupDto {
