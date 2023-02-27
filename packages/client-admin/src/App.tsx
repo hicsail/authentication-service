@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { FC } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Layout } from './layouts/layout';
+import { Callback } from './pages/callback';
+import { AuthProvider } from './context/auth.context';
+import { Home } from './pages/home';
 
-function App() {
+export const App: FC = () => {
   return (
-    <div className="App">
-      <h1>Admin Client</h1>
-    </div>
+    <Router>
+      <Layout>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/auth/callback" element={<Callback />} />
+          </Routes>
+        </AuthProvider>
+      </Layout>
+    </Router>
   );
-}
-
-export default App;
+};
