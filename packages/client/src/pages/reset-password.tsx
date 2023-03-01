@@ -1,14 +1,14 @@
 import { Alert, Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import { TextInput } from '../components/forms/text-input';
-import { SubmitButton } from '../components/forms/submit-button';
-import { useResetPasswordMutation } from '../graphql/auth/auth';
+import { TextInput } from '@components/forms/text-input';
+import { SubmitButton } from '@components/forms/submit-button';
+import { useResetPasswordMutation } from '@graphql/auth/auth';
 
 import { useEffect, useState } from 'react';
-import { useProject } from '../context/project.context';
+import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
-import { PasswordInput } from '../components/forms/password-input';
+import { PasswordInput } from '@components/forms/password-input';
 
 const ResetPasswordValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
