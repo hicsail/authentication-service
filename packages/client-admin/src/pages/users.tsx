@@ -1,17 +1,12 @@
 import { Box, Button } from '@mui/material';
 import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
 import { useAuth } from '../context/auth.context';
 import { useProjectUsersQuery } from '../graphql/user/user';
-import jwt_decode from 'jwt-decode';
 import { useForgotPasswordMutation } from '../graphql/auth/auth';
 
 export const Users = () => {
-  const [users, setUsers] = useState<any>();
-  const [rows, setRows] = useState<GridRowsProp>([]);
-  const { token, setToken } = useAuth();
-  const decoded: any = jwt_decode(token.token);
-  const projectId = decoded['projectId'];
+  const { token, decoded_token, setToken } = useAuth();
+  const projectId = decoded_token['projectId'];
   const [forgotPassword, { data: passwordData, error: passwordError }] = useForgotPasswordMutation();
   const {
     data: usersData,
@@ -23,23 +18,7 @@ export const Users = () => {
     }
   });
 
-  useEffect(() => {
-    if (usersData && usersData.projectUsers) {
-      setUsers(usersData.projectUsers);
-    }
-  }, [usersData]);
-
-  useEffect(() => {
-    if (users) {
-      const rows: any = [];
-      users.forEach((user: any) => {
-        rows.push({ id: user.id, email: user.email, username: user.username, role: user.role });
-      });
-      setRows(rows);
-    }
-  }, [users]);
-
-  const handleDelete = async (email: string) => {
+  const handleResetPassword = async (email: string) => {
     await forgotPassword({ variables: { email, projectId: projectId || '' } });
     if (passwordData && passwordData.forgotPassword) {
       window.alert('Password reset link sent to email!');
@@ -55,7 +34,7 @@ export const Users = () => {
       headerName: 'Update Password',
       width: 180,
       renderCell: (params) => (
-        <Button variant="contained" size="small" onClick={() => handleDelete(params.row.email)}>
+        <Button variant="contained" size="small" onClick={() => handleResetPassword(params.row.email)}>
           Update Password
         </Button>
       )
@@ -64,7 +43,7 @@ export const Users = () => {
 
   return (
     <Box sx={{ height: 400, width: '100%' }}>
-      <DataGrid rows={rows} columns={columns} />
+      <DataGrid rows={usersData?.projectUsers || []} columns={columns} />
     </Box>
   );
 };
