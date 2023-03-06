@@ -81,9 +81,8 @@ export class AuthService {
     const link = `${process.env.BASE_URL}/reset?code=${resetCodePlain}`;
     const project = await this.projectService.getProject(projectId);
     const payload = {
-      to: email,
+      to: [email],
       subject: 'Password Reset',
-      message: link,
       template: 'auth/passwordReset',
       templateData: {
         link,
