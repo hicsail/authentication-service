@@ -1,4 +1,4 @@
-import { Alert, Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
 
 const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
-  username: Yup.string(),
-  password: Yup.string().required('Required')
+  password: Yup.string().min(8, 'Password must be at least 8 characters').required('Required'),
+  confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match')
 });
 
 export const SignUp = () => {
@@ -58,30 +58,34 @@ export const SignUp = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
-        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          {project?.name || 'Sign up'}
-        </Typography>
+        {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
+        {project?.name && (
+          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+            {project?.name}
+          </Typography>
+        )}
         {errorText && (
           <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
             {errorText}
           </Alert>
         )}
         <Formik
-          validateOnBlur={false}
-          validateOnChange={false}
           validationSchema={SignUpValidation}
-          initialValues={{ email: '', username: undefined, password: '' }}
-          onSubmit={async ({ email, username, password }) => {
+          initialValues={{ email: '', confirmPassword: '', password: '' }}
+          onSubmit={async ({ email, password }) => {
             setErrorText('');
-            await signUpEmail({ variables: { email, password, username, projectId: project?.id || '' } });
+            await signUpEmail({ variables: { email, password, projectId: project?.id || '' } });
           }}
         >
           <Form>
-            <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
-            <TextInput autoFocus fullWidth name="username" label="username" margin="normal" />
-
-            <PasswordInput name="password" label="Password" fullWidth autoComplete="current-password" required margin="normal" />
+            <Card>
+              <CardHeader title="Sign Up" />
+              <CardContent>
+                <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
+                <PasswordInput name="password" label="Password" fullWidth autoComplete="new-password" required margin="normal" />
+                <PasswordInput name="confirmPassword" label="Confirm Password" fullWidth autoComplete="new-password" required margin="normal" />
+              </CardContent>
+            </Card>
             <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
               Sign Up
             </SubmitButton>

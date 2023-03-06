@@ -2,9 +2,8 @@
 /* tslint:disable */
 import * as Types from '../graphql';
 
+import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-import {gql} from '@apollo/client';
-
 const defaultOptions = {} as const;
 export type LoginEmailMutationVariables = Types.Exact<{
   projectId: Types.Scalars['String'];
@@ -18,7 +17,6 @@ export type SignUpEmailMutationVariables = Types.Exact<{
   projectId: Types.Scalars['String'];
   email: Types.Scalars['String'];
   password: Types.Scalars['String'];
-  username?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 export type SignUpEmailMutation = { __typename?: 'Mutation'; signup: { __typename?: 'AccessToken'; accessToken: string } };
@@ -75,8 +73,8 @@ export type LoginEmailMutationHookResult = ReturnType<typeof useLoginEmailMutati
 export type LoginEmailMutationResult = Apollo.MutationResult<LoginEmailMutation>;
 export type LoginEmailMutationOptions = Apollo.BaseMutationOptions<LoginEmailMutation, LoginEmailMutationVariables>;
 export const SignUpEmailDocument = gql`
-  mutation signUpEmail($projectId: String!, $email: String!, $password: String!, $username: String) {
-    signup(user: { projectId: $projectId, email: $email, password: $password, username: $username }) {
+  mutation signUpEmail($projectId: String!, $email: String!, $password: String!) {
+    signup(user: { projectId: $projectId, email: $email, password: $password }) {
       accessToken
     }
   }
@@ -99,7 +97,6 @@ export type SignUpEmailMutationFn = Apollo.MutationFunction<SignUpEmailMutation,
  *      projectId: // value for 'projectId'
  *      email: // value for 'email'
  *      password: // value for 'password'
- *      username: // value for 'username'
  *   },
  * });
  */

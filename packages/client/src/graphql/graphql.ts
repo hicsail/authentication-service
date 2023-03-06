@@ -102,16 +102,33 @@ export type ProjectModel = {
   name: Scalars['String'];
   redirectUrl?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+  users: Array<UserModel>;
 };
 
 export type Query = {
   __typename?: 'Query';
   getProject: ProjectModel;
+  getUser: UserModel;
   listProjects: Array<ProjectModel>;
+  projectUsers: Array<UserModel>;
+  publicKey: Array<Scalars['String']>;
+  users: Array<UserModel>;
 };
 
 export type QueryGetProjectArgs = {
   id: Scalars['String'];
+};
+
+export type QueryGetUserArgs = {
+  id: Scalars['ID'];
+};
+
+export type QueryProjectUsersArgs = {
+  projectId: Scalars['String'];
+};
+
+export type QueryUsersArgs = {
+  projectId: Scalars['ID'];
 };
 
 export type ResetDto = {
@@ -119,6 +136,18 @@ export type ResetDto = {
   email: Scalars['String'];
   password: Scalars['String'];
   projectId: Scalars['String'];
+};
+
+export type UserModel = {
+  __typename?: 'UserModel';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  email?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  projectId: Scalars['String'];
+  role: Scalars['Int'];
+  updatedAt: Scalars['DateTime'];
+  username?: Maybe<Scalars['String']>;
 };
 
 export type UserSignupDto = {

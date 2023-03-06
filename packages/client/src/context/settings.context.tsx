@@ -3,6 +3,7 @@ import { ThemeType } from '@theme/theme.provider';
 
 export interface Settings {
   theme: ThemeType;
+  lastProject?: string;
 }
 
 const defaultSettings: Settings = {

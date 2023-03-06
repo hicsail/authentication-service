@@ -1,4 +1,4 @@
-import { Alert, Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
@@ -8,6 +8,7 @@ import { useLoginEmailMutation } from '@graphql/auth/auth';
 import { useEffect, useState } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
+import { Paths } from '@constants/paths';
 
 const LoginValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -49,10 +50,12 @@ export const SignIn = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
-        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          {project?.name || 'Sign in'}
-        </Typography>
+        {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
+        {project?.name && (
+          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+            {project?.name}
+          </Typography>
+        )}
         {errorText && (
           <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
             {errorText}
@@ -69,8 +72,13 @@ export const SignIn = () => {
           }}
         >
           <Form>
-            <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
-            <PasswordInput name="password" label="Password" fullWidth autoComplete="current-password" required margin="normal" />
+            <Card>
+              <CardHeader title="Sign in" />
+              <CardContent>
+                <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
+                <PasswordInput name="password" label="Password" fullWidth autoComplete="current-password" required margin="normal" />
+              </CardContent>
+            </Card>
             <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
               Sign In
             </SubmitButton>
@@ -80,7 +88,7 @@ export const SignIn = () => {
           <Grid item xs>
             <Button
               onClick={() => {
-                navigate('/forgot-password');
+                navigate(Paths.FORGOT_PASSWORD);
               }}
             >
               <Typography variant="body2">Forgot password?</Typography>
@@ -89,7 +97,7 @@ export const SignIn = () => {
           <Grid item>
             <Button
               onClick={() => {
-                navigate('/sign-up');
+                navigate(Paths.SIGN_UP);
               }}
             >
               <Typography variant="body2">Don't have an account? Sign up</Typography>

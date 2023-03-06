@@ -9,6 +9,7 @@ import { Layout } from '@layouts/layout';
 import { SignUp } from '@pages/sign-up';
 import { ForgotPassword } from '@pages/forgot-password';
 import { ResetPassword } from '@pages/reset-password';
+import { Paths } from '@constants/paths';
 
 export const App: FC = () => (
   <GraphqlProvider>
@@ -18,10 +19,10 @@ export const App: FC = () => (
           <ProjectProvider>
             <Layout>
               <Routes>
-                <Route path="/" element={<SignIn />} />
-                <Route path="/sign-up" element={<SignUp />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path={Paths.LOGIN} element={<SignIn />} />
+                <Route path={Paths.SIGN_UP} element={<SignUp />} />
+                <Route path={Paths.FORGOT_PASSWORD} element={<ForgotPassword />} />
+                <Route path={Paths.RESET_PASSWORD} element={<ResetPassword />} />
               </Routes>
             </Layout>
           </ProjectProvider>

@@ -2,9 +2,8 @@
 /* tslint:disable */
 import * as Types from '../graphql';
 
+import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-import {gql} from '@apollo/client';
-
 const defaultOptions = {} as const;
 export type GetUserQueryVariables = Types.Exact<{
   id: Types.Scalars['ID'];
