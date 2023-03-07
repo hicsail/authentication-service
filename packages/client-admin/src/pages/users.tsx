@@ -6,7 +6,7 @@ import { useForgotPasswordMutation } from '../graphql/auth/auth';
 
 export const Users = () => {
   const { token, decoded_token, setToken } = useAuth();
-  const projectId = decoded_token['projectId'];
+  const projectId = decoded_token?.projectId || '';
   const [forgotPassword, { data: passwordData, error: passwordError }] = useForgotPasswordMutation();
   const {
     data: usersData,
@@ -15,7 +15,8 @@ export const Users = () => {
   } = useProjectUsersQuery({
     variables: {
       projectId
-    }
+    },
+    skip: !projectId
   });
 
   const handleResetPassword = async (email: string) => {

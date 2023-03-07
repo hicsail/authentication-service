@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { GraphqlProvider } from '@graphql/graphql-provider';
 import { SettingsProvider } from '@context/settings.context';
 import { ThemeProvider } from '@theme/theme.provider';
@@ -9,6 +9,8 @@ import { AuthProvider } from '@context/auth.context';
 import { Home } from '@pages/home';
 import { Callback } from '@pages/callback';
 import { Users } from '@pages/users';
+import { PermissionRequiredPage } from '@pages/permission-required';
+import { AdminGuard } from './guards/admin.guard';
 
 export const App: FC = () => {
   return (
@@ -19,9 +21,12 @@ export const App: FC = () => {
             <Layout>
               <AuthProvider>
                 <Routes>
-                  <Route path={Paths.HOME} element={<Home />} />
+                  <Route element={<AdminGuard />}>
+                    <Route path={Paths.HOME} element={<Home />} />
+                    <Route path={Paths.USER_LIST} element={<Users />} />
+                  </Route>
                   <Route path={Paths.AUTH_CALLBACK} element={<Callback />} />
-                  <Route path={Paths.USER_LIST} element={<Users />} />
+                  <Route path={Paths.PERMISSION_REQUIRED} element={<PermissionRequiredPage />} />
                 </Routes>
               </AuthProvider>
             </Layout>
