@@ -47,7 +47,7 @@ jobs:
             type=semver,pattern={{major}}
       - name: Login to Docker Hub
         uses: docker/login-action@v2
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -60,8 +60,15 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
       - name: Push to Staging
         uses: fjogeleit/http-request-action@v1
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
         with:
           method: "POST"
           url: ${{ secrets.PORTAINER_WEBHOOK }}
+          preventFailureOnNoResponse: true
+      - name: Push to Production
+        uses: fjogeleit/http-request-action@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          method: "POST"
+          url: ${{ secrets.PORTAINER_WEBHOOK_PRODUCTION }}
           preventFailureOnNoResponse: true
