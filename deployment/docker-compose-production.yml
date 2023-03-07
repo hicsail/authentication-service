@@ -1,21 +1,21 @@
 version: '3'
 services:
   auth-frontend:
-    image: hicsail/auth-client:main
+    image: hicsail/auth-client:latest
     restart: always
     ports:
       - 3002:80
     env_file:
       - ../stack.env
   auth-admin:
-    image: hicsail/auth-admin-client:main
+    image: hicsail/auth-admin-client:latest
     restart: always
     ports:
       - 3004:80
     env_file:
       - ../stack.env
   auth-backend:
-    image: hicsail/auth-service:main
+    image: hicsail/auth-service:latest
     restart: always
     ports:
       - 3001:3001
