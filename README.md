@@ -1,4 +1,4 @@
-[Auth Service](https://user-images.githubusercontent.com/5147346/223544775-4fa42e90-e779-4181-bd57-f6360861df2b.jpeg)
+![Auth Service](https://user-images.githubusercontent.com/5147346/223544775-4fa42e90-e779-4181-bd57-f6360861df2b.jpeg)
 
 # Authentication Service
 
