@@ -10,7 +10,7 @@ import { Home } from '@pages/home';
 import { Callback } from '@pages/callback';
 import { Users } from '@pages/users';
 import { PermissionRequiredPage } from '@pages/permission-required';
-import { AdminGuard } from './guards/admin.guard';
+import { AdminGuard } from '@guards/admin.guard';
 
 export const App: FC = () => {
   return (

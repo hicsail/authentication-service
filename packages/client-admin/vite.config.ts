@@ -12,6 +12,7 @@ export default defineConfig({
       '@constants': path.join(__dirname, 'src/constants'),
       '@context': path.join(__dirname, 'src/context'),
       '@graphql': path.join(__dirname, 'src/graphql'),
+      '@guards': path.join(__dirname, 'src/guards'),
       '@layouts': path.join(__dirname, 'src/layouts'),
       '@modules': path.join(__dirname, 'src/modules'),
       '@pages': path.join(__dirname, 'src/pages'),
