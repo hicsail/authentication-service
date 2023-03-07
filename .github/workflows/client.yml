@@ -1,6 +1,6 @@
 name: client
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
   push:
     paths:
       - 'packages/client/**'
