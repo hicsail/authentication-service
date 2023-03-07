@@ -1,0 +1,8 @@
+query projectUsers($projectId: String!) {
+  projectUsers(projectId: $projectId) {
+    id
+    username
+    email
+    role
+  }
+}
