@@ -11,6 +11,8 @@ on:
       - 'packages/client-admin/**'
     branches:
       - main
+  tags:
+    - "v*.*.*"
 
 jobs:
   build:
@@ -33,6 +35,16 @@ jobs:
         run: npm run prettier
       - name: Build
         run: npm run build
+      - name: Docker Tags
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: hicsail/auth-admin-client
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         if: github.ref == 'refs/heads/main'
@@ -44,7 +56,8 @@ jobs:
         with:
           context: ./packages/client-admin
           push: ${{ github.event_name != 'pull_request' }}
-          tags: hicsail/auth-admin-client:unstable
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
       - name: Push to Staging
         uses: fjogeleit/http-request-action@v1
         if: github.ref == 'refs/heads/main'
