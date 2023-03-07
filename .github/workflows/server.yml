@@ -6,13 +6,13 @@ on:
       - 'packages/server/**'
     branches:
       - main
+    tags:
+      - "v*.*.*"
   pull_request:
     paths:
       - 'packages/server/**'
     branches:
       - main
-  tags:
-    - "v*.*.*"
 
 jobs:
   build:

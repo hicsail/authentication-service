@@ -6,13 +6,13 @@ on:
       - 'packages/client-admin/**'
     branches:
       - main
+    tags:
+      - "v*.*.*"
   pull_request:
     paths:
       - 'packages/client-admin/**'
     branches:
       - main
-  tags:
-    - "v*.*.*"
 
 jobs:
   build:
