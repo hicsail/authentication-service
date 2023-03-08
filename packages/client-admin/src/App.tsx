@@ -11,6 +11,7 @@ import { Callback } from '@pages/callback';
 import { Users } from '@pages/users';
 import { PermissionRequiredPage } from '@pages/permission-required';
 import { AdminGuard } from '@guards/admin.guard';
+import { ProjectSettings } from '@pages/projectsettings';
 
 export const App: FC = () => {
   return (
@@ -27,6 +28,7 @@ export const App: FC = () => {
                   </Route>
                   <Route path={Paths.AUTH_CALLBACK} element={<Callback />} />
                   <Route path={Paths.PERMISSION_REQUIRED} element={<PermissionRequiredPage />} />
+                  <Route path={Paths.PROJECT_SETTINGS} element={<ProjectSettings />} />
                 </Routes>
               </AuthProvider>
             </Layout>
