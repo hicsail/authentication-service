@@ -40,6 +40,7 @@ export class UserService {
       data: {
         projectId: newUser.projectId,
         username: newUser.username,
+        fullname: newUser.fullname,
         email: newUser.email,
         password: pwdHash
       }

@@ -16,6 +16,9 @@ export class UserModel {
   @Field({ nullable: true })
   username?: string;
 
+  @Field()
+  fullname: string;
+
   @Field({ nullable: true })
   email?: string;
 

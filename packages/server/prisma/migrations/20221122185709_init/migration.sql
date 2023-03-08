@@ -3,6 +3,7 @@ CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "username" TEXT,
+    "fullname" TEXT,
     "email" TEXT,
     "password" TEXT NOT NULL,
     "role" INTEGER NOT NULL DEFAULT 0,
