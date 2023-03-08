@@ -5,7 +5,7 @@ import { ValidatedUser } from './types/auth.types';
 import * as dotenv from 'dotenv';
 import { ConfigService } from '@nestjs/config';
 
-dotenv.config({ path: `${__dirname}/../../.env.example` });
+dotenv.config({ path: `${__dirname}/../../.env` });
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
