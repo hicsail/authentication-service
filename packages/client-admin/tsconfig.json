@@ -22,6 +22,7 @@
       "@constants/*": ["constants/*"],
       "@context/*": ["context/*"],
       "@graphql/*": ["graphql/*"],
+      "@guards/*": ["guards/*"],
       "@layouts/*": ["layouts/*"],
       "@modules/*": ["modules/*"],
       "@pages/*": ["pages/*"],

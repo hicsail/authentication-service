@@ -1,14 +1,17 @@
 import React, { createContext, FC, useContext, useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 
-export interface Token {
-  token: string;
+export interface DecodedToken {
+  id: string;
+  projectId: string;
+  role: number;
 }
 
 export interface AuthContextProps {
-  token: Token;
-  decoded_token: any;
-  setToken: (token: Token) => void;
+  initialized: boolean;
+  token?: string;
+  decoded_token?: DecodedToken;
+  setToken: (token: string) => void;
 }
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -18,24 +21,35 @@ export interface AuthProviderProps {
 }
 
 export const AuthProvider: FC<AuthProviderProps> = (props) => {
-  const [token, setToken] = useState<Token>(restoreToken());
-  const [decoded_token, setDecodedToken] = useState({ token: '' });
+  const [initialized, setInitialized] = useState(false);
+  const [token, setToken] = useState<string>();
+  const [decoded_token, setDecodedToken] = useState<DecodedToken>();
 
   useEffect(() => {
-    saveToken(token);
-    setDecodedToken(jwt_decode(token.token));
+    const token = restoreToken();
+    if (token) {
+      setToken(token);
+      setDecodedToken(jwt_decode(token));
+    }
+    setInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      saveToken(token);
+      setDecodedToken(jwt_decode(token));
+    }
   }, [token]);
 
-  return <AuthContext.Provider value={{ token, decoded_token, setToken }} {...props} />;
+  return <AuthContext.Provider value={{ token, decoded_token, setToken, initialized }} {...props} />;
 };
 
-const saveToken = (token: Token) => {
-  localStorage.setItem('token', JSON.stringify(token));
+const saveToken = (token: string) => {
+  localStorage.setItem('token', token);
 };
 
-const restoreToken = (): Token => {
-  var token = localStorage.getItem('token');
-  return token ? JSON.parse(token) : { token: '' };
+const restoreToken = (): string | null => {
+  return localStorage.getItem('token');
 };
 
 export const useAuth = () => useContext(AuthContext);
