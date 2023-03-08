@@ -1,5 +1,6 @@
-import { Box, Container } from '@mui/material';
 import React, { FC } from 'react';
+import { Box, Container } from '@mui/material';
+
 import { useSettings } from '@context/settings.context';
 import { Header } from '@components/header';
 import { SideBar } from '@components/side-bar/side-bar';
