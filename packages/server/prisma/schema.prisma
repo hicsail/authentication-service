@@ -15,7 +15,7 @@ model User {
   id          String    @default(uuid()) @id
   projectId   String
   username    String?
-  fullname    String
+  fullname    String?
   email       String?
   password    String
   role        Int       @default(0)
