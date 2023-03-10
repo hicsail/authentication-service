@@ -71,17 +71,18 @@ export const SignUp = () => {
         )}
         <Formik
           validationSchema={SignUpValidation}
-          initialValues={{ email: '', confirmPassword: '', password: '' }}
-          onSubmit={async ({ email, password }) => {
+          initialValues={{ fullname: '', email: '', confirmPassword: '', password: '' }}
+          onSubmit={async ({ email, password, fullname }) => {
             setErrorText('');
-            await signUpEmail({ variables: { email, password, projectId: project?.id || '' } });
+            await signUpEmail({ variables: { email, password, fullname, projectId: project?.id || '' } });
           }}
         >
           <Form>
             <Card>
               <CardHeader title="Sign Up" />
               <CardContent>
-                <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
+                <TextInput autoFocus fullWidth name="fullname" label="Full Name" type="text" autoComplete="name" margin="normal" required />
+                <TextInput fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
                 <PasswordInput name="password" label="Password" fullWidth autoComplete="new-password" required margin="normal" />
                 <PasswordInput name="confirmPassword" label="Confirm Password" fullWidth autoComplete="new-password" required margin="normal" />
               </CardContent>

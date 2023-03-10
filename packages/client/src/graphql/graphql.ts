@@ -143,6 +143,7 @@ export type UserModel = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
+  fullname: Scalars['String'];
   id: Scalars['ID'];
   projectId: Scalars['String'];
   role: Scalars['Int'];
@@ -152,6 +153,7 @@ export type UserModel = {
 
 export type UserSignupDto = {
   email: Scalars['String'];
+  fullname: Scalars['String'];
   password: Scalars['String'];
   projectId: Scalars['String'];
   username?: InputMaybe<Scalars['String']>;
