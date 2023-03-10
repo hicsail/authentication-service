@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Toolbar } from '@mui/material';
 
 import { useSettings } from '@context/settings.context';
 import { Header } from '@components/header';
@@ -28,6 +28,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
         <SideListItem nodeId={Paths.HOME} label="Home" path={Paths.HOME} icon={<FontAwesomeIcon icon={faUsers} />} />
       </SideBar>
       <Box sx={{ flexGrow: 1 }}>
+        <Toolbar />
         <Container sx={{ mt: 4 }}>{children}</Container>
       </Box>
     </Box>
