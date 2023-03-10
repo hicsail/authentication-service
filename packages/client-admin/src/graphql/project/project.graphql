@@ -1,0 +1,21 @@
+query getProject($id: String!) {
+  getProject(id: $id) {
+    id
+    name
+    description
+    logo
+    homePage
+    redirectUrl
+  }
+}
+
+mutation updateProject($id: String!, $name: String!, $description: String!, $logo: String!, $homePage: String!, $redirectUrl: String!) {
+  updateProject(id: $id, settings: { name: $name, description: $description, logo: $logo, homePage: $homePage, redirectUrl: $redirectUrl }) {
+    id
+    name
+    description
+    logo
+    homePage
+    redirectUrl
+  }
+}

@@ -1,41 +1,98 @@
-import { Avatar, Box, Button, Card, CardHeader, IconButton } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, FormLabel, IconButton } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
-import { TextField } from '@mui/material';
+import { TextField, Icon as MuiIcon } from '@mui/material';
 import { useState } from 'react';
+import { Icon } from '@components/icon';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { useGetProjectQuery } from '@graphql/project/project';
+import { useUpdateProjectMutation } from '@graphql/project/project';
+import { useAuth } from '../context/auth.context';
 
-export const ProjectSettings = () => {
-  const onSubmit = (value: any) => {
-    console.log(value);
-  };
-
-  const initialValues = { name: 'Chris Cho', description: 'SAIL', logo: null, homePage: null, redirectUrl: null };
-  const [isDisabled, setIsDisabled] = useState(true);
+const IconPreview = (props: any) => {
+  const { icon, size, imageSize } = props;
 
   return (
-    <Box marginTop="100px">
-      {' '}
-      {/* Temporary margin */}
-      <Formik initialValues={initialValues} onSubmit={onSubmit}>
+    <MuiIcon fontSize={size}>
+      <img src={icon} alt="icon" style={{ width: imageSize, height: imageSize }} />
+    </MuiIcon>
+  );
+};
+
+export const ProjectSettings = () => {
+  const { token, decoded_token, setToken } = useAuth();
+  const projectId = decoded_token?.projectId || '';
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [updateProject] = useUpdateProjectMutation();
+  const { data: projectData, called, loading } = useGetProjectQuery({ variables: { id: projectId }, skip: !projectId });
+
+  const initialValues = {
+    id: projectData?.getProject.id || '',
+    name: projectData?.getProject.name || '',
+    description: projectData?.getProject.description || '',
+    logo: projectData?.getProject.logo || '',
+    homePage: projectData?.getProject.homePage || '',
+    redirectUrl: projectData?.getProject.redirectUrl || ''
+  };
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      enableReinitialize={true}
+      onSubmit={async (values, { setSubmitting }) => {
+        try {
+          await updateProject({
+            variables: { id: values.id, name: values.name, description: values.description, logo: values.logo, homePage: values.homePage, redirectUrl: values.redirectUrl }
+          });
+
+          window.alert('Project Settings have been updated');
+        } catch (error) {
+          console.error(error);
+          window.alert('Error in updating project');
+        }
+
+        setSubmitting(false);
+        setIsDisabled(true);
+      }}
+    >
+      {({ isSubmitting, values }) => (
         <Form>
-          <Field name="name">
-            {({ field }: { field: any }) => (
-              <Box>
-                <Card>
-                  <CardHeader avatar={<Avatar>U</Avatar>} action={<IconButton>{/* <MoreVert /> */}</IconButton>} title="Example Card" subheader="This is an example card" />
-                  {/* other card content */}
-                </Card>
-                {/* <TextField label="Name" fullWidth {...field} disabled={isDisabled} />
-                <Button>Edit value</Button> */}
-              </Box>
-            )}
-          </Field>
-          <Field name="description">{({ field }: { field: any }) => <TextField label="Description" fullWidth {...field} disabled={isDisabled} />}</Field>
-          <Field name="logo">{({ field }: { field: any }) => <TextField label="Logo" fullWidth {...field} disabled={isDisabled} />}</Field>
-          <Field name="homePage">{({ field }: { field: any }) => <TextField label="Homepage" fullWidth {...field} disabled={isDisabled} />}</Field>
-          <Field name="redirectUrl">{({ field }: { field: any }) => <TextField label="Redirect URL" fullWidth {...field} disabled={isDisabled} />}</Field>
-          <button type="submit">Submit</button>
+          <Card>
+            <CardHeader
+              action={
+                <IconButton disabled={isSubmitting} onClick={() => setIsDisabled(false)}>
+                  Edit
+                  <Icon icon={faCaretDown} />
+                </IconButton>
+              }
+            />
+            <CardContent>
+              <FormLabel>Name</FormLabel>
+              <Field name="name">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
+              <FormLabel>Description</FormLabel>
+              <Field name="description">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
+
+              <FormLabel>Logo</FormLabel>
+
+              <Field name="logo">
+                {({ field }: { field: any }) => (
+                  <Box display="flex" alignItems="center" gap={5}>
+                    <TextField fullWidth {...field} disabled={isDisabled} />
+                    <IconPreview icon={values.logo} size="large" imageSize={100} />
+                  </Box>
+                )}
+              </Field>
+              <FormLabel>Home Page</FormLabel>
+              <Field name="homePage">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
+              <FormLabel>Redirect URL</FormLabel>
+              <Field name="redirectUrl">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
+            </CardContent>
+            <IconButton type="submit" disabled={isSubmitting || isDisabled}>
+              Save
+              <Icon icon={faCaretDown} />
+            </IconButton>
+          </Card>
         </Form>
-      </Formik>
-    </Box>
+      )}
+    </Formik>
   );
 };
