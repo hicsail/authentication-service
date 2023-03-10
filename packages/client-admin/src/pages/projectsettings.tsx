@@ -7,7 +7,7 @@ import { faCaretDown, faCircleXmark, faPen } from '@fortawesome/free-solid-svg-i
 import { useGetProjectQuery } from '@graphql/project/project';
 import { useUpdateProjectMutation } from '@graphql/project/project';
 import { useAuth } from '../context/auth.context';
-import { TextInput } from '../../../client/src/components/forms/text-input';
+import { TextInput } from '@components/forms/text-input';
 import { LoadingButton } from '@mui/lab';
 
 const IconPreview = (props: any) => {
