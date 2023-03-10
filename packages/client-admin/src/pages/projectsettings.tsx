@@ -3,10 +3,12 @@ import { Formik, Form, Field } from 'formik';
 import { TextField, Icon as MuiIcon } from '@mui/material';
 import { useState } from 'react';
 import { Icon } from '@components/icon';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCircleXmark, faPen } from '@fortawesome/free-solid-svg-icons';
 import { useGetProjectQuery } from '@graphql/project/project';
 import { useUpdateProjectMutation } from '@graphql/project/project';
 import { useAuth } from '../context/auth.context';
+import { TextInput } from '../../../client/src/components/forms/text-input';
+import { LoadingButton } from '@mui/lab';
 
 const IconPreview = (props: any) => {
   const { icon, size, imageSize } = props;
@@ -19,9 +21,9 @@ const IconPreview = (props: any) => {
 };
 
 export const ProjectSettings = () => {
-  const { token, decoded_token, setToken } = useAuth();
+  const { decoded_token } = useAuth();
   const projectId = decoded_token?.projectId || '';
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isEditing, setisEditing] = useState(true);
   const [updateProject] = useUpdateProjectMutation();
   const { data: projectData, called, loading } = useGetProjectQuery({ variables: { id: projectId }, skip: !projectId });
 
@@ -51,7 +53,7 @@ export const ProjectSettings = () => {
         }
 
         setSubmitting(false);
-        setIsDisabled(true);
+        setisEditing(true);
       }}
     >
       {({ isSubmitting, values }) => (
@@ -59,37 +61,22 @@ export const ProjectSettings = () => {
           <Card>
             <CardHeader
               action={
-                <IconButton disabled={isSubmitting} onClick={() => setIsDisabled(false)}>
-                  Edit
-                  <Icon icon={faCaretDown} />
+                <IconButton onClick={() => setisEditing(false)}>
+                  <Icon icon={isEditing ? faCircleXmark : faPen} />
                 </IconButton>
               }
             />
             <CardContent>
-              <FormLabel>Name</FormLabel>
-              <Field name="name">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
-              <FormLabel>Description</FormLabel>
-              <Field name="description">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
-
-              <FormLabel>Logo</FormLabel>
-
-              <Field name="logo">
-                {({ field }: { field: any }) => (
-                  <Box display="flex" alignItems="center" gap={5}>
-                    <TextField fullWidth {...field} disabled={isDisabled} />
-                    <IconPreview icon={values.logo} size="large" imageSize={100} />
-                  </Box>
-                )}
-              </Field>
-              <FormLabel>Home Page</FormLabel>
-              <Field name="homePage">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
-              <FormLabel>Redirect URL</FormLabel>
-              <Field name="redirectUrl">{({ field }: { field: any }) => <TextField fullWidth {...field} disabled={isDisabled} />}</Field>
+              <TextInput disabled={isEditing} autoFocus fullWidth name="name" label="Name" type="text" margin="normal" required />
+              <TextInput disabled={isEditing} autoFocus fullWidth name="description" label="Description" type="text" margin="normal" required />
+              <TextInput disabled={isEditing} autoFocus fullWidth name="logo" label="Logo" type="text" margin="normal" required />
+              <IconPreview icon={values.logo} size="large" imageSize={100} />
+              <TextInput disabled={isEditing} autoFocus fullWidth name="homePage" label="HomePage" type="text" margin="normal" required />
+              <TextInput disabled={isEditing} autoFocus fullWidth name="redirectUrl" label="RedirectUrl" type="text" margin="normal" required />
             </CardContent>
-            <IconButton type="submit" disabled={isSubmitting || isDisabled}>
+            <LoadingButton fullWidth variant="contained" color="primary" sx={{ my: 2 }} loading={isSubmitting} disabled={isEditing || isSubmitting} type="submit">
               Save
-              <Icon icon={faCaretDown} />
-            </IconButton>
+            </LoadingButton>
           </Card>
         </Form>
       )}

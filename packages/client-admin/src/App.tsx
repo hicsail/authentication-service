@@ -25,7 +25,7 @@ export const App: FC = () => {
                   <Route element={<AdminGuard />}>
                     <Route path={Paths.HOME} element={<Home />} />
                     <Route path={Paths.USER_LIST} element={<Users />} />
-                    <Route path={Paths.PROJECT_SETTINGS} element={<ProjectSettings />} />
+                    <Route path={Paths.PROJECT} element={<ProjectSettings />} />
                   </Route>
                   <Route path={Paths.AUTH_CALLBACK} element={<Callback />} />
                   <Route path={Paths.PERMISSION_REQUIRED} element={<PermissionRequiredPage />} />
