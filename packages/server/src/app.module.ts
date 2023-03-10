@@ -24,6 +24,6 @@ import { ConfigModule } from '@nestjs/config';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(ProjectGuard).exclude('/(health|projects|graphql)(/.*)?').forRoutes('/');
+    consumer.apply(ProjectGuard).exclude('/(health|projects|graphql|public-key)(/.*)?').forRoutes('/');
   }
 }
