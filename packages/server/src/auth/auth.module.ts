@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { LoginController, RecoveryController, SignupController } from './auth.controller';
+import { LoginController, PublicKeyController, RecoveryController, SignupController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { PrismaService } from '../prisma/prisma.service';
@@ -32,7 +32,7 @@ import { ProjectModule } from '../project/project.module';
       inject: [ConfigService]
     })
   ],
-  controllers: [LoginController, SignupController, RecoveryController],
+  controllers: [LoginController, SignupController, RecoveryController, PublicKeyController],
   providers: [AuthResolver, AuthService, PrismaService, JwtStrategy],
   exports: [AuthService]
 })
