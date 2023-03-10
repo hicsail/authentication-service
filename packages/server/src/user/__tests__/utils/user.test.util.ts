@@ -48,9 +48,16 @@ export class UserTestUtil {
     }
 
     const dummyAdminsInput = [
-      { projectId: this.dummyProjects[0].id, username: 'admin0', email: 'admin0@mail.com', password: await bcrypt.hash('6pD$y38^6HzFcT6P', this.HASH_ROUNDS), role: 1 },
-      { projectId: this.dummyProjects[1].id, username: 'admin1', password: await bcrypt.hash('a7kgFU*#26f5KgRP', this.HASH_ROUNDS), role: 1 },
-      { projectId: this.dummyProjects[2].id, email: 'admin2@mail.com', password: await bcrypt.hash('kP15!YjF$5cLXUb%', this.HASH_ROUNDS), role: 1 }
+      {
+        projectId: this.dummyProjects[0].id,
+        username: 'admin0',
+        fullname: 'real admin0',
+        email: 'admin0@mail.com',
+        password: await bcrypt.hash('6pD$y38^6HzFcT6P', this.HASH_ROUNDS),
+        role: 1
+      },
+      { projectId: this.dummyProjects[1].id, username: 'admin1', fullname: 'real admin1', password: await bcrypt.hash('a7kgFU*#26f5KgRP', this.HASH_ROUNDS), role: 1 },
+      { projectId: this.dummyProjects[2].id, email: 'admin2@mail.com', fullname: 'real admin2', password: await bcrypt.hash('kP15!YjF$5cLXUb%', this.HASH_ROUNDS), role: 1 }
     ];
 
     this.dummyAdmins = [];
@@ -69,17 +76,35 @@ export class UserTestUtil {
     }
 
     const dummyUsersInput = [
-      { projectId: this.dummyProjects[0].id, username: 'proj00-user0', email: 'user0@mail.com', password: await bcrypt.hash('dz$d0I05s4!AmIkN', this.HASH_ROUNDS) },
-      { projectId: this.dummyProjects[0].id, username: 'proj00-user1', email: 'user1@mail.com', password: await bcrypt.hash('06!i68UKef87eCUs', this.HASH_ROUNDS) },
-      { projectId: this.dummyProjects[0].id, username: 'proj00-user2', email: 'user2@mail.com', password: await bcrypt.hash('V$fd5i9tu@LIHMa8', this.HASH_ROUNDS) },
+      {
+        projectId: this.dummyProjects[0].id,
+        username: 'proj00-user0',
+        fullname: 'proj00 user0',
+        email: 'user0@mail.com',
+        password: await bcrypt.hash('dz$d0I05s4!AmIkN', this.HASH_ROUNDS)
+      },
+      {
+        projectId: this.dummyProjects[0].id,
+        username: 'proj00-user1',
+        fullname: 'proj00 user0',
+        email: 'user1@mail.com',
+        password: await bcrypt.hash('06!i68UKef87eCUs', this.HASH_ROUNDS)
+      },
+      {
+        projectId: this.dummyProjects[0].id,
+        username: 'proj00-user2',
+        fullname: 'proj00 user0',
+        email: 'user2@mail.com',
+        password: await bcrypt.hash('V$fd5i9tu@LIHMa8', this.HASH_ROUNDS)
+      },
 
-      { projectId: this.dummyProjects[1].id, username: 'proj01-user3', password: await bcrypt.hash('n5I0!2UU6K%y1QEJ', this.HASH_ROUNDS) },
-      { projectId: this.dummyProjects[1].id, username: 'proj01-user4', password: await bcrypt.hash('D02WuvmY!BG7Cmj8', this.HASH_ROUNDS) },
-      { projectId: this.dummyProjects[1].id, username: 'proj01-user5', password: await bcrypt.hash('Uuq#EoM9*7Q$519^', this.HASH_ROUNDS) },
+      { projectId: this.dummyProjects[1].id, username: 'proj01-user3', fullname: 'proj01 user3', password: await bcrypt.hash('n5I0!2UU6K%y1QEJ', this.HASH_ROUNDS) },
+      { projectId: this.dummyProjects[1].id, username: 'proj01-user4', fullname: 'proj01 user4', password: await bcrypt.hash('D02WuvmY!BG7Cmj8', this.HASH_ROUNDS) },
+      { projectId: this.dummyProjects[1].id, username: 'proj01-user5', fullname: 'proj01 user5', password: await bcrypt.hash('Uuq#EoM9*7Q$519^', this.HASH_ROUNDS) },
 
-      { projectId: this.dummyProjects[2].id, email: 'user6@mail.com', password: await bcrypt.hash('1X9YrCjya483@bCE', this.HASH_ROUNDS) },
-      { projectId: this.dummyProjects[2].id, email: 'user7@mail.com', password: await bcrypt.hash('9wM#HB52MW^98Ni^', this.HASH_ROUNDS) },
-      { projectId: this.dummyProjects[2].id, email: 'user8@mail.com', password: await bcrypt.hash('IhS4^F6X6DcfI4#W', this.HASH_ROUNDS) }
+      { projectId: this.dummyProjects[2].id, email: 'user6@mail.com', fullname: 'proj02 user6', password: await bcrypt.hash('1X9YrCjya483@bCE', this.HASH_ROUNDS) },
+      { projectId: this.dummyProjects[2].id, email: 'user7@mail.com', fullname: 'proj02 user7', password: await bcrypt.hash('9wM#HB52MW^98Ni^', this.HASH_ROUNDS) },
+      { projectId: this.dummyProjects[2].id, email: 'user8@mail.com', fullname: 'proj02 user8', password: await bcrypt.hash('IhS4^F6X6DcfI4#W', this.HASH_ROUNDS) }
     ];
 
     this.dummyUsers = [];

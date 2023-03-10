@@ -13,6 +13,11 @@ export class UserSignupDto {
   @Field()
   projectId: string;
 
+  @IsOptional()
+  @IsString()
+  @Field()
+  fullname: string;
+
   @IsDefined()
   @IsEmail()
   @Field()

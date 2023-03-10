@@ -133,7 +133,7 @@ describe('UserModule Integration Test', () => {
     let tempUser: User;
 
     beforeEach(async () => {
-      const tempUserInput = { projectId: randomProject.id, username: 'temp', email: 'temp@mail.com', password: 'passsword', role: parseInt('10101010', 2) };
+      const tempUserInput = { projectId: randomProject.id, username: 'temp', fullname: 'temp name', email: 'temp@mail.com', password: 'passsword', role: parseInt('10101010', 2) };
       tempUser = await prisma.user.create({ data: tempUserInput });
     });
 
