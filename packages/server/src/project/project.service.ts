@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, Project, User } from '@prisma/client';
-import { ConfigurableProjectSettings, ProjectIdentifier } from './dto/project.dto';
+import { ConfigurableProjectSettings, ProjectAuthMethodsInput, ProjectIdentifier, ProjectSettingsInput } from './dto/project.dto';
+import { ProjectSettingsModel } from './model/project-settings.model';
+import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
 
 @Injectable()
 export class ProjectService {
@@ -117,6 +119,94 @@ export class ProjectService {
       where: {
         projectId: projectId
       }
+    });
+  }
+
+  /**
+   * For a given project return its project settings
+   *
+   * @param projectId The project id to check
+   * @returns Project Settings
+   * @throws Will throw a NotFoundException error if the project does not exist
+   */
+  async getProjectSettings(projectId: string): Promise<ProjectSettingsModel> {
+    const projectExists = await this.exists(projectId);
+    if (!projectExists) {
+      throw new NotFoundException();
+    }
+
+    return this.prisma.project.findFirstOrThrow({
+      where: { id: projectId },
+      select: { displayProjectName: true, allowSignup: true }
+    });
+  }
+
+  /**
+   * For a given project return its auth settings
+   *
+   * @param projectId The project id to check
+   * @returns Auth Settings
+   * @throws Will throw a NotFoundException error if the project does not exist
+   */
+  async getAuthSettings(projectId: string): Promise<ProjectAuthMethodsModel> {
+    const projectExists = await this.exists(projectId);
+    if (!projectExists) {
+      throw new NotFoundException();
+    }
+
+    return this.prisma.project.findFirstOrThrow({
+      where: { id: projectId },
+      select: { googleAuth: true }
+    });
+  }
+
+  /**
+   * Update the project settings.
+   *
+   * Project settings that are provided in the given object will be updated.
+   * Project settings that are not provided will not be changed.
+   *
+   * @param id The ID of the project to update
+   * @param settings The new settings to apply
+   * @returns The updated project
+   * @throws Will throw an error if the project does not exist
+   */
+  async updateProjectSettings(id: string, projectSettings: ProjectSettingsInput): Promise<Project> {
+    const projectExists = await this.exists(id);
+    if (!projectExists) {
+      throw new NotFoundException();
+    }
+
+    return this.prisma.project.update({
+      where: {
+        id: id
+      },
+      data: projectSettings
+    });
+  }
+
+  /**
+   * Update the project auth methods.
+   *
+   * Project auth methods that are provided in the given object will be updated.
+   * Project auth methods that are not provided will not be changed.
+   *
+   * @param id The ID of the project to update
+   * @param settings The new auth methods to apply
+   * @returns The updated project
+   * @throws Will throw an error if the project does not exist
+   */
+  async updateProjectAuthMethods(id: string, projectAuthMethods: ProjectAuthMethodsInput): Promise<Project> {
+    const projectExists = await this.exists(id);
+    if (!projectExists) {
+      throw new NotFoundException();
+    }
+
+    return this.prisma.project.update({
+      where: {
+        id: id
+      },
+      data: projectAuthMethods
     });
   }
 }

@@ -1,8 +1,10 @@
 import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { ConfigurableProjectSettings, ProjectCreateInput } from './dto/project.dto';
+import { ConfigurableProjectSettings, ProjectAuthMethodsInput, ProjectCreateInput, ProjectSettingsInput } from './dto/project.dto';
 import { ProjectService } from './project.service';
 import { ProjectModel } from './model/project.model';
 import { UserModel } from '../user/model/user.model';
+import { ProjectSettingsModel } from './model/project-settings.model';
+import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
 
 @Resolver(() => ProjectModel)
 export class ProjectResolver {
@@ -36,5 +38,25 @@ export class ProjectResolver {
   @ResolveField(() => [UserModel])
   async users(@Parent() { id }: ProjectModel): Promise<UserModel[]> {
     return this.projectService.getProjectUsers(id);
+  }
+
+  @ResolveField(() => ProjectSettingsModel)
+  async settings(@Parent() { id }: ProjectModel): Promise<ProjectSettingsModel> {
+    return this.projectService.getProjectSettings(id);
+  }
+
+  @ResolveField(() => ProjectAuthMethodsModel)
+  async authMethods(@Parent() { id }: ProjectModel): Promise<ProjectAuthMethodsModel> {
+    return this.projectService.getAuthSettings(id);
+  }
+
+  @Mutation(() => ProjectModel)
+  async updateProjectSettings(@Args('id') id: string, @Args('projectSettings') projectSettings: ProjectSettingsInput): Promise<ProjectModel> {
+    return this.projectService.updateProjectSettings(id, projectSettings);
+  }
+
+  @Mutation(() => ProjectModel)
+  async updateProjectAuthMethods(@Args('id') id: string, @Args('projectAuthMethods') projectAuthMethods: ProjectAuthMethodsInput): Promise<ProjectModel> {
+    return this.projectService.updateProjectAuthMethods(id, projectAuthMethods);
   }
 }

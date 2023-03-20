@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
+import { ProjectAuthMethodsModel } from './project-auth-methods.model';
+import { ProjectSettingsModel } from './project-settings.model';
 
 /**
  * This is a model which adds the needed annotations to the Prisma Project
