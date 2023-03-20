@@ -26,6 +26,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
       <SideBar>
         <SideListItem nodeId={Paths.USER_LIST} label="Users" path={Paths.USER_LIST} icon={<FontAwesomeIcon icon={faUsers} />} />
         <SideListItem nodeId={Paths.HOME} label="Home" path={Paths.HOME} icon={<FontAwesomeIcon icon={faUsers} />} />
+        <SideListItem nodeId={Paths.PROJECT} label="Project Settings" path={Paths.PROJECT} icon={<FontAwesomeIcon icon={faUsers} />} />
       </SideBar>
       <Box sx={{ flexGrow: 1 }}>
         <Toolbar />
