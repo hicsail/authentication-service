@@ -8,7 +8,7 @@ export class UserResolver {
 
   @Query(() => [UserModel])
   async users(@Args('projectId', { type: () => ID }) projectId: string): Promise<UserModel[]> {
-    return this.userService.findAllUsers();
+    return this.userService.findUsersByProjectId(projectId);
   }
 
   @Query(() => UserModel)
