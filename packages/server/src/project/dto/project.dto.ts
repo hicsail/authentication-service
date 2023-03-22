@@ -108,12 +108,12 @@ export class ConfigurableProjectSettings implements Partial<Omit<Project, 'id' |
 export class ProjectSettingsInput implements Partial<ProjectSettingsModel> {
   @IsOptional()
   @IsNotEmpty()
-  @Field()
+  @Field({ nullable: true })
   displayProjectName: boolean;
 
   @IsOptional()
   @IsNotEmpty()
-  @Field()
+  @Field({ nullable: true })
   allowSignup: boolean;
 }
 
@@ -121,6 +121,6 @@ export class ProjectSettingsInput implements Partial<ProjectSettingsModel> {
 export class ProjectAuthMethodsInput implements Partial<ProjectAuthMethodsModel> {
   @IsOptional()
   @IsNotEmpty()
-  @Field()
+  @Field({ nullable: true })
   googleAuth: boolean;
 }
