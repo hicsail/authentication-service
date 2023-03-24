@@ -6,6 +6,13 @@ query getProject($id: String!) {
     logo
     homePage
     redirectUrl
+    settings {
+      displayProjectName
+      allowSignup
+    }
+    authMethods {
+      googleAuth
+    }
   }
 }
 
@@ -17,5 +24,41 @@ mutation updateProject($id: String!, $name: String!, $description: String!, $log
     logo
     homePage
     redirectUrl
+  }
+}
+
+mutation updateProjectSettings($id: String!, $displayProjectName: Boolean, $allowSignup: Boolean) {
+  updateProjectSettings(id: $id, projectSettings: { displayProjectName: $displayProjectName, allowSignup: $allowSignup }) {
+    id
+    name
+    description
+    logo
+    homePage
+    redirectUrl
+    settings {
+      displayProjectName
+      allowSignup
+    }
+    authMethods {
+      googleAuth
+    }
+  }
+}
+
+mutation updateProjectAuthMethods($id: String!, $googleAuth: Boolean) {
+  updateProjectAuthMethods(id: $id, projectAuthMethods: { googleAuth: $googleAuth }) {
+    id
+    name
+    description
+    logo
+    homePage
+    redirectUrl
+    settings {
+      displayProjectName
+      allowSignup
+    }
+    authMethods {
+      googleAuth
+    }
   }
 }
