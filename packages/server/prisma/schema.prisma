@@ -39,4 +39,7 @@ model Project {
   homePage    String?
   redirectUrl String?
   User        User[]
+  displayProjectName Boolean? @default(true)
+  googleAuth Boolean? @default(false)
+  allowSignup Boolean? @default(true)
 }
