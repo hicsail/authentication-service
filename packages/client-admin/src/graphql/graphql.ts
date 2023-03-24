@@ -50,6 +50,8 @@ export type Mutation = {
   resetPassword: Scalars['Boolean'];
   signup: AccessToken;
   updateProject: ProjectModel;
+  updateProjectAuthMethods: ProjectModel;
+  updateProjectSettings: ProjectModel;
 };
 
 export type MutationCreateProjectArgs = {
@@ -81,8 +83,30 @@ export type MutationUpdateProjectArgs = {
   settings: ConfigurableProjectSettings;
 };
 
+export type MutationUpdateProjectAuthMethodsArgs = {
+  id: Scalars['String'];
+  projectAuthMethods: ProjectAuthMethodsInput;
+};
+
+export type MutationUpdateProjectSettingsArgs = {
+  id: Scalars['String'];
+  projectSettings: ProjectSettingsInput;
+};
+
+export type ProjectAuthMethodsInput = {
+  googleAuth?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type ProjectAuthMethodsModel = {
+  __typename?: 'ProjectAuthMethodsModel';
+  googleAuth: Scalars['Boolean'];
+};
+
 export type ProjectCreateInput = {
+  allowSignup: Scalars['Boolean'];
   description: Scalars['String'];
+  displayProjectName: Scalars['Boolean'];
+  googleAuth: Scalars['Boolean'];
   homePage?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['String']>;
   muiTheme?: InputMaybe<Scalars['JSON']>;
@@ -92,6 +116,7 @@ export type ProjectCreateInput = {
 
 export type ProjectModel = {
   __typename?: 'ProjectModel';
+  authMethods: ProjectAuthMethodsModel;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
@@ -101,8 +126,20 @@ export type ProjectModel = {
   muiTheme: Scalars['JSON'];
   name: Scalars['String'];
   redirectUrl?: Maybe<Scalars['String']>;
+  settings: ProjectSettingsModel;
   updatedAt: Scalars['DateTime'];
   users: Array<UserModel>;
+};
+
+export type ProjectSettingsInput = {
+  allowSignup?: InputMaybe<Scalars['Boolean']>;
+  displayProjectName?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type ProjectSettingsModel = {
+  __typename?: 'ProjectSettingsModel';
+  allowSignup: Scalars['Boolean'];
+  displayProjectName: Scalars['Boolean'];
 };
 
 export type Query = {
@@ -143,6 +180,7 @@ export type UserModel = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
+  fullname: Scalars['String'];
   id: Scalars['ID'];
   projectId: Scalars['String'];
   role: Scalars['Int'];
@@ -152,6 +190,7 @@ export type UserModel = {
 
 export type UserSignupDto = {
   email: Scalars['String'];
+  fullname: Scalars['String'];
   password: Scalars['String'];
   projectId: Scalars['String'];
   username?: InputMaybe<Scalars['String']>;
