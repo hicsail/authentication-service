@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { ApolloClient, ApolloProvider, from, HttpLink, InMemoryCache } from '@apollo/client';
 
 const uri = `${import.meta.env.VITE_AUTH_URL}/graphql`;
-console.log(uri);
 
 export interface GraphqlProviderProps {
   children: React.ReactNode;
