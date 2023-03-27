@@ -48,9 +48,13 @@ export const ForgotPassword = () => {
         }}
       >
         {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
-        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          {project?.name || 'Forgot Password'}
-        </Typography>
+        {project?.settings.displayProjectName ? (
+          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+            {project?.name || 'Forgot Password'}
+          </Typography>
+        ) : (
+          <></>
+        )}
         {data && data.forgotPassword ? (
           <>
             <Typography variant="h4" sx={{ mb: 5 }}>

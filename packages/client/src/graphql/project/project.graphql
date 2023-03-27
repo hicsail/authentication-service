@@ -5,5 +5,12 @@ query getProject($id: String!) {
     logo
     muiTheme
     redirectUrl
+    settings {
+      displayProjectName
+      allowSignup
+    }
+    authMethods {
+      googleAuth
+    }
   }
 }

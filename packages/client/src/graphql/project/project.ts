@@ -11,7 +11,16 @@ export type GetProjectQueryVariables = Types.Exact<{
 
 export type GetProjectQuery = {
   __typename?: 'Query';
-  getProject: { __typename?: 'ProjectModel'; id: string; name: string; logo?: string | null; muiTheme: any; redirectUrl?: string | null };
+  getProject: {
+    __typename?: 'ProjectModel';
+    id: string;
+    name: string;
+    logo?: string | null;
+    muiTheme: any;
+    redirectUrl?: string | null;
+    settings: { __typename?: 'ProjectSettingsModel'; displayProjectName: boolean; allowSignup: boolean };
+    authMethods: { __typename?: 'ProjectAuthMethodsModel'; googleAuth: boolean };
+  };
 };
 
 export const GetProjectDocument = gql`
@@ -22,6 +31,13 @@ export const GetProjectDocument = gql`
       logo
       muiTheme
       redirectUrl
+      settings {
+        displayProjectName
+        allowSignup
+      }
+      authMethods {
+        googleAuth
+      }
     }
   }
 `;
