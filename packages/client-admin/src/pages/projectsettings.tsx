@@ -8,6 +8,7 @@ import { useGetProjectQuery, useUpdateProjectMutation, useUpdateProjectAuthMetho
 import { useAuth } from '../context/auth.context';
 import { TextInput } from '@components/forms/text-input';
 import { LoadingButton } from '@mui/lab';
+import { InputMaybe } from '@graphql/graphql';
 
 const IconPreview = (props: any) => {
   const { icon, size, imageSize } = props;
@@ -19,6 +20,13 @@ const IconPreview = (props: any) => {
   );
 };
 
+type Params = {
+  id: string;
+  displayProjectName?: InputMaybe<boolean> | undefined;
+  allowSignup?: InputMaybe<boolean> | undefined;
+  googleAuth?: InputMaybe<boolean> | undefined;
+};
+
 const ProjectAdditionalSettingsSwitch = () => {
   const { decoded_token } = useAuth();
   const projectId = decoded_token?.projectId || '';
@@ -27,31 +35,30 @@ const ProjectAdditionalSettingsSwitch = () => {
   const [updateProjectSettings] = useUpdateProjectSettingsMutation();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const params: Params = { id: projectId };
     switch (event?.target.name) {
       case 'displayProjectName':
-        try {
-          updateProjectSettings({ variables: { id: projectId, displayProjectName: event.target.checked } });
-        } catch (error) {
-          console.error(error);
-          window.alert('Error in updating project');
-        }
+        params.displayProjectName = event.target.checked;
         break;
       case 'allowSignup':
-        try {
-          updateProjectSettings({ variables: { id: projectId, allowSignup: event.target.checked } });
-        } catch (error) {
-          console.error(error);
-          window.alert('Error in updating project');
-        }
+        params.allowSignup = event.target.checked;
         break;
       case 'googleAuth':
-        try {
-          updateProjectAuthMethods({ variables: { id: projectId, googleAuth: event.target.checked } });
-        } catch (error) {
-          console.error(error);
-          window.alert('Error in updating project');
-        }
+        params.googleAuth = event.target.checked;
         break;
+    }
+    try {
+      switch (event?.target.name) {
+        case 'displayProjectName':
+          updateProjectSettings({ variables: params });
+        case 'allowSignup':
+          updateProjectSettings({ variables: params });
+        case 'googleAuth':
+          updateProjectAuthMethods({ variables: params });
+      }
+    } catch (error) {
+      console.error(error);
+      window.alert('Error in updating project');
     }
   };
 
