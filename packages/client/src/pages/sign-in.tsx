@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Paths } from '@constants/paths';
 
 const LoginValidation = Yup.object().shape({
+  fullname: Yup.string().required('Required'),
   email: Yup.string().email('Invalid email').required('Required'),
   password: Yup.string().required('Required')
 });
