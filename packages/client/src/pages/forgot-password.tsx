@@ -1,4 +1,4 @@
-import { Alert, Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
@@ -47,7 +47,9 @@ export const ForgotPassword = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
+        {/* {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />} */}
+        {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
+
         {project?.settings.displayProjectName ? (
           <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
             {project?.name || 'Forgot Password'}
@@ -79,7 +81,12 @@ export const ForgotPassword = () => {
               }}
             >
               <Form>
-                <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
+                <Card>
+                  <CardHeader title="Forgot Password" />
+                  <CardContent>
+                    <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
+                  </CardContent>
+                </Card>
                 <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
                   Reset Password
                 </SubmitButton>
