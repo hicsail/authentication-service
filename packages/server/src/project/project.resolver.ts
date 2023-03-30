@@ -5,14 +5,15 @@ import { ProjectModel } from './model/project.model';
 import { UserModel } from '../user/model/user.model';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
+import { UsernameLoginDto } from 'src/auth/dto/auth.dto';
 
 @Resolver(() => ProjectModel)
 export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}
 
   @Mutation(() => ProjectModel)
-  async createProject(@Args('project') project: ProjectCreateInput): Promise<ProjectModel> {
-    return this.projectService.createProject(project);
+  async createProject(@Args('project') project: ProjectCreateInput, @Args('authServiceUser') authServiceUser: UsernameLoginDto): Promise<ProjectModel> {
+    return this.projectService.createProject(project, authServiceUser);
   }
 
   @Query(() => [ProjectModel])

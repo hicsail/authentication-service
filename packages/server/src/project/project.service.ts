@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, Project, User } from '@prisma/client';
 import { ConfigurableProjectSettings, ProjectAuthMethodsInput, ProjectIdentifier, ProjectSettingsInput } from './dto/project.dto';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
+import { UsernameLoginDto } from '../auth/dto/auth.dto';
+import { ConfigService } from '@nestjs/config';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ProjectService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private userService: UserService, private configService: ConfigService) {}
 
   /**
    * Create a new project. If the project ID is provided and a project with
@@ -15,18 +18,35 @@ export class ProjectService {
    *
    * @param newProject Information on the project to create
    * @returns The newly created project
-   * @throws Will throw an error if the project ID is already in use
+   * @throws Will throw an error if the project ID is already in use or an error if the user is not authorized to create a project
    */
-  async createProject(newProject: Prisma.ProjectCreateInput): Promise<Project> {
+  async createProject(newProject: Prisma.ProjectCreateInput, authServiceUser: UsernameLoginDto): Promise<Project> {
     // ProjectCreateInput by default allows the ID to be provided, but we
     // don't want to allow that. If the ID is provided, we remove it
     if (newProject.id) {
       delete newProject.id;
     }
 
-    return this.prisma.project.create({
-      data: newProject
-    });
+    if (
+      authServiceUser.projectId == '00000000-0000-0000-0000-000000000000' &&
+      authServiceUser.username == this.configService.get('ROOT_EMAIL') &&
+      authServiceUser.password == this.configService.get('ROOT_PASSWORD')
+    ) {
+      const project = await this.prisma.project.create({
+        data: newProject
+      });
+
+      const user = await this.userService.createUser({
+        projectId: project.id,
+        username: this.configService.get('EXAMPLE_USERNAME'),
+        password: this.configService.get('EXAMPLE_PASSWORD')
+      });
+
+      console.log(user);
+      return project;
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   /**
