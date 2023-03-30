@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Paths } from '@constants/paths';
 
 const LoginValidation = Yup.object().shape({
+  fullname: Yup.string().required('Required'),
   email: Yup.string().email('Invalid email').required('Required'),
   password: Yup.string().required('Required')
 });
@@ -51,11 +52,14 @@ export const SignIn = () => {
         }}
       >
         {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
-        {project?.name && (
-          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-            {project?.name}
-          </Typography>
-        )}
+        {project?.name &&
+          (project?.settings.displayProjectName ? (
+            <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+              {project?.name}
+            </Typography>
+          ) : (
+            <></>
+          ))}
         {errorText && (
           <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
             {errorText}
@@ -94,15 +98,19 @@ export const SignIn = () => {
               <Typography variant="body2">Forgot password?</Typography>
             </Button>
           </Grid>
-          <Grid item>
-            <Button
-              onClick={() => {
-                navigate(Paths.SIGN_UP);
-              }}
-            >
-              <Typography variant="body2">Don't have an account? Sign up</Typography>
-            </Button>
-          </Grid>
+          {project?.settings.allowSignup ? (
+            <Grid item>
+              <Button
+                onClick={() => {
+                  navigate(Paths.SIGN_UP);
+                }}
+              >
+                <Typography variant="body2">Don't have an account? Sign up</Typography>
+              </Button>
+            </Grid>
+          ) : (
+            <></>
+          )}
         </Grid>
       </Box>
     </Container>
