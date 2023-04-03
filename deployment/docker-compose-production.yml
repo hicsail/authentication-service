@@ -1,6 +1,7 @@
 version: '3'
 services:
   auth-frontend:
+    container_name: auth-client
     image: hicsail/auth-client:latest
     restart: always
     ports:
@@ -8,6 +9,7 @@ services:
     env_file:
       - ../stack.env
   auth-admin:
+    container_name: auth-admin
     image: hicsail/auth-admin-client:latest
     restart: always
     ports:
@@ -15,6 +17,7 @@ services:
     env_file:
       - ../stack.env
   auth-backend:
+    container_name: auth-server
     image: hicsail/auth-server:latest
     restart: always
     ports:
@@ -23,13 +26,13 @@ services:
       - ../stack.env
   auth-postgres:
     image: postgres:13
-    container_name: auth-postgres-staging
+    container_name: auth-postgres
     restart: always
     ports:
       - 5434:5432
     volumes:
-      - auth-staging:/var/lib/postgresql/data
+      - auth-production:/var/lib/postgresql/data
     env_file:
       - ../stack.env
 volumes:
-  auth-staging: ~
+  auth-production: ~
