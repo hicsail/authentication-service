@@ -4,12 +4,12 @@ import { ThemeType } from '@theme/theme.provider';
 export interface Settings {
   theme: ThemeType;
   lastProject?: string;
-  uri?: string;
+  VITE_AUTH_SERVICE?: string;
 }
 
 const defaultSettings: Settings = {
   theme: 'light',
-  uri: import.meta.env.VITE_AUTH_SERVICE
+  VITE_AUTH_SERVICE: import.meta.env.VITE_AUTH_SERVICE
 };
 
 export interface SettingsContextProps {

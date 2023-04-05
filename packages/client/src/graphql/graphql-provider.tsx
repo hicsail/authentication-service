@@ -12,10 +12,10 @@ export const GraphqlProvider: FC<GraphqlProviderProps> = ({ children }) => {
   const [httpLink, setHttpLink] = React.useState<HttpLink>();
 
   useEffect(() => {
-    if (settings?.uri) {
+    if (settings?.VITE_AUTH_SERVICE) {
       setHttpLink(
         new HttpLink({
-          uri: settings.uri,
+          uri: settings.VITE_AUTH_SERVICE,
           fetch: fetch
         })
       );
