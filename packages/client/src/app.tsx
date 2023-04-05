@@ -13,8 +13,8 @@ import { Paths } from '@constants/paths';
 
 export const App: FC = () => {
   return (
-    <GraphqlProvider>
-      <SettingsProvider>
+    <SettingsProvider>
+      <GraphqlProvider>
         <ThemeProvider>
           <Router>
             <ProjectProvider>
@@ -29,7 +29,7 @@ export const App: FC = () => {
             </ProjectProvider>
           </Router>
         </ThemeProvider>
-      </SettingsProvider>
-    </GraphqlProvider>
+      </GraphqlProvider>
+    </SettingsProvider>
   );
 };

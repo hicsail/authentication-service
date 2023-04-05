@@ -4,10 +4,12 @@ import { ThemeType } from '@theme/theme.provider';
 export interface Settings {
   theme: ThemeType;
   lastProject?: string;
+  uri?: string;
 }
 
 const defaultSettings: Settings = {
-  theme: 'light'
+  theme: 'light',
+  uri: import.meta.env.VITE_AUTH_SERVICE
 };
 
 export interface SettingsContextProps {
@@ -22,7 +24,12 @@ export interface SettingsProviderProps {
 }
 
 export const SettingsProvider: FC<SettingsProviderProps> = (props) => {
-  const [settings, setSettings] = useState<Settings>(restoreSettings());
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+
+  useEffect(() => {
+    // Restore settings from local storage
+    restoreSettings().then((settings) => setSettings(settings));
+  }, []);
 
   useEffect(() => {
     // Save settings to local storage
@@ -36,9 +43,20 @@ const saveSettings = (settings: Settings) => {
   localStorage.setItem('settings', JSON.stringify(settings));
 };
 
-const restoreSettings = (): Settings => {
-  const settings = localStorage.getItem('settings');
-  return settings ? JSON.parse(settings) : defaultSettings;
+const restoreSettings = async (): Promise<Settings> => {
+  let settings = defaultSettings;
+  const storedSettings = localStorage.getItem('settings');
+  if (storedSettings) {
+    settings = { ...settings, ...JSON.parse(storedSettings) };
+  }
+  try {
+    const response = await fetch('/env.json');
+    const env = await response.json();
+    settings = { ...settings, ...env };
+  } catch (e) {
+    console.error(e);
+  }
+  return settings;
 };
 
 export const useSettings = () => useContext(SettingsContext);
