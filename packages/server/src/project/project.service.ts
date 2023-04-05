@@ -64,9 +64,11 @@ export class ProjectService {
   }
 
   /**
-   * Get all projects
+   * List basic project information for all projects.
+   *
+   * @returns An array of project information
    */
-  async getAllProjects(): Promise<Project[]> {
+  async getProjects(): Promise<Project[]> {
     return this.prisma.project.findMany();
   }
 
@@ -108,19 +110,13 @@ export class ProjectService {
    * @param projectId The project id to check
    * @returns True if the project exists, false otherwise
    */
-  async exists(projectId: string | undefined): Promise<boolean> {
-    // If the project ID is not provided, return false
-    if (!projectId) {
+  async exists(projectId: string): Promise<boolean> {
+    try {
+      await this.getProject(projectId);
+      return true;
+    } catch (e) {
       return false;
     }
-
-    // Return true if there is a project with the provided ID
-    const projectCount = await this.prisma.project.count({
-      where: {
-        id: projectId
-      }
-    });
-    return projectCount > 0;
   }
   /**
    * For a given project return a list of users
@@ -130,11 +126,7 @@ export class ProjectService {
    * @throws Will throw a NotFoundException error if the project does not exist
    */
   async getProjectUsers(projectId: string): Promise<User[]> {
-    const projectExists = await this.exists(projectId);
-    if (!projectExists) {
-      throw new NotFoundException();
-    }
-
+    await this.getProject(projectId); // Check if the project exists
     return this.prisma.user.findMany({
       where: {
         projectId: projectId
@@ -150,11 +142,6 @@ export class ProjectService {
    * @throws Will throw a NotFoundException error if the project does not exist
    */
   async getProjectSettings(projectId: string): Promise<ProjectSettingsModel> {
-    const projectExists = await this.exists(projectId);
-    if (!projectExists) {
-      throw new NotFoundException();
-    }
-
     return this.prisma.project.findFirstOrThrow({
       where: { id: projectId },
       select: { displayProjectName: true, allowSignup: true }
@@ -169,11 +156,6 @@ export class ProjectService {
    * @throws Will throw a NotFoundException error if the project does not exist
    */
   async getAuthSettings(projectId: string): Promise<ProjectAuthMethodsModel> {
-    const projectExists = await this.exists(projectId);
-    if (!projectExists) {
-      throw new NotFoundException();
-    }
-
     return this.prisma.project.findFirstOrThrow({
       where: { id: projectId },
       select: { googleAuth: true }
@@ -192,11 +174,7 @@ export class ProjectService {
    * @throws Will throw an error if the project does not exist
    */
   async updateProjectSettings(id: string, projectSettings: ProjectSettingsInput): Promise<Project> {
-    const projectExists = await this.exists(id);
-    if (!projectExists) {
-      throw new NotFoundException();
-    }
-
+    await this.getProject(id); // Check if the project exists
     return this.prisma.project.update({
       where: {
         id: id
@@ -217,11 +195,7 @@ export class ProjectService {
    * @throws Will throw an error if the project does not exist
    */
   async updateProjectAuthMethods(id: string, projectAuthMethods: ProjectAuthMethodsInput): Promise<Project> {
-    const projectExists = await this.exists(id);
-    if (!projectExists) {
-      throw new NotFoundException();
-    }
-
+    await this.getProject(id); // Check if the project exists
     return this.prisma.project.update({
       where: {
         id: id

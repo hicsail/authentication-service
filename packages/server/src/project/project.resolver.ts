@@ -5,7 +5,7 @@ import { ProjectModel } from './model/project.model';
 import { UserModel } from '../user/model/user.model';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
-import { UsernameLoginDto } from 'src/auth/dto/auth.dto';
+import { UsernameLoginDto } from '../auth/dto/auth.dto';
 
 @Resolver(() => ProjectModel)
 export class ProjectResolver {
@@ -18,7 +18,7 @@ export class ProjectResolver {
 
   @Query(() => [ProjectModel])
   async listProjects(): Promise<ProjectModel[]> {
-    return this.projectService.getAllProjects();
+    return this.projectService.getProjects();
   }
 
   @Query(() => ProjectModel)
