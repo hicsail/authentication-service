@@ -2,8 +2,6 @@ import React, { FC } from 'react';
 import { ApolloClient, ApolloProvider, from, HttpLink, InMemoryCache } from '@apollo/client';
 import { env } from '@utils/env';
 
-const uri = `${env.VITE_AUTH_SERVICE}/graphql`;
-
 export interface GraphqlProviderProps {
   children: React.ReactNode;
 }
@@ -11,7 +9,7 @@ export interface GraphqlProviderProps {
 export const GraphqlProvider: FC<GraphqlProviderProps> = ({ children }) => {
   const httpLink = new HttpLink({
     fetch: fetch,
-    uri
+    uri: `${env.VITE_AUTH_SERVICE}/graphql`
   });
   const apolloClient = new ApolloClient({
     cache: new InMemoryCache({
