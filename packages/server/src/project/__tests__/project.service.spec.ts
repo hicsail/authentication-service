@@ -27,10 +27,7 @@ describe('ProjectService', () => {
     };
     mockUserService = sandbox.createStubInstance(UserService);
     mockConfigService = sandbox.createStubInstance(ConfigService);
-    let module = await Test.createTestingModule({
-      providers: [ProjectService, PrismaService, UserService, ConfigService]
-    }).compile();
-    projectService = module.get<ProjectService>(ProjectService);
+    projectService = new ProjectService(mockPrismaService, mockUserService, mockConfigService);
   });
 
   afterEach(() => {
