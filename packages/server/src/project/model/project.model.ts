@@ -1,7 +1,5 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, Directive } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
-import { ProjectAuthMethodsModel } from './project-auth-methods.model';
-import { ProjectSettingsModel } from './project-settings.model';
 
 /**
  * This is a model which adds the needed annotations to the Prisma Project
@@ -9,6 +7,7 @@ import { ProjectSettingsModel } from './project-settings.model';
  * but does need to be updated if the database schema changes.
  */
 @ObjectType()
+@Directive('@key(fields: "id")')
 export class ProjectModel {
   @Field(() => ID)
   id: string;

@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType, Directive } from '@nestjs/graphql';
 
 /**
  * This is a model which adds the needed annotations to the Prisma Project
@@ -6,6 +6,7 @@ import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
  * but does need to be updated if the database schema changes.
  */
 @ObjectType()
+@Directive('@key(fields: "id")')
 export class UserModel {
   @Field(() => ID)
   id: string;

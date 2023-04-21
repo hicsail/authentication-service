@@ -37,6 +37,7 @@
     "prisma:seed": "ts-node-dev prisma/seed.ts"
   },
   "dependencies": {
+    "@apollo/subgraph": "^2.4.2",
     "@golevelup/ts-jest": "^0.3.4",
     "@nestjs/apollo": "^10.1.7",
     "@nestjs/common": "^9.0.0",
