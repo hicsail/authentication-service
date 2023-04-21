@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, Directive } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
 
 /**
@@ -7,6 +7,7 @@ import JSON from 'graphql-type-json';
  * but does need to be updated if the database schema changes.
  */
 @ObjectType()
+@Directive('@key(fields: "id")')
 export class ProjectModel {
   @Field(() => ID)
   id: string;
