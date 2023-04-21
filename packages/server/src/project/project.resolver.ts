@@ -1,4 +1,4 @@
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver, ResolveReference } from '@nestjs/graphql';
 import { ConfigurableProjectSettings, ProjectAuthMethodsInput, ProjectCreateInput, ProjectSettingsInput } from './dto/project.dto';
 import { ProjectService } from './project.service';
 import { ProjectModel } from './model/project.model';
@@ -6,6 +6,7 @@ import { UserModel } from '../user/model/user.model';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
 import { UsernameLoginDto } from 'src/auth/dto/auth.dto';
+import {BadRequestException} from '@nestjs/common';
 
 @Resolver(() => ProjectModel)
 export class ProjectResolver {
@@ -60,4 +61,14 @@ export class ProjectResolver {
   async updateProjectAuthMethods(@Args('id') id: string, @Args('projectAuthMethods') projectAuthMethods: ProjectAuthMethodsInput): Promise<ProjectModel> {
     return this.projectService.updateProjectAuthMethods(id, projectAuthMethods);
   }
+
+  @ResolveReference()
+  async resolveReference(reference: { __typename: string; id: string }): Promise<ProjectModel> {
+    try {
+      return await this.projectService.getProject(reference.id);
+    } catch(e: any) {
+      throw new BadRequestException(`Could not found project with ID ${reference.id}`);
+    }
+  }
+
 }
