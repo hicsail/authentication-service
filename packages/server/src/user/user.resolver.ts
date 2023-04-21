@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { UserModel } from './model/user.model';
 import {BadRequestException} from '@nestjs/common';
 
-@Resolver()
+@Resolver(() => UserModel)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
