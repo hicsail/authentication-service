@@ -6,7 +6,7 @@ import { UserModel } from '../user/model/user.model';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
 import { UsernameLoginDto } from 'src/auth/dto/auth.dto';
-import {BadRequestException} from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
 @Resolver(() => ProjectModel)
 export class ProjectResolver {
@@ -66,9 +66,8 @@ export class ProjectResolver {
   async resolveReference(reference: { __typename: string; id: string }): Promise<ProjectModel> {
     try {
       return await this.projectService.getProject(reference.id);
-    } catch(e: any) {
+    } catch (e: any) {
       throw new BadRequestException(`Could not found project with ID ${reference.id}`);
     }
   }
-
 }
