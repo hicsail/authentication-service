@@ -1,10 +1,7 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import jwt_decode from 'jwt-decode';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 
 export const GetProject = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
-  const request = ctx.switchToHttp().getRequest();
-  const token = request.headers.authorization.split(' ')[1];
-  const decoded: any = jwt_decode(token);
-
-  return decoded.projectId;
+  const gqlCtx = GqlExecutionContext.create(ctx);
+  return gqlCtx.getContext().req.projectId;
 });
