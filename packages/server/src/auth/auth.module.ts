@@ -4,7 +4,6 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from '../project/project.module';
@@ -13,7 +12,6 @@ import { NotificationModule } from '../notification/notification.module';
 @Module({
   imports: [
     UserModule,
-    PassportModule,
     ProjectModule,
     NotificationModule,
     JwtModule.registerAsync({
