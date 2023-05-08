@@ -1,4 +1,5 @@
 import { Field, ID, Int, ObjectType, Directive } from '@nestjs/graphql';
+import { InviteStatus } from './invite.status';
 
 /**
  * This is a model which adds the needed annotations to the Prisma Project
@@ -31,4 +32,7 @@ export class InviteModel {
 
   @Field({ nullable: true })
   deletedAt: Date;
+
+  @Field()
+  status?: InviteStatus;
 }

@@ -3,19 +3,21 @@ import { InviteModel } from './model/invite.model';
 import { InviteService } from './invite.service';
 import { InviteStatus } from './model/invite.status';
 import { AcceptInviteModel } from './model/accept-invite.model';
-import { Invite, Project } from '@prisma/client';
+import { Invite } from '@prisma/client';
 import { UserModel } from '../user/model/user.model';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { ProjectId } from '../project/project.decorator';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/enum/role.enum';
 import { UserId } from '../user/user.decorator';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Resolver(() => InviteModel)
 export class InviteResolver {
   constructor(private readonly inviteService: InviteService) {}
 
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @Query(() => [InviteModel])
   async invites(@ProjectId() projectId: string, @Args('status', { type: () => InviteStatus, nullable: true }) status?: InviteStatus): Promise<InviteModel[]> {
     return this.inviteService.listInvites(projectId, status);
@@ -26,6 +28,8 @@ export class InviteResolver {
     return this.inviteService.findInviteById(id);
   }
 
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @Mutation(() => InviteModel)
   async createInvite(
     @ProjectId() projectId: string,
@@ -36,6 +40,8 @@ export class InviteResolver {
     return this.inviteService.createInvite({ email, role }, userId, projectId);
   }
 
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @Mutation(() => InviteModel)
   async resendInvite(@ProjectId() usersProjectId: string, @Args('id', { type: () => ID }) id: string): Promise<InviteModel> {
     return this.inviteService.resendInvite(id, usersProjectId);
@@ -46,6 +52,8 @@ export class InviteResolver {
     return this.inviteService.acceptInvite(input.inviteCode, input.projectId, input.email, input.password, input.fullname);
   }
 
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @Mutation(() => InviteModel)
   async cancelInvite(@Args('id', { type: () => ID }) id: string, @ProjectId() usersProjectId: string): Promise<InviteModel> {
     return this.inviteService.cancelInvite(id, usersProjectId);
