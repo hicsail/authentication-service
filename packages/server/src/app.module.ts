@@ -9,6 +9,7 @@ import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/ap
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { InviteModule } from './invite/invite.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { InviteModule } from './invite/invite.module';
         path: join(process.cwd(), 'dist/schema.gql')
       }
     }),
-    InviteModule
+    InviteModule,
+    NotificationModule
   ]
 })
 export class AppModule implements NestModule {

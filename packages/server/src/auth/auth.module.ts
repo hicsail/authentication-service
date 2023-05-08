@@ -9,12 +9,14 @@ import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from '../project/project.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
     ProjectModule,
+    NotificationModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {

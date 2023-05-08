@@ -1,18 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Invite } from '@prisma/client';
+import { Invite, Project } from '@prisma/client';
 import { UserService } from '../user/user.service';
 import { compare, hash } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { addDays, subDays } from 'date-fns';
 import { InviteStatus } from './model/invite.status';
+import { NotificationService } from '../notification/notification.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class InviteService {
-  constructor(private prisma: PrismaService, private userService: UserService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+    private readonly notification: NotificationService,
+    private readonly config: ConfigService
+  ) {}
 
-  async createInvite(newInvite: Pick<Invite, 'email' | 'role'>, fromUserId: string, projectId: string): Promise<Invite> {
-    if (await this.userService.findUserByEmail(projectId, newInvite.email)) {
+  async createInvite(newInvite: Pick<Invite, 'email' | 'role'>, fromUserId: string, project: Project): Promise<Invite> {
+    if (await this.userService.findUserByEmail(project.id, newInvite.email)) {
       throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
     }
     const inviteCode = randomBytes(4).toString('hex');
@@ -21,12 +28,14 @@ export class InviteService {
     const invite = await this.prisma.invite.create({
       data: {
         ...newInvite,
-        projectId,
+        projectId: project.id,
         inviteCode: hashInviteCode,
         invitedById: fromUserId,
         expiresAt
       }
     });
+    const inviteUrl = `${this.config.get('BASE_URL')}/invite/${invite.id}?inviteCode=${inviteCode}`;
+    await this.notification.sendInviteEmail(project, invite.email, inviteUrl);
     return invite;
   }
 
