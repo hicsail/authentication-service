@@ -10,6 +10,7 @@ import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { InviteModule } from './invite/invite.module';
 import { NotificationModule } from './notification/notification.module';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { NotificationModule } from './notification/notification.module';
       }
     }),
     InviteModule,
-    NotificationModule
+    NotificationModule,
+    JwtModule
   ]
 })
 export class AppModule implements NestModule {
