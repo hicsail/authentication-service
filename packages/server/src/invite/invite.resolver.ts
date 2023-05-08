@@ -19,12 +19,23 @@ export class InviteResolver {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @Query(() => [InviteModel])
-  async invites(@ProjectId() projectId: string, @Args('status', { type: () => InviteStatus, nullable: true }) status?: InviteStatus): Promise<InviteModel[]> {
+  async invites(
+    @ProjectId() projectId: string,
+    @Args('status', {
+      type: () => InviteStatus,
+      nullable: true,
+      description: 'The status of the invites to retrieve. If omitted, all invites for the given project will be returned.'
+    })
+    status?: InviteStatus
+  ): Promise<InviteModel[]> {
     return this.inviteService.listInvites(projectId, status);
   }
 
   @Query(() => InviteModel)
-  async invite(@Args('id', { type: () => ID }) id: string): Promise<InviteModel> {
+  async invite(
+    @Args('id', { type: () => ID, description: 'The ID of the invite to retrieve.' })
+    id: string
+  ): Promise<InviteModel> {
     return this.inviteService.findInviteById(id);
   }
 
@@ -34,8 +45,10 @@ export class InviteResolver {
   async createInvite(
     @ProjectId() projectId: string,
     @UserId() userId: string,
-    @Args('email') email: string,
-    @Args('role', { type: () => Int, nullable: true }) role = 0
+    @Args('email', { description: 'The email address of the user to invite.' })
+    email: string,
+    @Args('role', { type: () => Int, nullable: true, description: 'The role to assign to the invited user. If omitted, the default role of Regular User will be assigned.' })
+    role = 0
   ): Promise<InviteModel> {
     return this.inviteService.createInvite({ email, role }, userId, projectId);
   }
@@ -43,19 +56,19 @@ export class InviteResolver {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @Mutation(() => InviteModel)
-  async resendInvite(@ProjectId() usersProjectId: string, @Args('id', { type: () => ID }) id: string): Promise<InviteModel> {
+  async resendInvite(@ProjectId() usersProjectId: string, @Args('id', { type: () => ID, description: 'The ID of the invite to resend.' }) id: string): Promise<InviteModel> {
     return this.inviteService.resendInvite(id, usersProjectId);
   }
 
   @Mutation(() => InviteModel)
-  async acceptInvite(@Args('input') input: AcceptInviteModel): Promise<InviteModel> {
+  async acceptInvite(@Args('input', { description: 'Input for accepting an invite' }) input: AcceptInviteModel): Promise<InviteModel> {
     return this.inviteService.acceptInvite(input.inviteCode, input.projectId, input.email, input.password, input.fullname);
   }
 
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @Mutation(() => InviteModel)
-  async cancelInvite(@Args('id', { type: () => ID }) id: string, @ProjectId() usersProjectId: string): Promise<InviteModel> {
+  async cancelInvite(@Args('id', { type: () => ID, description: 'The ID of the invite to cancel.' }) id: string, @ProjectId() usersProjectId: string): Promise<InviteModel> {
     return this.inviteService.cancelInvite(id, usersProjectId);
   }
 

@@ -4,9 +4,10 @@ import { InviteResolver } from './invite.resolver';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
 import { NotificationModule } from '../notification/notification.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [UserModule, NotificationModule],
+  imports: [UserModule, NotificationModule, AuthModule],
   providers: [InviteService, InviteResolver, PrismaService],
   exports: [InviteService]
 })

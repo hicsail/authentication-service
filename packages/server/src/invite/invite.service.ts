@@ -10,12 +10,14 @@ import { NotificationService } from '../notification/notification.service';
 import { ConfigService } from '@nestjs/config';
 import { InviteModel } from './model/invite.model';
 import { isPast } from 'date-fns';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class InviteService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
+    private readonly auth: AuthService,
     private readonly notification: NotificationService,
     private readonly config: ConfigService
   ) {}
@@ -124,14 +126,19 @@ export class InviteService {
     if (!(await compare(inviteCode, invite.inviteCode))) {
       throw new HttpException('Invalid invite code', HttpStatus.FORBIDDEN);
     }
-    // Create the user
-    const user = await this.userService.createUser({
-      fullname,
+    // Sign up the user
+    await this.auth.signup({
+      email,
       password,
-      projectId: invite.projectId,
-      email: invite.email,
-      role: invite.role
+      fullname,
+      projectId
     });
+    // get user
+    const user = await this.userService.findUserByEmail(projectId, email);
+    if (invite.role != 0) {
+      // Promote the user to the role specified in the invite
+      await this.userService.updateUserRole(user.id, invite.role, true);
+    }
     return this.prisma.invite.update({
       where: {
         id: invite.id
