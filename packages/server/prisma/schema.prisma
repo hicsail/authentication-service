@@ -12,34 +12,54 @@ datasource db {
 }
 
 model User {
-  id          String    @default(uuid()) @id
-  projectId   String
-  username    String?
-  fullname    String?
-  email       String?
-  password    String
-  role        Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  resetCode           String?
-  resetCodeExpiresAt  DateTime?
-  Project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id                 String    @id @default(uuid())
+  projectId          String
+  username           String?
+  fullname           String?
+  email              String?
+  password           String
+  role               Int       @default(0)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  resetCode          String?
+  resetCodeExpiresAt DateTime?
+  Project            Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  Invite             Invite?   @relation(name: "acceptedBy")
+  InviteSent         Invite[]  @relation(name: "invitedBy")
 }
 
 model Project {
-  id          String    @default(uuid()) @id
-  name        String
-  description String?
-  logo        String?
-  muiTheme    Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  homePage    String?
-  redirectUrl String?
-  User        User[]
-  displayProjectName Boolean? @default(true)
-  googleAuth Boolean? @default(false)
-  allowSignup Boolean? @default(true)
+  id                 String    @id @default(uuid())
+  name               String
+  description        String?
+  logo               String?
+  muiTheme           Json?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+  homePage           String?
+  redirectUrl        String?
+  User               User[]
+  displayProjectName Boolean?  @default(true)
+  googleAuth         Boolean?  @default(false)
+  allowSignup        Boolean?  @default(true)
+  Invite             Invite[]
+}
+
+model Invite {
+  id           String    @id @default(uuid())
+  projectId    String
+  invitedById  String
+  acceptedById String?   @unique
+  email        String
+  role         Int       @default(0)
+  inviteCode   String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  expiresAt    DateTime
+  Project      Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invitedBy    User      @relation(name: "invitedBy", fields: [invitedById], references: [id])
+  acceptedBy   User?     @relation(name: "acceptedBy", fields: [acceptedById], references: [id])
 }

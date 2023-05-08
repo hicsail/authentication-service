@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { default as axios } from 'axios';
 import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
 import { UserService } from '../user/user.service';
@@ -9,10 +8,17 @@ import { AccessToken } from './types/auth.types';
 import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 import { ProjectService } from '../project/project.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService, private readonly projectService: ProjectService, private configService: ConfigService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly projectService: ProjectService,
+    private readonly configService: ConfigService,
+    private readonly notification: NotificationService
+  ) {}
 
   /**
    * Validate login using username.
@@ -78,20 +84,8 @@ export class AuthService {
       return;
     }
 
-    const link = `${process.env.BASE_URL}/reset?code=${resetCodePlain}`;
-    const project = await this.projectService.getProject(projectId);
-    const payload = {
-      to: [email],
-      subject: 'Password Reset',
-      template: 'auth/passwordReset',
-      templateData: {
-        link,
-        project
-      }
-    };
-
-    const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
-    return axios.post(sendEmailEndpoint, payload);
+    const link = `${this.configService.get('BASE_URL')}/reset?code=${resetCodePlain}`;
+    return this.notification.sendPasswordResetEmail(projectId, email, link);
   }
 
   /**
@@ -112,16 +106,8 @@ export class AuthService {
     const update = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
     if (update.status == 200) {
-      const payload = {
-        to: email,
-        subject: 'Password Reset Successful',
-        message: 'Password updated.'
-      };
-
-      const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
-      axios.post(sendEmailEndpoint, payload);
+      await this.notification.sendPasswordUpdatedEmail(projectId, email);
     }
-
     return update;
   }
 

@@ -4,17 +4,16 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from '../project/project.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     UserModule,
-    PassportModule,
     ProjectModule,
+    NotificationModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -33,7 +32,7 @@ import { ProjectModule } from '../project/project.module';
     })
   ],
   controllers: [LoginController, SignupController, RecoveryController, PublicKeyController],
-  providers: [AuthResolver, AuthService, PrismaService, JwtStrategy],
+  providers: [AuthResolver, AuthService, PrismaService],
   exports: [AuthService]
 })
 export class AuthModule {}
