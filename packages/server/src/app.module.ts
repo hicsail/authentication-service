@@ -8,6 +8,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
+import { InviteModule } from './invite/invite.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { ConfigModule } from '@nestjs/config';
         federation: 2,
         path: join(process.cwd(), 'dist/schema.gql')
       }
-    })
+    }),
+    InviteModule
   ]
 })
 export class AppModule implements NestModule {
