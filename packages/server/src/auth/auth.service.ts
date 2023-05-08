@@ -85,8 +85,7 @@ export class AuthService {
     }
 
     const link = `${this.configService.get('BASE_URL')}/reset?code=${resetCodePlain}`;
-    const project = await this.projectService.getProject(projectId);
-    return this.notification.sendPasswordResetEmail(project, email, link);
+    return this.notification.sendPasswordResetEmail(projectId, email, link);
   }
 
   /**
@@ -107,7 +106,7 @@ export class AuthService {
     const update = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
     if (update.status == 200) {
-      await this.notification.sendPasswordUpdatedEmail(await this.projectService.getProject(projectId), email);
+      await this.notification.sendPasswordUpdatedEmail(projectId, email);
     }
     return update;
   }

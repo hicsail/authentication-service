@@ -14,8 +14,8 @@ export class InviteModel {
   @Field()
   projectId: string;
 
-  @Field({ nullable: true })
-  email?: string;
+  @Field()
+  email: string;
 
   @Field(() => Int)
   role: number;

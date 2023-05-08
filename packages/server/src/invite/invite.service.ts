@@ -8,6 +8,8 @@ import { addDays, subDays } from 'date-fns';
 import { InviteStatus } from './model/invite.status';
 import { NotificationService } from '../notification/notification.service';
 import { ConfigService } from '@nestjs/config';
+import { InviteModel } from './model/invite.model';
+import { isPast } from 'date-fns';
 
 @Injectable()
 export class InviteService {
@@ -18,40 +20,60 @@ export class InviteService {
     private readonly config: ConfigService
   ) {}
 
-  async createInvite(newInvite: Pick<Invite, 'email' | 'role'>, fromUserId: string, project: Project): Promise<Invite> {
-    if (await this.userService.findUserByEmail(project.id, newInvite.email)) {
+  async createInvite(newInvite: Pick<Invite, 'email' | 'role'>, fromUserId: string, projectId: string): Promise<Invite> {
+    if (await this.userService.findUserByEmail(projectId, newInvite.email)) {
       throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
+    }
+    if (await this.findInviteByEmail(projectId, newInvite.email)) {
+      throw new HttpException('Invite already exists for this user', HttpStatus.FORBIDDEN);
     }
     const inviteCode = randomBytes(4).toString('hex');
     const hashInviteCode = await hash(inviteCode, 10);
     const expiresAt = addDays(new Date(), 7);
     const invite = await this.prisma.invite.create({
       data: {
-        ...newInvite,
-        projectId: project.id,
+        projectId,
+        email: newInvite.email,
+        role: newInvite.role,
+        expiresAt,
         inviteCode: hashInviteCode,
-        invitedById: fromUserId,
-        expiresAt
+        invitedById: fromUserId
       }
     });
     const inviteUrl = `${this.config.get('BASE_URL')}/invite/${invite.id}?inviteCode=${inviteCode}`;
-    await this.notification.sendInviteEmail(project, invite.email, inviteUrl);
+    await this.notification.sendInviteEmail(projectId, invite.email, inviteUrl);
     return invite;
   }
 
-  async acceptInvite(inviteCode: string, projectId: string, email: string, password: string, fullname: string): Promise<void> {
-    const invite = await this.prisma.invite.findFirst({
+  async findInviteById(id: string): Promise<Invite> {
+    const invite = await this.prisma.invite.findUnique({
       where: {
-        email,
-        projectId,
-        deletedAt: null
+        id
       }
     });
     if (!invite) {
       throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
     }
-    if (new Date() > invite.expiresAt) {
-      throw new HttpException('Invite expired', HttpStatus.FORBIDDEN);
+    return invite;
+  }
+
+  async findInviteByEmail(projectId: string, email: string): Promise<Invite> {
+    return await this.prisma.invite.findFirst({
+      where: {
+        projectId,
+        email,
+        deletedAt: null,
+        expiresAt: {
+          gt: new Date()
+        }
+      }
+    });
+  }
+
+  async acceptInvite(inviteCode: string, projectId: string, email: string, password: string, fullname: string): Promise<InviteModel> {
+    const invite = await this.findInviteByEmail(projectId, email);
+    if (!invite) {
+      throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
     }
     if (invite.acceptedById) {
       throw new HttpException('Invite already accepted', HttpStatus.FORBIDDEN);
@@ -69,7 +91,7 @@ export class InviteService {
       email: invite.email,
       role: invite.role
     });
-    await this.prisma.invite.update({
+    return this.prisma.invite.update({
       where: {
         id: invite.id
       },
@@ -146,8 +168,18 @@ export class InviteService {
     }
   }
 
-  async cancelInvite(inviteId: string): Promise<void> {
-    await this.prisma.invite.update({
+  async cancelInvite(inviteId: string, usersProjectId: string): Promise<InviteModel> {
+    const invite = await this.findInviteById(inviteId);
+    if (!invite) {
+      throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
+    }
+    if (usersProjectId !== invite.projectId) {
+      throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
+    }
+    if (invite.acceptedById) {
+      throw new HttpException('Invite already accepted', HttpStatus.FORBIDDEN);
+    }
+    return this.prisma.invite.update({
       where: {
         id: inviteId
       },
@@ -157,13 +189,16 @@ export class InviteService {
     });
   }
 
-  async resendInvite(inviteId: string): Promise<void> {
+  async resendInvite(inviteId: string, usersProjectId: string): Promise<InviteModel> {
     const invite = await this.prisma.invite.findUnique({
       where: {
         id: inviteId
       }
     });
     if (!invite) {
+      throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
+    }
+    if (usersProjectId !== invite.projectId) {
       throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
     }
     if (invite.acceptedById) {
@@ -174,7 +209,7 @@ export class InviteService {
     }
     const inviteCode = randomBytes(4).toString('hex');
     const hashInviteCode = await hash(inviteCode, 10);
-    await this.prisma.invite.update({
+    return this.prisma.invite.update({
       where: {
         id: inviteId
       },
@@ -182,5 +217,18 @@ export class InviteService {
         inviteCode: hashInviteCode
       }
     });
+  }
+
+  getInviteStatus(invite: Invite): InviteStatus {
+    if (invite.deletedAt) {
+      return InviteStatus.CANCELLED;
+    }
+    if (invite.acceptedById) {
+      return InviteStatus.ACCEPTED;
+    }
+    if (isPast(invite.expiresAt)) {
+      return InviteStatus.EXPIRED;
+    }
+    return InviteStatus.PENDING;
   }
 }
