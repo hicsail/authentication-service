@@ -11,6 +11,7 @@ import { useProject } from '@context/project.context';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ProjectDisplay } from '@components/project-display';
 import { InviteStatus } from '@graphql/graphql';
+import { Paths } from '@constants/paths';
 
 const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -33,7 +34,7 @@ export const Invite: FC = () => {
     skip: !inviteId
   });
 
-  const [acceptInvite, { data, error }] = useAcceptInviteMutation();
+  const [acceptInvite, { data: acceptInviteData, error: acceptInviteError }] = useAcceptInviteMutation();
 
   // Update the project for the current invite
   useEffect(() => {
@@ -57,6 +58,15 @@ export const Invite: FC = () => {
       setErrorText('Invite not found, please contact the project owner to resend the invite');
     }
   }, [inviteData, inviteError]);
+
+  useEffect(() => {
+    if (acceptInviteData && acceptInviteData.acceptInvite && acceptInviteData.acceptInvite.id) {
+      // Successfully accepted invite, redirecting to log in
+      navigate(Paths.LOGIN);
+    } else if (acceptInviteError) {
+      setErrorText('Error accepting invite, please contact the project owner to resend the invite');
+    }
+  }, [acceptInviteData, acceptInviteError]);
 
   return (
     <Container
@@ -102,7 +112,7 @@ export const Invite: FC = () => {
           >
             <Form>
               <Card>
-                <CardHeader title="Sign Up" />
+                <CardHeader title="Create Account" />
                 <CardContent>
                   <TextInput autoFocus fullWidth name="fullname" label="Full Name" type="text" autoComplete="name" margin="normal" required />
                   <TextInput fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
@@ -111,7 +121,7 @@ export const Invite: FC = () => {
                 </CardContent>
               </Card>
               <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
-                Sign Up
+                Accept Invite
               </SubmitButton>
             </Form>
           </Formik>

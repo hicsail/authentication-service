@@ -11,7 +11,7 @@ const defaultSettings: Settings = {
 
 export interface SettingsContextProps {
   settings: Settings;
-  setSettings: (settings: Settings) => void;
+  setSettings: (key: string, value: string) => void;
 }
 
 const SettingsContext = createContext<SettingsContextProps>({} as SettingsContextProps);

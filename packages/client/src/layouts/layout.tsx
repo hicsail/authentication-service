@@ -11,7 +11,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
   const { settings, setSettings } = useSettings();
 
   const toggleDarkMode = () => {
-    setSettings({ ...settings, theme: settings.theme === 'light' ? 'dark' : 'light' });
+    setSettings('theme', settings.theme === 'light' ? 'dark' : 'light');
   };
 
   return (

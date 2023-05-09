@@ -7,6 +7,7 @@ import { useSettings } from '@context/settings.context';
 
 export interface ProjectContextProps {
   project?: ProjectModel;
+  setProjectId: (projectId: string) => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps>({} as ProjectContextProps);
@@ -33,7 +34,7 @@ export const ProjectProvider: FC<ProjectProviderProps> = ({ children, ...props }
     const id = new URLSearchParams(search).get('projectId') || '';
     if (id) {
       setProjectId(id);
-    } else if (settings.lastProject) {
+    } else if (settings.lastProject && settings.lastProject !== projectId) {
       setProjectId(settings.lastProject);
     }
   }, [settings]);
@@ -52,15 +53,12 @@ export const ProjectProvider: FC<ProjectProviderProps> = ({ children, ...props }
         ...data.getProject,
         redirectUrl: redirectUrl || data.getProject.redirectUrl
       } as ProjectModel);
-      setSettings({
-        lastProject: data.getProject.id,
-        ...settings
-      });
+      setSettings('lastProject', data.getProject.id);
     }
   }, [data]);
 
   return (
-    <ProjectContext.Provider value={{ project }} {...props}>
+    <ProjectContext.Provider value={{ project, setProjectId }} {...props}>
       <Backdrop open={!project} sx={{ backgroundColor: (theme) => theme.palette.background.default, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         {loading && <CircularProgress color="primary" />}
         {!loading && !project && projectId && (

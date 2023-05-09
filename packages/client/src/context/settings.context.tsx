@@ -14,7 +14,7 @@ const defaultSettings: Settings = {
 
 export interface SettingsContextProps {
   settings: Settings;
-  setSettings: (settings: Settings) => void;
+  setSettings: (key: keyof Settings, value: string) => void;
 }
 
 const SettingsContext = createContext<SettingsContextProps>({} as SettingsContextProps);
@@ -24,22 +24,33 @@ export interface SettingsProviderProps {
 }
 
 export const SettingsProvider: FC<SettingsProviderProps> = (props) => {
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [settings, saveSettings] = useState<Settings>(defaultSettings);
 
   useEffect(() => {
     // Restore settings from local storage
-    restoreSettings().then((settings) => setSettings(settings));
+    restoreSettings().then((settings) => saveSettings(settings));
   }, []);
 
   useEffect(() => {
     // Save settings to local storage
-    saveSettings(settings);
+    saveToLocalStorage(settings);
   }, [settings]);
+
+  const setSettings = (key: keyof Settings, value: string) => {
+    if (settings && settings[key] === value) {
+      // skip if value is the same, causes an infinite loop if removed
+      return;
+    }
+    saveSettings({
+      ...settings,
+      [key]: value
+    });
+  };
 
   return <SettingsContext.Provider value={{ settings, setSettings }} {...props} />;
 };
 
-const saveSettings = (settings: Settings) => {
+const saveToLocalStorage = (settings: Settings) => {
   localStorage.setItem('settings', JSON.stringify(settings));
 };
 
