@@ -1,15 +1,16 @@
-import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
 import { PasswordInput } from '@components/forms/password-input';
 import { SubmitButton } from '@components/forms/submit-button';
 import { useLoginEmailMutation } from '@graphql/auth/auth';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { Paths } from '@constants/paths';
 import { ProjectDisplay } from '@components/project-display';
+import { useSnackbar } from '@context/snackbar.context';
 
 const LoginValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -18,8 +19,8 @@ const LoginValidation = Yup.object().shape({
 
 export const SignIn = () => {
   const [loginEmail, { data, error }] = useLoginEmailMutation();
-  const [errorText, setErrorText] = useState('');
   const { project } = useProject();
+  const { pushMessage } = useSnackbar();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export const SignIn = () => {
 
   useEffect(() => {
     if (error) {
-      setErrorText('Invalid email or password');
+      pushMessage('Invalid email or password');
     }
   }, [error]);
 
@@ -52,18 +53,12 @@ export const SignIn = () => {
         }}
       >
         <ProjectDisplay project={project} />
-        {errorText && (
-          <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
-            {errorText}
-          </Alert>
-        )}
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
           validationSchema={LoginValidation}
           initialValues={{ email: '', password: '' }}
           onSubmit={async ({ email, password }) => {
-            setErrorText('');
             await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
           }}
         >

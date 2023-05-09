@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { ProjectDisplay } from '@components/project-display';
+import { useSnackbar } from '@context/snackbar.context';
 
 const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -19,8 +20,7 @@ const SignUpValidation = Yup.object().shape({
 
 export const SignUp = () => {
   const [signUpEmail, { data, error }] = useSignUpEmailMutation();
-
-  const [errorText, setErrorText] = useState('');
+  const { pushMessage } = useSnackbar();
   const { project } = useProject();
   const navigate = useNavigate();
 
@@ -33,11 +33,11 @@ export const SignUp = () => {
   useEffect(() => {
     if (error) {
       if (error.message.includes('User already exist in the database')) {
-        setErrorText('User already exist in the database');
+        pushMessage('User already exist in the database');
       } else if (error.message.includes('status code 500')) {
-        setErrorText('Server error. Try again later.');
+        pushMessage('Server error. Try again later.');
       } else {
-        setErrorText('Invalid email or password');
+        pushMessage('Invalid email or password');
       }
     }
   }, [error]);
@@ -60,16 +60,10 @@ export const SignUp = () => {
         }}
       >
         <ProjectDisplay project={project} />
-        {errorText && (
-          <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
-            {errorText}
-          </Alert>
-        )}
         <Formik
           validationSchema={SignUpValidation}
           initialValues={{ fullname: '', email: '', confirmPassword: '', password: '' }}
           onSubmit={async ({ email, password, fullname }) => {
-            setErrorText('');
             await signUpEmail({ variables: { email, password, fullname, projectId: project?.id || '' } });
           }}
         >

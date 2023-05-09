@@ -10,6 +10,7 @@ import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { PasswordInput } from '@components/forms/password-input';
 import { ProjectDisplay } from '@components/project-display';
+import { useSnackbar } from '@context/snackbar.context';
 
 const ResetPasswordValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -19,14 +20,13 @@ const ResetPasswordValidation = Yup.object().shape({
 
 export const ResetPassword = () => {
   const [resetPassword, { data, error }] = useResetPasswordMutation();
-
-  const [errorText, setErrorText] = useState('');
+  const { pushMessage } = useSnackbar();
   const { project } = useProject();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (error) {
-      setErrorText('Invalid email or password');
+      pushMessage('Invalid email or password');
     }
   }, [error]);
 
@@ -64,18 +64,12 @@ export const ResetPassword = () => {
           </>
         ) : (
           <>
-            {errorText && (
-              <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
-                {errorText}
-              </Alert>
-            )}
             <Formik
               validateOnBlur={false}
               validateOnChange={false}
               validationSchema={ResetPasswordValidation}
               initialValues={{ email: '', code: '', password: '' }}
               onSubmit={async ({ email, code, password }) => {
-                setErrorText('');
                 await resetPassword({ variables: { email, code, password, projectId: project?.id || '' } });
               }}
             >

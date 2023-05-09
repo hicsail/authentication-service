@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { ProjectDisplay } from '@components/project-display';
+import { useSnackbar } from '@context/snackbar.context';
 
 const ForgotPasswordValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required')
@@ -16,17 +17,16 @@ const ForgotPasswordValidation = Yup.object().shape({
 
 export const ForgotPassword = () => {
   const [forgotPassword, { data, error }] = useForgotPasswordMutation();
-
-  const [errorText, setErrorText] = useState('');
+  const { pushMessage } = useSnackbar();
   const { project } = useProject();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (error) {
       if (error.message.includes('status code 500')) {
-        setErrorText('Server error. Try again later.');
+        pushMessage('Server error. Try again later.');
       } else {
-        setErrorText('Invalid email or password');
+        pushMessage('Invalid email or password');
       }
     }
   }, [error]);
@@ -57,18 +57,12 @@ export const ForgotPassword = () => {
           </>
         ) : (
           <>
-            {errorText && (
-              <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
-                {errorText}
-              </Alert>
-            )}
             <Formik
               validateOnBlur={false}
               validateOnChange={false}
               validationSchema={ForgotPasswordValidation}
               initialValues={{ email: '' }}
               onSubmit={async ({ email }) => {
-                setErrorText('');
                 await forgotPassword({ variables: { email, projectId: project?.id || '' } });
               }}
             >

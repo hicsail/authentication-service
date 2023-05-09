@@ -12,6 +12,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ProjectDisplay } from '@components/project-display';
 import { InviteStatus } from '@graphql/graphql';
 import { Paths } from '@constants/paths';
+import { useSnackbar } from '@context/snackbar.context';
 
 const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -25,7 +26,7 @@ export const Invite: FC = () => {
   const navigate = useNavigate();
   const { inviteCode } = new URLSearchParams(location.search) as any;
   const { project, setProjectId } = useProject();
-  const [errorText, setErrorText] = useState('');
+  const { pushMessage } = useSnackbar();
 
   const { data: inviteData, error: inviteError } = useGetInviteQuery({
     variables: {
@@ -44,18 +45,18 @@ export const Invite: FC = () => {
       }
       switch (inviteData.invite.status) {
         case InviteStatus.Accepted:
-          setErrorText('Invite has already been accepted');
+          pushMessage('Invite has already been accepted');
           break;
         case InviteStatus.Expired:
-          setErrorText('Invite has expired, please contact the project owner to resend the invite');
+          pushMessage('Invite has expired, please contact the project owner to resend the invite');
           break;
         case InviteStatus.Cancelled:
-          setErrorText('Invite has been cancelled,  please contact the project owner if this is a mistake');
+          pushMessage('Invite has been cancelled,  please contact the project owner if this is a mistake');
           break;
       }
     }
     if (inviteError) {
-      setErrorText('Invite not found, please contact the project owner to resend the invite');
+      pushMessage('Invite not found, please contact the project owner to resend the invite');
     }
   }, [inviteData, inviteError]);
 
@@ -63,8 +64,9 @@ export const Invite: FC = () => {
     if (acceptInviteData && acceptInviteData.acceptInvite && acceptInviteData.acceptInvite.id) {
       // Successfully accepted invite, redirecting to log in
       navigate(Paths.LOGIN);
+      pushMessage('Invite accepted, please log in', 'success');
     } else if (acceptInviteError) {
-      setErrorText('Error accepting invite, please contact the project owner to resend the invite');
+      pushMessage('Error accepting invite, please contact the project owner to resend the invite');
     }
   }, [acceptInviteData, acceptInviteError]);
 
@@ -86,17 +88,11 @@ export const Invite: FC = () => {
         }}
       >
         <ProjectDisplay project={project} />
-        {errorText && (
-          <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
-            {errorText}
-          </Alert>
-        )}
         {inviteData?.invite && (
           <Formik
             validationSchema={SignUpValidation}
             initialValues={{ fullname: '', email: '', confirmPassword: '', password: '' }}
             onSubmit={async ({ email, password, fullname }) => {
-              setErrorText('');
               await acceptInvite({
                 variables: {
                   input: {
