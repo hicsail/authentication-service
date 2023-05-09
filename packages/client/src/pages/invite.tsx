@@ -1,4 +1,4 @@
-import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, Container } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
@@ -6,7 +6,7 @@ import { PasswordInput } from '@components/forms/password-input';
 import { SubmitButton } from '@components/forms/submit-button';
 import { useAcceptInviteMutation, useGetInviteQuery } from '@graphql/auth/invite';
 
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { useProject } from '@context/project.context';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ProjectDisplay } from '@components/project-display';

@@ -1,11 +1,11 @@
-import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
 import { SubmitButton } from '@components/forms/submit-button';
 import { useForgotPasswordMutation } from '@graphql/auth/auth';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { ProjectDisplay } from '@components/project-display';
