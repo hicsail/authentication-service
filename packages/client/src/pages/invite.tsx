@@ -24,7 +24,7 @@ export const Invite: FC = () => {
   const { inviteId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { inviteCode } = new URLSearchParams(location.search) as any;
+  const inviteCode = location.search.split('inviteCode=')[1];
   const { project, setProjectId } = useProject();
   const { pushMessage } = useSnackbar();
 
