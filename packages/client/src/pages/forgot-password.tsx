@@ -8,6 +8,7 @@ import { useForgotPasswordMutation } from '@graphql/auth/auth';
 import { useEffect, useState } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
+import { ProjectDisplay } from '@components/project-display';
 
 const ForgotPasswordValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required')
@@ -47,16 +48,7 @@ export const ForgotPassword = () => {
           alignItems: 'center'
         }}
       >
-        {/* {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />} */}
-        {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
-
-        {project?.settings.displayProjectName ? (
-          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-            {project?.name || 'Forgot Password'}
-          </Typography>
-        ) : (
-          <></>
-        )}
+        <ProjectDisplay project={project} />
         {data && data.forgotPassword ? (
           <>
             <Typography variant="h4" sx={{ mb: 5 }}>

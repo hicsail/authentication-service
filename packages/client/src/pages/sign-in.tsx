@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { Paths } from '@constants/paths';
+import { ProjectDisplay } from '@components/project-display';
 
 const LoginValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -50,15 +51,7 @@ export const SignIn = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
-        {project?.name &&
-          (project?.settings.displayProjectName ? (
-            <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-              {project?.name}
-            </Typography>
-          ) : (
-            <></>
-          ))}
+        <ProjectDisplay project={project} />
         {errorText && (
           <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
             {errorText}

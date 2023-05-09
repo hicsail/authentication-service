@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { PasswordInput } from '@components/forms/password-input';
+import { ProjectDisplay } from '@components/project-display';
 
 const ResetPasswordValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -46,15 +47,7 @@ export const ResetPassword = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
-        {project?.settings.displayProjectName ? (
-          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-            {project?.name || 'Forgot Password'}
-          </Typography>
-        ) : (
-          <></>
-        )}
-
+        <ProjectDisplay project={project} />
         {data && data.resetPassword ? (
           <>
             <Typography variant="h4" sx={{ mb: 5 }}>

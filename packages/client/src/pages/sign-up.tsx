@@ -9,6 +9,7 @@ import { useSignUpEmailMutation } from '@graphql/auth/auth';
 import { useEffect, useState } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
+import { ProjectDisplay } from '@components/project-display';
 
 const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -58,16 +59,7 @@ export const SignUp = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
-        {project?.name &&
-          (project?.settings.displayProjectName ? (
-            <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-              {project?.name}
-            </Typography>
-          ) : (
-            <></>
-          ))}
-
+        <ProjectDisplay project={project} />
         {errorText && (
           <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
             {errorText}
