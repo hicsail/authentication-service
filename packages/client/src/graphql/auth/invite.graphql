@@ -1,0 +1,12 @@
+mutation acceptInvite($input: AcceptInviteModel!) {
+  acceptInvite(input: $input) {
+    id
+  }
+}
+
+query getInvite($id: ID!) {
+  invite(id: $id) {
+    projectId
+    status
+  }
+}

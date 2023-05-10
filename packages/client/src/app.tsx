@@ -10,26 +10,31 @@ import { SignUp } from '@pages/sign-up';
 import { ForgotPassword } from '@pages/forgot-password';
 import { ResetPassword } from '@pages/reset-password';
 import { Paths } from '@constants/paths';
+import { Invite } from '@pages/invite';
+import { SnackbarProvider } from '@context/snackbar.context';
 
 export const App: FC = () => {
   return (
-    <SettingsProvider>
-      <GraphqlProvider>
-        <ThemeProvider>
-          <Router>
-            <ProjectProvider>
-              <Layout>
-                <Routes>
-                  <Route path={Paths.LOGIN} element={<SignIn />} />
-                  <Route path={Paths.SIGN_UP} element={<SignUp />} />
-                  <Route path={Paths.FORGOT_PASSWORD} element={<ForgotPassword />} />
-                  <Route path={Paths.RESET_PASSWORD} element={<ResetPassword />} />
-                </Routes>
-              </Layout>
-            </ProjectProvider>
-          </Router>
-        </ThemeProvider>
-      </GraphqlProvider>
-    </SettingsProvider>
+    <SnackbarProvider>
+      <SettingsProvider>
+        <GraphqlProvider>
+          <ThemeProvider>
+            <Router>
+              <ProjectProvider>
+                <Layout>
+                  <Routes>
+                    <Route path={Paths.LOGIN} element={<SignIn />} />
+                    <Route path={Paths.SIGN_UP} element={<SignUp />} />
+                    <Route path={Paths.FORGOT_PASSWORD} element={<ForgotPassword />} />
+                    <Route path={Paths.RESET_PASSWORD} element={<ResetPassword />} />
+                    <Route path={Paths.INVITE} element={<Invite />} />
+                  </Routes>
+                </Layout>
+              </ProjectProvider>
+            </Router>
+          </ThemeProvider>
+        </GraphqlProvider>
+      </SettingsProvider>
+    </SnackbarProvider>
   );
 };

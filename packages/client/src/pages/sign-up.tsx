@@ -1,4 +1,4 @@
-import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
@@ -6,9 +6,11 @@ import { PasswordInput } from '@components/forms/password-input';
 import { SubmitButton } from '@components/forms/submit-button';
 import { useSignUpEmailMutation } from '@graphql/auth/auth';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
+import { ProjectDisplay } from '@components/project-display';
+import { useSnackbar } from '@context/snackbar.context';
 
 const SignUpValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -18,8 +20,7 @@ const SignUpValidation = Yup.object().shape({
 
 export const SignUp = () => {
   const [signUpEmail, { data, error }] = useSignUpEmailMutation();
-
-  const [errorText, setErrorText] = useState('');
+  const { pushMessage } = useSnackbar();
   const { project } = useProject();
   const navigate = useNavigate();
 
@@ -32,11 +33,11 @@ export const SignUp = () => {
   useEffect(() => {
     if (error) {
       if (error.message.includes('User already exist in the database')) {
-        setErrorText('User already exist in the database');
+        pushMessage('User already exist in the database');
       } else if (error.message.includes('status code 500')) {
-        setErrorText('Server error. Try again later.');
+        pushMessage('Server error. Try again later.');
       } else {
-        setErrorText('Invalid email or password');
+        pushMessage('Invalid email or password');
       }
     }
   }, [error]);
@@ -58,26 +59,11 @@ export const SignUp = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Box component="img" alt="project logo" src={project.logo} sx={{ mb: 2, maxHeight: '15vh' }} />}
-        {project?.name &&
-          (project?.settings.displayProjectName ? (
-            <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-              {project?.name}
-            </Typography>
-          ) : (
-            <></>
-          ))}
-
-        {errorText && (
-          <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
-            {errorText}
-          </Alert>
-        )}
+        <ProjectDisplay project={project} />
         <Formik
           validationSchema={SignUpValidation}
           initialValues={{ fullname: '', email: '', confirmPassword: '', password: '' }}
           onSubmit={async ({ email, password, fullname }) => {
-            setErrorText('');
             await signUpEmail({ variables: { email, password, fullname, projectId: project?.id || '' } });
           }}
         >

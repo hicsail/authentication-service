@@ -1,14 +1,16 @@
-import { Alert, Avatar, Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInput } from '@components/forms/text-input';
 import { SubmitButton } from '@components/forms/submit-button';
 import { useResetPasswordMutation } from '@graphql/auth/auth';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
 import { PasswordInput } from '@components/forms/password-input';
+import { ProjectDisplay } from '@components/project-display';
+import { useSnackbar } from '@context/snackbar.context';
 
 const ResetPasswordValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -18,14 +20,13 @@ const ResetPasswordValidation = Yup.object().shape({
 
 export const ResetPassword = () => {
   const [resetPassword, { data, error }] = useResetPasswordMutation();
-
-  const [errorText, setErrorText] = useState('');
+  const { pushMessage } = useSnackbar();
   const { project } = useProject();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (error) {
-      setErrorText('Invalid email or password');
+      pushMessage('Invalid email or password');
     }
   }, [error]);
 
@@ -46,15 +47,7 @@ export const ResetPassword = () => {
           alignItems: 'center'
         }}
       >
-        {project && project.logo && <Avatar alt="project logo" src={project.logo} sx={{ width: 75, height: 75, mb: 2 }} />}
-        {project?.settings.displayProjectName ? (
-          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-            {project?.name || 'Forgot Password'}
-          </Typography>
-        ) : (
-          <></>
-        )}
-
+        <ProjectDisplay project={project} />
         {data && data.resetPassword ? (
           <>
             <Typography variant="h4" sx={{ mb: 5 }}>
@@ -71,18 +64,12 @@ export const ResetPassword = () => {
           </>
         ) : (
           <>
-            {errorText && (
-              <Alert severity="error" variant="outlined" sx={{ width: '100%', mb: 2 }}>
-                {errorText}
-              </Alert>
-            )}
             <Formik
               validateOnBlur={false}
               validateOnChange={false}
               validationSchema={ResetPasswordValidation}
               initialValues={{ email: '', code: '', password: '' }}
               onSubmit={async ({ email, code, password }) => {
-                setErrorText('');
                 await resetPassword({ variables: { email, code, password, projectId: project?.id || '' } });
               }}
             >
