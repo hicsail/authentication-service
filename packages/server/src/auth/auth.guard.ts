@@ -13,6 +13,10 @@ export class AuthGuard implements CanActivate {
   canActivate(ctx: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const context = GqlExecutionContext.create(ctx);
     const { headers } = context.getContext().req;
+    if (!headers.authorization) {
+      this.logger.log('No authorization header found');
+      return false;
+    }
     const token = headers.authorization.split(' ')[1] || '';
     try {
       const decodedToken = this.jwtService.verify(token);
