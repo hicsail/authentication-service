@@ -55,6 +55,11 @@ export class ProjectCreateInput implements Omit<Project, 'id' | 'createdAt' | 'u
   @IsDefined()
   @Field()
   googleAuth: boolean;
+
+  @IsNotEmpty()
+  @IsDefined()
+  @Field()
+  emailAuth: boolean;
 }
 
 export class ProjectIdentifier {
@@ -123,4 +128,9 @@ export class ProjectAuthMethodsInput implements Partial<ProjectAuthMethodsModel>
   @IsNotEmpty()
   @Field({ nullable: true })
   googleAuth: boolean;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @Field({nullable: true})
+  emailAuth: boolean;
 }

@@ -43,6 +43,7 @@ model Project {
   User               User[]
   displayProjectName Boolean?  @default(true)
   googleAuth         Boolean?  @default(false)
+  emailAuth          Boolean?  @default(true)
   allowSignup        Boolean?  @default(true)
   Invite             Invite[]
 }
