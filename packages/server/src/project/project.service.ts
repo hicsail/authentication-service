@@ -154,7 +154,7 @@ export class ProjectService {
 
     return this.prisma.project.findFirstOrThrow({
       where: { id: projectId },
-      select: { googleAuth: true, emailAuth: true}
+      select: { googleAuth: true, emailAuth: true }
     });
   }
 

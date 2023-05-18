@@ -131,6 +131,6 @@ export class ProjectAuthMethodsInput implements Partial<ProjectAuthMethodsModel>
 
   @IsOptional()
   @IsNotEmpty()
-  @Field({nullable: true})
+  @Field({ nullable: true })
   emailAuth: boolean;
 }

@@ -9,7 +9,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 export class ProjectAuthMethodsModel {
   @Field()
   googleAuth: boolean;
-  
+
   @Field()
   emailAuth: boolean;
 }
