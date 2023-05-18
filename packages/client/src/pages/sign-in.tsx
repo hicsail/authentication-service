@@ -53,38 +53,46 @@ export const SignIn = () => {
         }}
       >
         <ProjectDisplay project={project} />
-        <Formik
-          validateOnBlur={false}
-          validateOnChange={false}
-          validationSchema={LoginValidation}
-          initialValues={{ email: '', password: '' }}
-          onSubmit={async ({ email, password }) => {
-            await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
-          }}
-        >
-          <Form>
-            <Card>
-              <CardHeader title="Sign in" />
-              <CardContent>
-                <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
-                <PasswordInput name="password" label="Password" fullWidth autoComplete="current-password" required margin="normal" />
-              </CardContent>
-            </Card>
-            <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
-              Sign In
-            </SubmitButton>
-          </Form>
-        </Formik>
+        {project?.authMethods.emailAuth ? (
+          <Formik
+            validateOnBlur={false}
+            validateOnChange={false}
+            validationSchema={LoginValidation}
+            initialValues={{ email: '', password: '' }}
+            onSubmit={async ({ email, password }) => {
+              await loginEmail({ variables: { email, password, projectId: project?.id || '' } });
+            }}
+          >
+            <Form>
+              <Card>
+                <CardHeader title="Sign in" />
+                <CardContent>
+                  <TextInput autoFocus fullWidth name="email" label="Email Address" type="email" autoComplete="email" margin="normal" required />
+                  <PasswordInput name="password" label="Password" fullWidth autoComplete="current-password" required margin="normal" />
+                </CardContent>
+              </Card>
+              <SubmitButton fullWidth variant="contained" color="primary" sx={{ my: 2 }}>
+                Sign In
+              </SubmitButton>
+            </Form>
+          </Formik>
+        ) : (
+          <></>
+        )}
         <Grid container>
-          <Grid item xs>
-            <Button
-              onClick={() => {
-                navigate(Paths.FORGOT_PASSWORD);
-              }}
-            >
-              <Typography variant="body2">Forgot password?</Typography>
-            </Button>
-          </Grid>
+          {project?.authMethods.emailAuth ? (
+            <Grid item xs>
+              <Button
+                onClick={() => {
+                  navigate(Paths.FORGOT_PASSWORD);
+                }}
+              >
+                <Typography variant="body2">Forgot password?</Typography>
+              </Button>
+            </Grid>
+          ) : (
+            <></>
+          )}
           {project?.settings.allowSignup ? (
             <Grid item>
               <Button
