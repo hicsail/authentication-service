@@ -1,5 +1,5 @@
 overwrite: true
-schema: http://localhost:3001/graphql
+schema: https://test-auth-service.sail.codes/graphql
 documents: src/graphql/**/*.graphql
 generates:
   src/graphql/graphql.ts:

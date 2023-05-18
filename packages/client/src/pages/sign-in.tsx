@@ -80,15 +80,19 @@ export const SignIn = () => {
           <></>
         )}
         <Grid container>
-          <Grid item xs>
-            <Button
-              onClick={() => {
-                navigate(Paths.FORGOT_PASSWORD);
-              }}
-            >
-              <Typography variant="body2">Forgot password?</Typography>
-            </Button>
-          </Grid>
+          {project?.authMethods.emailAuth ? (
+            <Grid item xs>
+              <Button
+                onClick={() => {
+                  navigate(Paths.FORGOT_PASSWORD);
+                }}
+              >
+                <Typography variant="body2">Forgot password?</Typography>
+              </Button>
+            </Grid>
+          ) : (
+            <></>
+          )}
           {project?.settings.allowSignup ? (
             <Grid item>
               <Button
