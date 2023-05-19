@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import { Paths } from '@constants/paths';
 import { ProjectDisplay } from '@components/project-display';
 import { useSnackbar } from '@context/snackbar.context';
+import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const LoginValidation = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -106,6 +108,20 @@ export const SignIn = () => {
           ) : (
             <></>
           )}
+        </Grid>
+        <Grid container>
+          <Grid item alignItems="center">
+            <GoogleLogin
+              login_uri={"http://localhost:5173/auth/google" + project?.id}
+              onSuccess={credentialResponse => {
+                console.log(credentialResponse);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+
+            />
+          </Grid>
         </Grid>
       </Box>
     </Container>
