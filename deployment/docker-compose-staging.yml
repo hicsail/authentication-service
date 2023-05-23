@@ -31,5 +31,12 @@ services:
       - auth-staging:/var/lib/postgresql/data
     env_file:
       - ../stack.env
+  backup:
+    image: offen/docker-volume-backup:v2.27.0
+    restart: always
+    env_file:
+      - ../backup.env
+    volumes:
+      - auth-staging:/backup:ro
 volumes:
   auth-staging: ~
