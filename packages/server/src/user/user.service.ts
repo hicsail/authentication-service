@@ -221,4 +221,12 @@ export class UserService {
       }
     });
   }
+
+  async findUsersByEmail(email: string): Promise<User[]> {
+    return await this.prisma.user.findMany({
+      where: {
+        email
+      }
+    });
+  }
 }

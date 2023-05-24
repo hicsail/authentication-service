@@ -9,6 +9,8 @@ import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 import { ProjectService } from '../project/project.service';
 import { NotificationService } from '../notification/notification.service';
+import { ProjectModel } from '../project/model/project.model';
+import { Project } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -146,5 +148,25 @@ export class AuthService {
     publicKeys.push(this.configService.get('PUBLIC_KEY_1'));
     publicKeys.push(this.configService.get('PUBLIC_KEY_2'));
     return publicKeys;
+  }
+
+  /**
+   * Get list of projects that a user has access to and is an admin of
+   *
+   * @returns List of projects
+   */
+  async projects(userId: string): Promise<Project[]> {
+    const firstUser = await this.userService.findUserById(userId);
+    const email = firstUser.email;
+
+    const users = await this.userService.findUsersByEmail(email);
+    const projects = [];
+    for (const user of users) {
+      if (user.role == 1) {
+        projects.push(await this.projectService.getProject(user.projectId));
+      }
+    }
+
+    return projects;
   }
 }

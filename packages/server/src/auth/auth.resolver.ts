@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AccessToken } from './types/auth.types';
 import {
@@ -12,7 +12,13 @@ import {
   UsernameLoginDto,
   UserSignupDto
 } from './dto/auth.dto';
-import { UsePipes } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
+import { ProjectModel } from '../project/model/project.model';
+import { Roles } from './roles.decorator';
+import { Role } from './enum/role.enum';
+import { AuthGuard } from './auth.guard';
+import { ProjectId } from '../project/project.decorator';
+import { UserId } from '../user/user.decorator';
 
 @Resolver()
 export class AuthResolver {
@@ -62,5 +68,12 @@ export class AuthResolver {
   @Query(() => [String])
   publicKey(): string[] {
     return this.authService.publicKey();
+  }
+
+  @Query(() => [ProjectModel])
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  projects(@ProjectId() projectId: string, @UserId() userId: string): Promise<ProjectModel[]> {
+    return this.authService.projects(userId);
   }
 }
