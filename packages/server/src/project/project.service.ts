@@ -7,6 +7,7 @@ import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
 import { UsernameLoginDto } from '../auth/dto/auth.dto';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../user/user.service';
+import { Role } from '../auth/enum/role.enum';
 
 @Injectable()
 export class ProjectService {
@@ -206,5 +207,25 @@ export class ProjectService {
       },
       data: projectAuthMethods
     });
+  }
+
+  /**
+   * Get list of projects that a user has access to and is an admin of
+   *
+   * @returns List of projects
+   */
+  async projects(userId: string): Promise<Project[]> {
+    const firstUser = await this.userService.findUserById(userId);
+    const email = firstUser.email;
+
+    const users = await this.userService.findUsersByEmail(email);
+    const projects = [];
+    for (const user of users) {
+      if (user.role == Role.Admin) {
+        projects.push(await this.getProject(user.projectId));
+      }
+    }
+
+    return projects;
   }
 }

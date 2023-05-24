@@ -5,8 +5,13 @@ import { ProjectModel } from './model/project.model';
 import { UserModel } from '../user/model/user.model';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
-import { UsernameLoginDto } from 'src/auth/dto/auth.dto';
-import { BadRequestException } from '@nestjs/common';
+import { UsernameLoginDto } from '../auth/dto/auth.dto';
+import { BadRequestException, UseGuards } from '@nestjs/common';
+import { Role } from '../auth/enum/role.enum';
+import { Roles } from '../auth/roles.decorator';
+import { UserId } from '../user/user.decorator';
+import { ProjectId } from './project.decorator';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Resolver(() => ProjectModel)
 export class ProjectResolver {
@@ -69,5 +74,12 @@ export class ProjectResolver {
     } catch (e: any) {
       throw new BadRequestException(`Could not found project with ID ${reference.id}`);
     }
+  }
+
+  @Query(() => [ProjectModel])
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  projects(@ProjectId() projectId: string, @UserId() userId: string): Promise<ProjectModel[]> {
+    return this.projectService.projects(userId);
   }
 }
