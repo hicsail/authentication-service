@@ -81,6 +81,24 @@ export class UserService {
   }
 
   /**
+   * Find unique user if they have permission for a given project
+   *
+   * @param id ID of the user
+   * @param projectId ID of the project
+
+   * @returns `User` object, or throw `NotFoundError` when not exist
+   */
+  async findUserByIdIfPermissionGiven(id: string, projectId: string): Promise<User> {
+    const user = this.prisma.user.findFirst({ where: { id: id, projectId: projectId } });
+
+    if (!user) {
+      throw new Error('Permission denied');
+    }
+
+    return user;
+  }
+
+  /**
    * Find unique user for a project using email.
    *
    * @param projectId project ID where the user belong to
