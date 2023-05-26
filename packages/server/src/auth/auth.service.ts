@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
@@ -9,6 +9,9 @@ import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 import { ProjectService } from '../project/project.service';
 import { NotificationService } from '../notification/notification.service';
+import { decode } from 'jsonwebtoken';
+import { HttpService } from '@nestjs/axios';
+import { last, lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +20,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly projectService: ProjectService,
     private readonly configService: ConfigService,
-    private readonly notification: NotificationService
+    private readonly notification: NotificationService,
+    private readonly http: HttpService
   ) {}
 
   /**
@@ -62,6 +66,34 @@ export class AuthService {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
 
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+    }
+
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+  }
+
+
+  /**
+   * 
+   * @param projectId 
+   * @param credential 
+   * @returns JWT or 401 status code
+   */
+  async validateGoogle(projectId: string, credential:string): Promise<any> {
+    if (projectId == null || credential == null) {
+      throw new HttpException('Bad request: project id and credential required.', HttpStatus.BAD_REQUEST);
+    }
+
+    const verifiedCredentials = await this.verifyGoogleToken(credential);
+    if (verifiedCredentials == null) {
+      throw new HttpException('Bad Request: Invalid ID Token', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.userService.findUserByEmail(projectId, verifiedCredentials['email'])
+
+    if (user) {
+      const payload = { id: user.id, projectId: user.projectId, role: user.role};
+      
+      return { accessToken: this.jwtService.sign(payload, {expiresIn: process.env.JWT_EXPIRATION})}
     }
 
     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -146,5 +178,15 @@ export class AuthService {
     publicKeys.push(this.configService.get('PUBLIC_KEY_1'));
     publicKeys.push(this.configService.get('PUBLIC_KEY_2'));
     return publicKeys;
+  }
+
+  async verifyGoogleToken(credential:string) {
+    try{
+      const verificationRequest = this.http.get('https://oauth2.googleapis.com/tokeninfo?id_token=' + credential)
+      return (await lastValueFrom(verificationRequest)).data;
+    } catch (error) {
+      return null;
+    }
+     
   }
 }

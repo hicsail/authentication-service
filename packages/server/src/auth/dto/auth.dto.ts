@@ -79,6 +79,23 @@ export class EmailLoginDto {
 }
 
 @InputType()
+export class GoogleLoginDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsDefined()
+  @Type(() => String)
+  @Field()
+  projectId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsDefined()
+  @Type(() => String)
+  @Field()
+  credential: string;
+}
+
+@InputType()
 export class ForgotDto {
   @IsNotEmpty()
   @IsString()
@@ -150,6 +167,17 @@ export class EmailLoginTransformPipe implements PipeTransform {
     user.password = body.password;
 
     return user;
+  }
+}
+
+export class GoogleLoginTransformPipe implements PipeTransform {
+  transform(body: any): GoogleLoginDto {
+    const user = new GoogleLoginDto();
+
+    user.projectId = body.projectId.toString();
+    user.credential = body.credential;
+
+    return user
   }
 }
 

@@ -58,6 +58,11 @@ export type ForgotDto = {
   projectId: Scalars['String'];
 };
 
+export type GoogleLoginDto = {
+  credential: Scalars['String'];
+  projectId: Scalars['String'];
+};
+
 export type InviteModel = {
   __typename?: 'InviteModel';
   /** The date and time at which the invitation was created. */
@@ -96,6 +101,7 @@ export type Mutation = {
   createProject: ProjectModel;
   forgotPassword: Scalars['Boolean'];
   loginEmail: AccessToken;
+  loginGoogle: AccessToken;
   loginUsername: AccessToken;
   resendInvite: InviteModel;
   resetPassword: Scalars['Boolean'];
@@ -128,6 +134,10 @@ export type MutationForgotPasswordArgs = {
 
 export type MutationLoginEmailArgs = {
   user: EmailLoginDto;
+};
+
+export type MutationLoginGoogleArgs = {
+  user: GoogleLoginDto;
 };
 
 export type MutationLoginUsernameArgs = {

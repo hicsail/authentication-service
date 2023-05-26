@@ -5,6 +5,7 @@ import { TextInput } from '@components/forms/text-input';
 import { PasswordInput } from '@components/forms/password-input';
 import { SubmitButton } from '@components/forms/submit-button';
 import { useLoginEmailMutation } from '@graphql/auth/auth';
+import { useLoginGoogleMutation } from '@graphql/auth/auth';
 import { useEffect } from 'react';
 import { useProject } from '@context/project.context';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +22,7 @@ const LoginValidation = Yup.object().shape({
 
 export const SignIn = () => {
   const [loginEmail, { data, error }] = useLoginEmailMutation();
+  const [loginGoogle, { data:googleData, error:googleError }] = useLoginGoogleMutation();
   const { project } = useProject();
   const { pushMessage } = useSnackbar();
   const navigate = useNavigate();
@@ -29,7 +31,11 @@ export const SignIn = () => {
     if (data && project) {
       window.location.replace(`${project.redirectUrl}?token=${data.loginEmail.accessToken}`);
     }
-  }, [data]);
+
+    if (googleData && project) {
+      window.location.replace(`${project.redirectUrl}?token=${googleData.loginGoogle.accessToken}`);
+    }
+  }, [data, googleData]);
 
   useEffect(() => {
     if (error) {
@@ -110,18 +116,22 @@ export const SignIn = () => {
           )}
         </Grid>
         <Grid container>
-          <Grid item alignItems="center">
+          {project?.authMethods.googleAuth ? (
+            <Grid item>
             <GoogleLogin
-              login_uri={"http://localhost:5173/auth/google" + project?.id}
-              onSuccess={credentialResponse => {
-                console.log(credentialResponse);
+              onSuccess={({credential}) => {
+                loginGoogle({variables: {projectId: project?.id || '', credential:credential as string}})
+                .catch((error) => {
+                  console.log(error)
+                  pushMessage("Invalid Credentials")
+                });
               }}
-              onError={() => {
-                console.log('Login Failed');
-              }}
-
             />
           </Grid>
+
+          ) : (
+            <></>
+          )}
         </Grid>
       </Box>
     </Container>
