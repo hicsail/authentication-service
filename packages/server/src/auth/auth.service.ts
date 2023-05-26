@@ -71,14 +71,13 @@ export class AuthService {
     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 
-
   /**
-   * 
-   * @param projectId 
-   * @param credential 
+   *
+   * @param projectId
+   * @param credential
    * @returns JWT or 401 status code
    */
-  async validateGoogle(projectId: string, credential:string): Promise<any> {
+  async validateGoogle(projectId: string, credential: string): Promise<any> {
     if (projectId == null || credential == null) {
       throw new HttpException('Bad request: project id and credential required.', HttpStatus.BAD_REQUEST);
     }
@@ -88,20 +87,20 @@ export class AuthService {
       throw new HttpException('Bad Request: Invalid ID Token', HttpStatus.UNAUTHORIZED);
     }
 
-    const user = await this.userService.findUserByEmail(projectId, verifiedCredentials['email'])
+    const user = await this.userService.findUserByEmail(projectId, verifiedCredentials['email']);
 
     if (user) {
-      const payload = { id: user.id, projectId: user.projectId, role: user.role};
-      return { accessToken: this.jwtService.sign(payload, {expiresIn: process.env.JWT_EXPIRATION})}
+      const payload = { id: user.id, projectId: user.projectId, role: user.role };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
     //If user doesn't exist, create new user with Google User data
     const newUserDto = new UserSignupDto();
     newUserDto.email = verifiedCredentials['email'];
-    newUserDto.fullname = verifiedCredentials['name']
+    newUserDto.fullname = verifiedCredentials['name'];
     newUserDto.projectId = projectId;
     newUserDto.password = null;
-    
+
     return this.signup(newUserDto);
   }
 
@@ -186,13 +185,12 @@ export class AuthService {
     return publicKeys;
   }
 
-  async verifyGoogleToken(credential:string) {
-    try{
-      const verificationRequest = this.http.get('https://oauth2.googleapis.com/tokeninfo?id_token=' + credential)
+  async verifyGoogleToken(credential: string) {
+    try {
+      const verificationRequest = this.http.get('https://oauth2.googleapis.com/tokeninfo?id_token=' + credential);
       return (await lastValueFrom(verificationRequest)).data;
     } catch (error) {
       return null;
     }
-     
   }
 }

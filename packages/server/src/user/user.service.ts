@@ -35,7 +35,7 @@ export class UserService {
     }
 
     //If password is defined, return hash. Otherwise return null
-    let pwdHash = (newUser.password) ? await bcrypt.hash(newUser.password, this.SALT_ROUNDS) : null;
+    let pwdHash = newUser.password ? await bcrypt.hash(newUser.password, this.SALT_ROUNDS) : null;
 
     return this.prisma.user.create({
       data: {

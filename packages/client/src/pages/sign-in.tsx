@@ -22,7 +22,7 @@ const LoginValidation = Yup.object().shape({
 
 export const SignIn = () => {
   const [loginEmail, { data, error }] = useLoginEmailMutation();
-  const [loginGoogle, { data:googleData, error:googleError }] = useLoginGoogleMutation();
+  const [loginGoogle, { data: googleData, error: googleError }] = useLoginGoogleMutation();
   const { project } = useProject();
   const { pushMessage } = useSnackbar();
   const navigate = useNavigate();
@@ -118,17 +118,15 @@ export const SignIn = () => {
         <Grid container>
           {project?.authMethods.googleAuth ? (
             <Grid item>
-            <GoogleLogin
-              onSuccess={({credential}) => {
-                loginGoogle({variables: {projectId: project?.id || '', credential:credential as string}})
-                .catch((err) => {
-                  console.log(err)
-                  pushMessage("Invalid Credentials")
-                });
-              }}
-            />
-          </Grid>
-
+              <GoogleLogin
+                onSuccess={({ credential }) => {
+                  loginGoogle({ variables: { projectId: project?.id || '', credential: credential as string } }).catch((err) => {
+                    console.log(err);
+                    pushMessage('Invalid Credentials');
+                  });
+                }}
+              />
+            </Grid>
           ) : (
             <></>
           )}

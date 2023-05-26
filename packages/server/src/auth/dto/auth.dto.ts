@@ -177,7 +177,7 @@ export class GoogleLoginTransformPipe implements PipeTransform {
     user.projectId = body.projectId.toString();
     user.credential = body.credential;
 
-    return user
+    return user;
   }
 }
 
