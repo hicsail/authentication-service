@@ -121,8 +121,8 @@ export const SignIn = () => {
             <GoogleLogin
               onSuccess={({credential}) => {
                 loginGoogle({variables: {projectId: project?.id || '', credential:credential as string}})
-                .catch((error) => {
-                  console.log(error)
+                .catch((err) => {
+                  console.log(err)
                   pushMessage("Invalid Credentials")
                 });
               }}

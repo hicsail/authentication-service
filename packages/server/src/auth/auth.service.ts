@@ -85,18 +85,24 @@ export class AuthService {
 
     const verifiedCredentials = await this.verifyGoogleToken(credential);
     if (verifiedCredentials == null) {
-      throw new HttpException('Bad Request: Invalid ID Token', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Bad Request: Invalid ID Token', HttpStatus.UNAUTHORIZED);
     }
 
     const user = await this.userService.findUserByEmail(projectId, verifiedCredentials['email'])
 
     if (user) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role};
-      
       return { accessToken: this.jwtService.sign(payload, {expiresIn: process.env.JWT_EXPIRATION})}
     }
 
-    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    //If user doesn't exist, create new user with Google User data
+    const newUserDto = new UserSignupDto();
+    newUserDto.email = verifiedCredentials['email'];
+    newUserDto.fullname = verifiedCredentials['name']
+    newUserDto.projectId = projectId;
+    newUserDto.password = null;
+    
+    return this.signup(newUserDto);
   }
 
   /**
