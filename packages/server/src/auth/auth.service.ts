@@ -185,7 +185,7 @@ export class AuthService {
     return publicKeys;
   }
 
-  async verifyGoogleToken(credential: string) {
+  async verifyGoogleToken(credential: string): Promise<any> {
     try {
       const verificationRequest = this.http.get('https://oauth2.googleapis.com/tokeninfo?id_token=' + credential);
       return (await lastValueFrom(verificationRequest)).data;
