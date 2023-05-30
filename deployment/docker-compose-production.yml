@@ -39,6 +39,7 @@ services:
     restart: always
     env_file:
       - ../backup.env
+      - ../stack.env
     volumes:
       - auth-production:/backup:ro
 volumes:
