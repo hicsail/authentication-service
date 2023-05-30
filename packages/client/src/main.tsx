@@ -4,9 +4,9 @@ import { App } from './app';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <GoogleOAuthProvider clientId="920265659839-vu93dpp83vk1gaotvq5psjeeobjkbmlt.apps.googleusercontent.com">
-    <React.StrictMode>
+  <React.StrictMode>
+    <GoogleOAuthProvider clientId="920265659839-vu93dpp83vk1gaotvq5psjeeobjkbmlt.apps.googleusercontent.com">
       <App />
-    </React.StrictMode>
-  </GoogleOAuthProvider>
+    </GoogleOAuthProvider>
+  </React.StrictMode>
 );
