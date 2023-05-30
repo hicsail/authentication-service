@@ -9,9 +9,8 @@ import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 import { ProjectService } from '../project/project.service';
 import { NotificationService } from '../notification/notification.service';
-import { decode } from 'jsonwebtoken';
 import { HttpService } from '@nestjs/axios';
-import { last, lastValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
