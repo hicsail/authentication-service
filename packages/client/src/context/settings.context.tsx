@@ -5,11 +5,13 @@ export interface Settings {
   theme: ThemeType;
   lastProject?: string;
   VITE_AUTH_SERVICE?: string;
+  VITE_GOOGLE_CLIENT_ID?: string;
 }
 
 const defaultSettings: Settings = {
   theme: 'light',
-  VITE_AUTH_SERVICE: import.meta.env.VITE_AUTH_SERVICE
+  VITE_AUTH_SERVICE: import.meta.env.VITE_AUTH_SERVICE,
+  VITE_GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID
 };
 
 export interface SettingsContextProps {
