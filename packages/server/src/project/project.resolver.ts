@@ -7,9 +7,11 @@ import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
 import { UsernameLoginDto } from 'src/auth/dto/auth.dto';
 import { BadRequestException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 @Resolver(() => ProjectModel)
 export class ProjectResolver {
+  private readonly logger = new Logger(ProjectResolver.name);
   constructor(private readonly projectService: ProjectService) {}
 
   @Mutation(() => ProjectModel)

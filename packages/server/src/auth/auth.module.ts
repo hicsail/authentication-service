@@ -7,10 +7,9 @@ import { UserModule } from '../user/user.module';
 import { ProjectModule } from '../project/project.module';
 import { NotificationModule } from '../notification/notification.module';
 import { JwtModule } from '../jwt/jwt.module';
-import { TelemetryModule } from '../telemetry/telemetry.module';
 
 @Module({
-  imports: [UserModule, ProjectModule, NotificationModule, JwtModule, TelemetryModule],
+  imports: [UserModule, ProjectModule, NotificationModule, JwtModule],
   controllers: [LoginController, SignupController, RecoveryController, PublicKeyController],
   providers: [AuthResolver, AuthService, PrismaService],
   exports: [AuthService]

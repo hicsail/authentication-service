@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { InviteModule } from './invite/invite.module';
 import { NotificationModule } from './notification/notification.module';
 import { JwtModule } from './jwt/jwt.module';
+import { TelemetryModule } from './telemetry/telemetry.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { JwtModule } from './jwt/jwt.module';
     }),
     InviteModule,
     NotificationModule,
-    JwtModule
+    JwtModule,
+    TelemetryModule
   ]
 })
 export class AppModule implements NestModule {

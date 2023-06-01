@@ -1,17 +1,16 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { OpenTelemetryModule } from '@metinseylan/nestjs-opentelemetry';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
-@Module({})
-export class TelemetryModule {
-  static forRoot(serviceName: string): DynamicModule {
-    return {
-      module: TelemetryModule,
-      imports: [
-        OpenTelemetryModule.forRoot({
-          serviceName,
-        }),
-      ],
-      exports: [OpenTelemetryModule],
-    };
-  }
-}
+@Module({
+  imports: [
+    OpenTelemetryModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        serviceName: configService.get('SERVICE_NAME')
+      }),
+      inject: [ConfigService]
+    })
+  ]
+})
+export class TelemetryModule {}
