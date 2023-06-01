@@ -34,5 +34,13 @@ services:
       - auth-production:/var/lib/postgresql/data
     env_file:
       - ../stack.env
+  backup:
+    image: offen/docker-volume-backup:v2.27.0
+    restart: always
+    env_file:
+      - ../backup.env
+      - ../stack.env
+    volumes:
+      - auth-production:/backup:ro
 volumes:
   auth-production: ~
