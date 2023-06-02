@@ -16,7 +16,13 @@ export class ProjectResolver {
 
   @Mutation(() => ProjectModel)
   async createProject(@Args('project') project: ProjectCreateInput): Promise<ProjectModel> {
-    return this.projectService.createProject(project);
+    const success = this.projectService.createProject(project);
+    if (success) {
+      this.logger.log('Project created');
+      return success;
+    } else {
+      this.logger.error('Create Project Unsuccessful');
+    }
   }
 
   @Query(() => [ProjectModel])
@@ -31,7 +37,13 @@ export class ProjectResolver {
 
   @Mutation(() => ProjectModel)
   updateProject(@Args('id') id: string, @Args('settings') settings: ConfigurableProjectSettings): Promise<ProjectModel> {
-    return this.projectService.updateProject(id, settings);
+    const success = this.projectService.updateProject(id, settings);
+    if (success) {
+      this.logger.log('Project updated');
+      return success;
+    } else {
+      this.logger.error('Update Project Unsuccessful');
+    }
   }
 
   @Query(() => [UserModel])

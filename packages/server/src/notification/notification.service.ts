@@ -28,8 +28,10 @@ export class NotificationService {
     if (response.status !== HttpStatus.CREATED) {
       this.logger.error(`Failed to send password reset email to ${email} for project ${project.id}`);
       throw new HttpException('Failed to send password reset email', HttpStatus.INTERNAL_SERVER_ERROR);
+    } else {
+      this.logger.log('Reset email sent');
+      return response.data;
     }
-    return response.data;
   }
 
   async sendPasswordUpdatedEmail(projectId: string, email: string): Promise<any> {
@@ -48,8 +50,10 @@ export class NotificationService {
     if (response.status !== HttpStatus.CREATED) {
       this.logger.error(`Failed to send password updated email to ${email} for project ${project.id}`);
       throw new HttpException('Failed to send password updated email', HttpStatus.INTERNAL_SERVER_ERROR);
+    } else {
+      this.logger.log('PW update email sent');
+      return response.data;
     }
-    return response.data;
   }
 
   async sendInviteEmail(projectId: string, email: string, link: string): Promise<any> {
@@ -69,7 +73,9 @@ export class NotificationService {
     if (response.status !== HttpStatus.CREATED) {
       this.logger.error(`Failed to send invite email to ${email} for project ${project.id}`);
       throw new HttpException('Failed to send invite email', HttpStatus.INTERNAL_SERVER_ERROR);
+    } else {
+      this.logger.log('Invite email sent');
+      return response.data;
     }
-    return response.data;
   }
 }
