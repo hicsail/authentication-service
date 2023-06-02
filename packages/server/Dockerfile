@@ -17,7 +17,7 @@ WORKDIR /usr/src/app
 # Copy over the build
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/package.json ./package.json
-
+COPY --from=builder /usr/src/app/prisma ./prisma
 # Install production dependencies
 RUN npm install --omit=dev
 RUN npm run prisma:generate
