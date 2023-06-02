@@ -76,10 +76,6 @@ jobs:
   server-checks:
     name: Server Checks
     runs-on: ubuntu-latest
-    permissions:
-      checks: write
-      pull-requests: write
-      contents: write
     defaults:
       run:
         working-directory: packages/server
@@ -110,12 +106,13 @@ jobs:
       - name: Tests
         continue-on-error: true
         run: npm run test:cov
-      - name: Jest coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2
+      - name: Coverage Report
+        uses: romeovs/lcov-reporter-action@v0.2.16
         with:
-          prnumber: ${{ steps.findPr.outputs.number }}
-          skip-step: all
-          coverage-file: packages/server/coverage/coverage-final.json
+          filter-changed-files: true
+          working-directory: packages/server
+          lcov-file: ./coverage/lcov.info
+          delete-old-comments: true
       - name: Docker Tags
         id: meta
         uses: docker/metadata-action@v4
