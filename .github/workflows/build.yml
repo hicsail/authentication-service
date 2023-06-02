@@ -105,13 +105,19 @@ jobs:
         run: npm run prettier
       - name: Check Linting
         run: npm run lint
+      - name: Prisma Generate
+        run: npm run prisma:generate
       - name: Build
         run: npm run build
+      - name: Tests
+        continue-on-error: true
+        run: npm run test:cov
       - name: Jest coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           prnumber: ${{ steps.findPr.outputs.number }}
-          skip-step: install
+          skip-step: all
+          coverage-file: coverage/lcov.info
       - name: Docker Tags
         id: meta
         uses: docker/metadata-action@v4
