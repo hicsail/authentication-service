@@ -111,6 +111,7 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           prnumber: ${{ steps.findPr.outputs.number }}
+          skip-step: install
       - name: Docker Tags
         id: meta
         uses: docker/metadata-action@v4
