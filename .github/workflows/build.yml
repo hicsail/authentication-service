@@ -76,10 +76,16 @@ jobs:
   server-checks:
     name: Server Checks
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: write
     defaults:
       run:
         working-directory: packages/server
     steps:
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
@@ -101,11 +107,10 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v3
+      - name: Jest coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          files: ./packages/server/coverage/lcov.info
-          fail_ci_if_error: false
+          prnumber: ${{ steps.findPr.outputs.number }}
       - name: Docker Tags
         id: meta
         uses: docker/metadata-action@v4
