@@ -23,40 +23,24 @@ export class AuthResolver {
   /** Login via username */
   @Mutation(() => AccessToken)
   async loginUsername(@Args('user') user: UsernameLoginDto): Promise<AccessToken> {
-    const success = this.authService.validateUsername(user.projectId, user.username, user.password);
-    if(success){
-      this.logger.log('Username Validated');
-      return success
-    } else{
-      this.logger.error('Username Validation Unsuccessful');
-    }
+    this.logger.log('Username Validated');
+    return this.authService.validateUsername(user.projectId, user.username, user.password);
   }
 
   /** Login via email */
   @Mutation(() => AccessToken)
   @UsePipes(new EmailLoginTransformPipe())
   async loginEmail(@Args('user') user: EmailLoginDto): Promise<AccessToken> {
-    const success = this.authService.validateEmail(user.projectId, user.email, user.password);
-    if(success){
-      this.logger.log('Email Validated');
-      return success
-    } else{
-      this.logger.error('Email Validation Unsuccessful');
-    }
+    this.logger.log('Email Validated');
+    return this.authService.validateEmail(user.projectId, user.email, user.password);
   }
 
   /** Signup logic */
   @Mutation(() => AccessToken)
   @UsePipes(new SignupTransformPipe())
   async signup(@Args('user') user: UserSignupDto): Promise<AccessToken> {
-    
-    const success = this.authService.signup(user);
-    if(success){
-      this.logger.log('Signup Successful');
-      return success
-    } else{
-      this.logger.error('Signup Unsuccessful');
-    }
+    this.logger.log('Signup Successful');
+    return this.authService.signup(user);
   }
 
   /** Forgot password */
@@ -74,21 +58,16 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @UsePipes(new ResetPasswordTransformPipe())
   async resetPassword(@Args('user') user: ResetDto): Promise<boolean> {
-    const success = this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
-    if(success){
-      this.logger.log('PW Reset Successful');
-      return true;
-    } else{
-      this.logger.error('PW Reset Unsuccessful');
-      return false;
-    }
+    this.logger.log('PW Reset Successful');
+    this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
+    return true;
     // GraphQL needs something to return
-    
   }
 
   /** Return Public Key */
   @Query(() => [String])
   publicKey(): string[] {
+    this.logger.log('Public Key');
     return this.authService.publicKey();
   }
 }

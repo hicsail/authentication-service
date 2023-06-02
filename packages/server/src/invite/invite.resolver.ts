@@ -15,7 +15,7 @@ import { Logger } from '@nestjs/common';
 
 @Resolver(() => InviteModel)
 export class InviteResolver {
-  private readonly logger = new Logger(InviteResolver.name)
+  private readonly logger = new Logger(InviteResolver.name);
   constructor(private readonly inviteService: InviteService) {}
 
   @UseGuards(AuthGuard)
@@ -30,13 +30,8 @@ export class InviteResolver {
     })
     status?: InviteStatus
   ): Promise<InviteModel[]> {
-    const success = this.inviteService.listInvites(projectId, status);
-    if(success){
-      this.logger.log('Invites retrieved');
-      return success
-    } else{
-      this.logger.error('Invites retrieval Unsuccessful');
-    }
+    this.logger.log('Invites retrieved');
+    return this.inviteService.listInvites(projectId, status);
   }
 
   @Query(() => InviteModel)
@@ -44,13 +39,8 @@ export class InviteResolver {
     @Args('id', { type: () => ID, description: 'The ID of the invite to retrieve.' })
     id: string
   ): Promise<InviteModel> {
-    const success = this.inviteService.findInviteById(id);
-    if(success){
-      this.logger.log('Invites retrieved');
-      return success
-    } else{
-      this.logger.error('Invites retrieval Unsuccessful');
-    }
+    this.logger.log('Invites retrieved');
+    return this.inviteService.findInviteById(id);
   }
 
   @UseGuards(AuthGuard)
@@ -64,26 +54,16 @@ export class InviteResolver {
     @Args('role', { type: () => Int, nullable: true, description: 'The role to assign to the invited user. If omitted, the default role of Regular User will be assigned.' })
     role = 0
   ): Promise<InviteModel> {
-    const success = this.inviteService.createInvite({ email, role }, userId, projectId);
-    if(success){
-      this.logger.log('Invites created');
-      return success
-    } else{
-      this.logger.error('Invites create Unsuccessful');
-    }
+    this.logger.log('Invites created');
+    return this.inviteService.createInvite({ email, role }, userId, projectId);
   }
 
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @Mutation(() => InviteModel)
   async resendInvite(@ProjectId() usersProjectId: string, @Args('id', { type: () => ID, description: 'The ID of the invite to resend.' }) id: string): Promise<InviteModel> {
-    const success = this.inviteService.resendInvite(id, usersProjectId);
-    if(success){
-      this.logger.log('Invites resent');
-      return success
-    } else{
-      this.logger.error('Invites resend Unsuccessful');
-    }
+    this.logger.log('Invites resent');
+    return this.inviteService.resendInvite(id, usersProjectId);
   }
 
   @Mutation(() => InviteModel)
@@ -103,6 +83,7 @@ export class InviteResolver {
   @ResolveReference()
   async resolveReference(reference: { __typename: string; id: string }): Promise<UserModel> {
     try {
+      this.logger.log('Resolving reference');
       return await this.inviteService.findInviteById(reference.id);
     } catch (e: any) {
       throw new BadRequestException(`Could not find invite with ID ${reference.id}`);
@@ -111,6 +92,7 @@ export class InviteResolver {
 
   @ResolveField()
   status(@Parent() invite: Invite): InviteStatus {
+    this.logger.log('Getting invite status');
     return this.inviteService.getInviteStatus(invite);
   }
 }

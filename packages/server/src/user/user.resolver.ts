@@ -17,6 +17,7 @@ export class UserResolver {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   async users(@ProjectId() projectId: string): Promise<UserModel[]> {
+    this.logger.log(`Users of projectId: ${projectId} found updated`);
     return this.userService.findUsersByProjectId(projectId);
   }
 
@@ -24,6 +25,7 @@ export class UserResolver {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   getUser(@Args('id', { type: () => ID }) id: string, @ProjectId() projectId: string): Promise<UserModel> {
+    this.logger.log(`Users of projectId: ${projectId} found updated`);
     return this.userService.findUserByIdIfPermissionGiven(id, projectId);
   }
 
