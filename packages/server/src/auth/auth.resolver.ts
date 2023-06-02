@@ -57,8 +57,8 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @UsePipes(new ResetPasswordTransformPipe())
   async resetPassword(@Args('user') user: ResetDto): Promise<boolean> {
-    this.logger.log('PW Reset Successful');
     await this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
+    this.logger.log('PW Reset Successful');
     // GraphQL needs something to return
     return true;
   }
