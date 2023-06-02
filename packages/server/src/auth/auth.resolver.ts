@@ -47,10 +47,9 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @UsePipes(new ForgotPasswordTransformPipe())
   async forgotPassword(@Args('user') user: ForgotDto): Promise<boolean> {
-    // GraphQL needs something to return
     await this.authService.forgotPassword(user.projectId, user.email);
     this.logger.log('Forgot PW Clicked');
-
+    // GraphQL needs something to return
     return true;
   }
 
@@ -58,9 +57,9 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @UsePipes(new ResetPasswordTransformPipe())
   async resetPassword(@Args('user') user: ResetDto): Promise<boolean> {
-    // GraphQL needs something to return
     this.logger.log('PW Reset Successful');
     this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
+    // GraphQL needs something to return
     return true;
   }
 
