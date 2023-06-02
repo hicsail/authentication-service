@@ -115,7 +115,7 @@ jobs:
         with:
           prnumber: ${{ steps.findPr.outputs.number }}
           skip-step: all
-          coverage-file: packages/server/coverage/lcov.info
+          coverage-file: packages/server/coverage/coverage-final.json
       - name: Docker Tags
         id: meta
         uses: docker/metadata-action@v4
