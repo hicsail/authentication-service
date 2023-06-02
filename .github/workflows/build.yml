@@ -1,0 +1,190 @@
+name: Build & Deploy
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  client-checks:
+    name: Client Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/client
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Clean Up
+        run: rm ../../package.json
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm install
+      - name: Check Formatting
+        run: npm run prettier
+  client-docker:
+    name: Client Docker Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/client
+    steps:
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - uses: actions/checkout@v3
+      - name: Clean Up
+        run: rm ../../package.json
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            hicsail/auth-client
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build & Push Docker Build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./packages/client
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+  server-checks:
+    name: Server Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/server
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Clean Up
+        run: rm ../../package.json
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm install
+      - name: Check Formatting
+        run: npm run prettier
+      - name: Check Linting
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./packages/server/coverage/lcov.info
+          fail_ci_if_error: false
+      - name: Docker Tags
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: hicsail/auth-server
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build & Push Docker Build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./packages/server
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      - name: Push to Staging
+        uses: fjogeleit/http-request-action@v1
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        with:
+          method: "POST"
+          url: ${{ secrets.PORTAINER_WEBHOOK }}
+          preventFailureOnNoResponse: true
+      - name: Push to Production
+        uses: fjogeleit/http-request-action@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          method: "POST"
+          url: ${{ secrets.PORTAINER_WEBHOOK_PRODUCTION }}
+          preventFailureOnNoResponse: true
+  server-docker:
+    name: Server Docker Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/server
+    steps:
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - uses: actions/checkout@v3
+      - name: Clean Up
+        run: rm ../../package.json
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build & Push Docker Build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./packages/server
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+  deployment:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    needs: [ client-docker, server-docker ]
+    steps:
+      - name: Push to Staging
+        uses: fjogeleit/http-request-action@v1
+        with:
+          method: "POST"
+          url: ${{ secrets.PORTAINER_WEBHOOK }}
+          preventFailureOnNoResponse: true
+      - name: Push to Production
+        uses: fjogeleit/http-request-action@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          method: "POST"
+          url: ${{ secrets.PORTAINER_WEBHOOK_PRODUCTION }}
+          preventFailureOnNoResponse: true
