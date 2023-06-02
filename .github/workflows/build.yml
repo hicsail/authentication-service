@@ -100,15 +100,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm run prisma:generate
       - name: Check Formatting
         run: npm run prettier
       - name: Check Linting
         run: npm run lint
-      - name: Prisma Generate
-        run: npm run prisma:generate
-      - name: Build
-        run: npm run build
       - name: Tests
         continue-on-error: true
         run: npm run test:cov
@@ -117,7 +115,7 @@ jobs:
         with:
           prnumber: ${{ steps.findPr.outputs.number }}
           skip-step: all
-          coverage-file: coverage/lcov.info
+          coverage-file: packages/server/coverage/lcov.info
       - name: Docker Tags
         id: meta
         uses: docker/metadata-action@v4
