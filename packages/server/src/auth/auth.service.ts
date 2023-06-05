@@ -77,10 +77,6 @@ export class AuthService {
    * @returns JWT or 401 status code
    */
   async validateGoogle(projectId: string, credential: string): Promise<any> {
-    if (projectId == null || credential == null) {
-      throw new HttpException('Bad request: project id and credential required.', HttpStatus.BAD_REQUEST);
-    }
-
     const verifiedCredentials = await this.verifyGoogleToken(credential);
     if (verifiedCredentials == null) {
       throw new HttpException('Bad Request: Invalid ID Token', HttpStatus.UNAUTHORIZED);
