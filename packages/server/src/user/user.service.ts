@@ -34,7 +34,8 @@ export class UserService {
       throw new Error('User already exist in the database.');
     }
 
-    const pwdHash = await bcrypt.hash(newUser.password, this.SALT_ROUNDS);
+    //If password is defined, return hash. Otherwise return null
+    const pwdHash = newUser.password ? await bcrypt.hash(newUser.password, this.SALT_ROUNDS) : null;
 
     return this.prisma.user.create({
       data: {

@@ -12,6 +12,7 @@
     "introspection": "graphql-codegen --config graphql-codegen.yml"
   },
   "dependencies": {
+    "@react-oauth/google": "0.11.0",
     "@apollo/client": "^3.7.2",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",

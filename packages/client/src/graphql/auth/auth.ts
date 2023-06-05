@@ -38,6 +38,13 @@ export type ResetPasswordMutationVariables = Types.Exact<{
 
 export type ResetPasswordMutation = { __typename?: 'Mutation'; resetPassword: boolean };
 
+export type LoginGoogleMutationVariables = Types.Exact<{
+  projectId: Types.Scalars['String'];
+  credential: Types.Scalars['String'];
+}>;
+
+export type LoginGoogleMutation = { __typename?: 'Mutation'; loginGoogle: { __typename?: 'AccessToken'; accessToken: string } };
+
 export const LoginEmailDocument = gql`
   mutation loginEmail($projectId: String!, $email: String!, $password: String!) {
     loginEmail(user: { projectId: $projectId, email: $email, password: $password }) {
@@ -175,3 +182,37 @@ export function useResetPasswordMutation(baseOptions?: Apollo.MutationHookOption
 export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPasswordMutation>;
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
+export const LoginGoogleDocument = gql`
+  mutation loginGoogle($projectId: String!, $credential: String!) {
+    loginGoogle(user: { projectId: $projectId, credential: $credential }) {
+      accessToken
+    }
+  }
+`;
+export type LoginGoogleMutationFn = Apollo.MutationFunction<LoginGoogleMutation, LoginGoogleMutationVariables>;
+
+/**
+ * __useLoginGoogleMutation__
+ *
+ * To run a mutation, you first call `useLoginGoogleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginGoogleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginGoogleMutation, { data, loading, error }] = useLoginGoogleMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      credential: // value for 'credential'
+ *   },
+ * });
+ */
+export function useLoginGoogleMutation(baseOptions?: Apollo.MutationHookOptions<LoginGoogleMutation, LoginGoogleMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<LoginGoogleMutation, LoginGoogleMutationVariables>(LoginGoogleDocument, options);
+}
+export type LoginGoogleMutationHookResult = ReturnType<typeof useLoginGoogleMutation>;
+export type LoginGoogleMutationResult = Apollo.MutationResult<LoginGoogleMutation>;
+export type LoginGoogleMutationOptions = Apollo.BaseMutationOptions<LoginGoogleMutation, LoginGoogleMutationVariables>;

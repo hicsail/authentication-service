@@ -6,6 +6,8 @@ import {
   EmailLoginTransformPipe,
   ForgotDto,
   ForgotPasswordTransformPipe,
+  GoogleLoginDto,
+  GoogleLoginTransformPipe,
   ResetDto,
   ResetPasswordTransformPipe,
   SignupTransformPipe,
@@ -29,6 +31,12 @@ export class LoginController {
   @UsePipes(new EmailLoginTransformPipe())
   async loginEmail(@Body() user: EmailLoginDto): Promise<AccessToken> {
     return this.authService.validateEmail(user.projectId, user.email, user.password);
+  }
+
+  @Post('google')
+  @UsePipes(new GoogleLoginTransformPipe())
+  async loginGoogle(@Body() user: GoogleLoginDto): Promise<AccessToken> {
+    return this.authService.validateGoogle(user.projectId, user.credential);
   }
 }
 
