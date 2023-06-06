@@ -21,8 +21,6 @@
     "start:deploy": "npm run prisma:migrate && npm run start:prod",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "pretest": "npm run docker:test && sleep 2 && dotenv -e .env.test -- npm run prisma:migrate",
-    "posttest": "docker-compose -f docker-compose.test.yml down",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
