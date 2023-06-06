@@ -20,33 +20,11 @@ export class ProjectService {
    * @returns The newly created project
    * @throws Will throw an error if the project ID is already in use or an error if the user is not authorized to create a project
    */
-  async createProject(newProject: Prisma.ProjectCreateInput, authServiceUser: UsernameLoginDto): Promise<Project> {
-    // ProjectCreateInput by default allows the ID to be provided, but we
-    // don't want to allow that. If the ID is provided, we remove it
-    if (newProject.id) {
-      delete newProject.id;
-    }
-
-    if (
-      authServiceUser.projectId == '00000000-0000-0000-0000-000000000000' &&
-      authServiceUser.username == this.configService.get('ROOT_EMAIL') &&
-      authServiceUser.password == this.configService.get('ROOT_PASSWORD')
-    ) {
-      const project = await this.prisma.project.create({
-        data: newProject
-      });
-
-      const user = await this.userService.createUser({
-        projectId: project.id,
-        username: this.configService.get('EXAMPLE_USERNAME'),
-        password: this.configService.get('EXAMPLE_PASSWORD')
-      });
-
-      console.log(user);
-      return project;
-    } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    }
+  async createProject(newProject: Prisma.ProjectCreateInput): Promise<Project> {
+    const project = await this.prisma.project.create({
+      data: newProject
+    });
+    return project;
   }
 
   /**
@@ -158,7 +136,7 @@ export class ProjectService {
   async getAuthSettings(projectId: string): Promise<ProjectAuthMethodsModel> {
     return this.prisma.project.findFirstOrThrow({
       where: { id: projectId },
-      select: { googleAuth: true }
+      select: { googleAuth: true, emailAuth: true }
     });
   }
 

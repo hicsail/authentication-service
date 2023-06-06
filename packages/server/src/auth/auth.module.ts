@@ -4,36 +4,15 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from '../project/project.module';
+import { NotificationModule } from '../notification/notification.module';
+import { JwtModule } from '../jwt/jwt.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [
-    UserModule,
-    PassportModule,
-    ProjectModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        const options: JwtModuleOptions = {
-          privateKey: configService.get('PRIVATE_KEY'),
-          publicKey: configService.get('PUBLIC_KEY_1'),
-          signOptions: {
-            expiresIn: configService.get('JWT_EXPIRATION'),
-            issuer: 'https://sail.bu.edu',
-            algorithm: 'RS256'
-          }
-        };
-        return options;
-      },
-      inject: [ConfigService]
-    })
-  ],
+  imports: [UserModule, ProjectModule, NotificationModule, JwtModule, HttpModule],
   controllers: [LoginController, SignupController, RecoveryController, PublicKeyController],
-  providers: [AuthResolver, AuthService, PrismaService, JwtStrategy],
+  providers: [AuthResolver, AuthService, PrismaService],
   exports: [AuthService]
 })
 export class AuthModule {}

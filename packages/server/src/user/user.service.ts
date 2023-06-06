@@ -34,7 +34,8 @@ export class UserService {
       throw new Error('User already exist in the database.');
     }
 
-    const pwdHash = await bcrypt.hash(newUser.password, this.SALT_ROUNDS);
+    //If password is defined, return hash. Otherwise return null
+    const pwdHash = newUser.password ? await bcrypt.hash(newUser.password, this.SALT_ROUNDS) : null;
 
     return this.prisma.user.create({
       data: {
@@ -78,6 +79,24 @@ export class UserService {
    */
   async findUserById(id: string): Promise<User> {
     return this.prisma.user.findFirstOrThrow({ where: { id: id } });
+  }
+
+  /**
+   * Find unique user if they have permission for a given project
+   *
+   * @param id ID of the user
+   * @param projectId ID of the project
+
+   * @returns `User` object, or throw `NotFoundError` when not exist
+   */
+  async findUserByIdIfPermissionGiven(id: string, projectId: string): Promise<User> {
+    const user = this.prisma.user.findFirst({ where: { id: id, projectId: projectId } });
+
+    if (!user) {
+      throw new Error('Permission denied');
+    }
+
+    return user;
   }
 
   /**

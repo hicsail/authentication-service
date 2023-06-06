@@ -1,6 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { default as axios } from 'axios';
 import * as bcrypt from 'bcrypt';
 import * as randomstring from 'randomstring';
 import { UserService } from '../user/user.service';
@@ -9,10 +8,20 @@ import { AccessToken } from './types/auth.types';
 import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 import { ProjectService } from '../project/project.service';
+import { NotificationService } from '../notification/notification.service';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService, private readonly projectService: ProjectService, private configService: ConfigService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly projectService: ProjectService,
+    private readonly configService: ConfigService,
+    private readonly notification: NotificationService,
+    private readonly http: HttpService
+  ) {}
 
   /**
    * Validate login using username.
@@ -64,6 +73,35 @@ export class AuthService {
   /**
    *
    * @param projectId
+   * @param credential
+   * @returns JWT or 401 status code
+   */
+  async validateGoogle(projectId: string, credential: string): Promise<any> {
+    const verifiedCredentials = await this.verifyGoogleToken(credential);
+    if (verifiedCredentials == null) {
+      throw new HttpException('Bad Request: Invalid ID Token', HttpStatus.UNAUTHORIZED);
+    }
+
+    const user = await this.userService.findUserByEmail(projectId, verifiedCredentials['email']);
+
+    if (user) {
+      const payload = { id: user.id, projectId: user.projectId, role: user.role };
+      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+    }
+
+    //If user doesn't exist, create new user with Google User data
+    const newUserDto = new UserSignupDto();
+    newUserDto.email = verifiedCredentials['email'];
+    newUserDto.fullname = verifiedCredentials['name'];
+    newUserDto.projectId = projectId;
+    newUserDto.password = null;
+
+    return this.signup(newUserDto);
+  }
+
+  /**
+   *
+   * @param projectId
    * @param email
    */
   async forgotPassword(projectId: string, email: string): Promise<void> {
@@ -78,20 +116,8 @@ export class AuthService {
       return;
     }
 
-    const link = `${process.env.BASE_URL}/reset?code=${resetCodePlain}`;
-    const project = await this.projectService.getProject(projectId);
-    const payload = {
-      to: [email],
-      subject: 'Password Reset',
-      template: 'auth/passwordReset',
-      templateData: {
-        link,
-        project
-      }
-    };
-
-    const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
-    return axios.post(sendEmailEndpoint, payload);
+    const link = `${this.configService.get('BASE_URL')}/reset?code=${resetCodePlain}`;
+    return this.notification.sendPasswordResetEmail(projectId, email, link);
   }
 
   /**
@@ -112,16 +138,8 @@ export class AuthService {
     const update = await this.userService.updateUserPassword(projectId, email, password, resetCode);
 
     if (update.status == 200) {
-      const payload = {
-        to: email,
-        subject: 'Password Reset Successful',
-        message: 'Password updated.'
-      };
-
-      const sendEmailEndpoint = `${process.env.NOTIFICATION_SERVICE_URL}/email/send`;
-      axios.post(sendEmailEndpoint, payload);
+      await this.notification.sendPasswordUpdatedEmail(projectId, email);
     }
-
     return update;
   }
 
@@ -160,5 +178,14 @@ export class AuthService {
     publicKeys.push(this.configService.get('PUBLIC_KEY_1'));
     publicKeys.push(this.configService.get('PUBLIC_KEY_2'));
     return publicKeys;
+  }
+
+  async verifyGoogleToken(credential: string): Promise<any> {
+    try {
+      const verificationRequest = this.http.get('https://oauth2.googleapis.com/tokeninfo?id_token=' + credential);
+      return (await lastValueFrom(verificationRequest)).data;
+    } catch (error) {
+      return null;
+    }
   }
 }

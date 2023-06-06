@@ -1,17 +1,31 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { ApolloClient, ApolloProvider, from, HttpLink, InMemoryCache } from '@apollo/client';
-
-const uri = `${import.meta.env.VITE_AUTH_URL}/graphql`;
+import { useSettings } from '@context/settings.context';
+import { LoadingScreen } from '@components/loading-screen';
 
 export interface GraphqlProviderProps {
   children: React.ReactNode;
 }
 
 export const GraphqlProvider: FC<GraphqlProviderProps> = ({ children }) => {
-  const httpLink = new HttpLink({
-    fetch: fetch,
-    uri
-  });
+  const { settings } = useSettings();
+  const [httpLink, setHttpLink] = React.useState<HttpLink>();
+
+  useEffect(() => {
+    if (settings?.VITE_AUTH_SERVICE) {
+      setHttpLink(
+        new HttpLink({
+          uri: settings.VITE_AUTH_SERVICE,
+          fetch: fetch
+        })
+      );
+    }
+  }, [settings]);
+
+  if (!httpLink) {
+    return <LoadingScreen />;
+  }
+
   const apolloClient = new ApolloClient({
     cache: new InMemoryCache({
       resultCaching: true

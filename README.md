@@ -31,3 +31,78 @@ The Authentication Microservice provides a secure and flexible authentication an
 | Client       | https://auth.sail.codes/          |
 | Admin Client | https://auth-admin.sail.codes/    |
 | Service      | https://auth-service.sail.codes/  |
+
+
+# Local Development
+
+This section outlines the steps to set up the Authentication Service for local development.
+
+## Prerequisites
+
+Ensure you have the following software installed on your machine:
+
+1. [Docker](https://docs.docker.com/get-docker/)
+2. [Node.js](https://nodejs.org/en/download/)
+3. [npm](https://www.npmjs.com/get-npm)
+
+## Setup Instructions
+
+1. Open a terminal and navigate to the server package directory:
+
+    ```
+    cd packages/server
+    ```
+
+2. Build and run the Docker Compose file:
+
+    ```
+    docker-compose up -d --build
+    ```
+
+3. Install the project's npm dependencies:
+
+    ```
+    npm i
+    ```
+
+4. Generate Prisma Client JS:
+
+    ```
+    npm run prisma:generate
+    ```
+
+5. Run Prisma migrations to set up your database schema:
+
+    ```
+    npm run prisma:migrate
+    ```
+
+6. Start the development server:
+
+    ```
+    npm run start:dev
+    ```
+
+7. Access the GraphQL Playground at [http://localhost:3001/graphql](http://localhost:3001/graphql).
+
+8. To create a project, use the following GraphQL mutation:
+
+    ```graphql
+    mutation {
+      createProject(
+        project: {
+          name: "test",
+          description: "test",
+          displayProjectName: true,
+          allowSignup: true,
+          googleAuth: true,
+          emailAuth: true
+        }
+      ) {
+        id,
+        name
+      }
+    }
+    ```
+
+This mutation will create a new project with the name "test". The project's display name is set to be shown, and both signup and authentication via Google and email are allowed. The server's response will include the new project's id and name.

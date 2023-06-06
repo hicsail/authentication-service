@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { Project } from '@prisma/client';
-import { UsernameLoginDto } from '../auth/dto/auth.dto';
-import { UserModel } from '../user/model/user.model';
+import { UserModel } from 'src/user/model/user.model';
 import { ConfigurableProjectSettings, ProjectCreateInput, ProjectIdentifier } from './dto/project.dto';
 import { ProjectService } from './project.service';
 
@@ -10,8 +9,8 @@ export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
   @Post()
-  createProject(@Body() newProject: ProjectCreateInput, @Body() authServiceUser: UsernameLoginDto): Promise<Project> {
-    return this.projectService.createProject(newProject, authServiceUser);
+  createProject(@Body() newProject: ProjectCreateInput): Promise<Project> {
+    return this.projectService.createProject(newProject);
   }
 
   @Get()

@@ -14,6 +14,23 @@ export type Scalars = {
   Float: number;
   DateTime: any;
   JSON: any;
+  _Any: any;
+  federation__FieldSet: any;
+  link__Import: any;
+};
+
+/** Input type for accepting an invite */
+export type AcceptInviteModel = {
+  /** The email address of the user accepting the invite */
+  email: Scalars['String'];
+  /** The full name of the user accepting the invite */
+  fullname: Scalars['String'];
+  /** The invite code that was included in the invite email */
+  inviteCode: Scalars['String'];
+  /** The password for the new user account */
+  password: Scalars['String'];
+  /** The ID of the project the invite is associated with */
+  projectId: Scalars['String'];
 };
 
 export type AccessToken = {
@@ -41,17 +58,70 @@ export type ForgotDto = {
   projectId: Scalars['String'];
 };
 
+export type GoogleLoginDto = {
+  credential: Scalars['String'];
+  projectId: Scalars['String'];
+};
+
+export type InviteModel = {
+  __typename?: 'InviteModel';
+  /** The date and time at which the invitation was created. */
+  createdAt: Scalars['DateTime'];
+  /** The date and time at which the invitation was deleted, if applicable. */
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  /** The email address of the user being invited. */
+  email: Scalars['String'];
+  /** The date and time at which the invitation expires. */
+  expiresAt: Scalars['DateTime'];
+  /** The ID of the invitation. */
+  id: Scalars['ID'];
+  /** The ID of the project to which the invitation belongs. */
+  projectId: Scalars['String'];
+  /** The role that the user being invited will have. */
+  role: Scalars['Int'];
+  /** The status of the invitation. */
+  status: InviteStatus;
+  /** The date and time at which the invitation was last updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+/** The status of an invite */
+export enum InviteStatus {
+  Accepted = 'ACCEPTED',
+  Cancelled = 'CANCELLED',
+  Expired = 'EXPIRED',
+  Pending = 'PENDING'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
+  acceptInvite: InviteModel;
+  cancelInvite: InviteModel;
+  createInvite: InviteModel;
   createProject: ProjectModel;
   forgotPassword: Scalars['Boolean'];
   loginEmail: AccessToken;
+  loginGoogle: AccessToken;
   loginUsername: AccessToken;
+  resendInvite: InviteModel;
   resetPassword: Scalars['Boolean'];
   signup: AccessToken;
   updateProject: ProjectModel;
   updateProjectAuthMethods: ProjectModel;
   updateProjectSettings: ProjectModel;
+};
+
+export type MutationAcceptInviteArgs = {
+  input: AcceptInviteModel;
+};
+
+export type MutationCancelInviteArgs = {
+  id: Scalars['ID'];
+};
+
+export type MutationCreateInviteArgs = {
+  email: Scalars['String'];
+  role?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationCreateProjectArgs = {
@@ -66,8 +136,16 @@ export type MutationLoginEmailArgs = {
   user: EmailLoginDto;
 };
 
+export type MutationLoginGoogleArgs = {
+  user: GoogleLoginDto;
+};
+
 export type MutationLoginUsernameArgs = {
   user: UsernameLoginDto;
+};
+
+export type MutationResendInviteArgs = {
+  id: Scalars['ID'];
 };
 
 export type MutationResetPasswordArgs = {
@@ -94,11 +172,13 @@ export type MutationUpdateProjectSettingsArgs = {
 };
 
 export type ProjectAuthMethodsInput = {
+  emailAuth?: InputMaybe<Scalars['Boolean']>;
   googleAuth?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ProjectAuthMethodsModel = {
   __typename?: 'ProjectAuthMethodsModel';
+  emailAuth: Scalars['Boolean'];
   googleAuth: Scalars['Boolean'];
 };
 
@@ -106,6 +186,7 @@ export type ProjectCreateInput = {
   allowSignup: Scalars['Boolean'];
   description: Scalars['String'];
   displayProjectName: Scalars['Boolean'];
+  emailAuth: Scalars['Boolean'];
   googleAuth: Scalars['Boolean'];
   homePage?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['String']>;
@@ -144,12 +225,20 @@ export type ProjectSettingsModel = {
 
 export type Query = {
   __typename?: 'Query';
+  _entities: Array<Maybe<_Entity>>;
+  _service: _Service;
   getProject: ProjectModel;
   getUser: UserModel;
+  invite: InviteModel;
+  invites: Array<InviteModel>;
   listProjects: Array<ProjectModel>;
   projectUsers: Array<UserModel>;
   publicKey: Array<Scalars['String']>;
   users: Array<UserModel>;
+};
+
+export type Query_EntitiesArgs = {
+  representations: Array<Scalars['_Any']>;
 };
 
 export type QueryGetProjectArgs = {
@@ -158,6 +247,14 @@ export type QueryGetProjectArgs = {
 
 export type QueryGetUserArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryInviteArgs = {
+  id: Scalars['ID'];
+};
+
+export type QueryInvitesArgs = {
+  status?: InputMaybe<InviteStatus>;
 };
 
 export type QueryProjectUsersArgs = {
@@ -180,7 +277,7 @@ export type UserModel = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
-  fullname: Scalars['String'];
+  fullname?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   projectId: Scalars['String'];
   role: Scalars['Int'];
@@ -201,3 +298,17 @@ export type UsernameLoginDto = {
   projectId: Scalars['String'];
   username: Scalars['String'];
 };
+
+export type _Entity = InviteModel | ProjectModel | UserModel;
+
+export type _Service = {
+  __typename?: '_Service';
+  sdl?: Maybe<Scalars['String']>;
+};
+
+export enum Link__Purpose {
+  /** `EXECUTION` features provide metadata necessary for operation execution. */
+  Execution = 'EXECUTION',
+  /** `SECURITY` features provide metadata necessary to securely resolve fields. */
+  Security = 'SECURITY'
+}
