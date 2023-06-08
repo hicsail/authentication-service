@@ -2,6 +2,17 @@ import { HttpStatus, Injectable, Logger, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { ProjectService } from '../project/project.service';
+
+interface Email {
+  to: string[];
+  cc?: string[];
+  bcc?: string[];
+  subject: string;
+  message: string;
+  template: string;
+  templateData: any;
+}
+
 @Injectable()
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
@@ -11,38 +22,57 @@ export class NotificationService {
     this.notificationUrl = this.configService.getOrThrow('NOTIFICATION_SERVICE_URL');
   }
 
-  private async sendEmail(email: string, subject: string, message: string, template: string, projectId?: string, link?: string): Promise<any> {
-    const project = await this.projectService.getProject(projectId);
-    const response = await this.http
-      .post(this.notificationUrl, {
-        to: [email],
-        subject,
-        message,
-        template,
-        templateData: {
-          link,
-          project
-        }
-      })
-      .toPromise();
+  private async sendEmail(email: Email, projectId: string): Promise<any> {
+    if (projectId) {
+      const project = await this.projectService.getProject(projectId);
+      email.templateData.project = project;
+    }
+
+    const response = await this.http.post(this.notificationUrl, email).toPromise();
 
     if (response.status !== HttpStatus.CREATED) {
-      this.logger.error(`Failed to send ${template} email to ${email} ${projectId ? 'for project ' + project.id : ''}`);
-      throw new HttpException(`Failed to send ${template} email`, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.logger.error(`Failed to send ${email.template} email to ${email.to} ${projectId ? 'for project ' + projectId : ''}`);
+      throw new HttpException(`Failed to send ${email.template} email`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return response.data;
   }
-
-  async sendPasswordResetEmail(projectId: string, email: string, link: string): Promise<any> {
-    return this.sendEmail(email, 'Password reset', `Click this link to reset your password: ${link}`, 'auth/passwordReset', projectId, link);
+  async sendPasswordResetEmail(email: string, projectId: string, link: string): Promise<any> {
+    return this.sendEmail(
+      {
+        to: [email],
+        subject: 'Password reset',
+        message: `Click this link to reset your password: ${link}`,
+        template: 'auth/passwordReset',
+        templateData: { link }
+      },
+      projectId
+    );
   }
 
-  async sendPasswordUpdatedEmail(projectId: string, email: string): Promise<any> {
-    return this.sendEmail(email, 'Password updated', 'Your password has been updated.', 'auth/passwordUpdated', projectId);
+  async sendPasswordUpdatedEmail(email: string, projectId: string): Promise<any> {
+    return this.sendEmail(
+      {
+        to: [email],
+        subject: 'Password updated',
+        message: 'Your password has been updated.',
+        template: 'auth/passwordUpdated',
+        templateData: {}
+      },
+      projectId
+    );
   }
 
-  async sendInviteEmail(projectId: string, email: string, link: string): Promise<any> {
-    return this.sendEmail(email, `You have been invited to join ${projectId}`, `Click this link to join: ${link}`, 'auth/invite', projectId, link);
+  async sendInviteEmail(email: string, projectId: string, link: string): Promise<any> {
+    return this.sendEmail(
+      {
+        to: [email],
+        subject: `You have been invited to join ${projectId}`,
+        message: `Click this link to join: ${link}`,
+        template: 'auth/invite',
+        templateData: {}
+      },
+      projectId
+    );
   }
 }

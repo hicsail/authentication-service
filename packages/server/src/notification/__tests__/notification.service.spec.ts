@@ -33,7 +33,7 @@ describe('NotificationService', () => {
     expect(notificationService).toBeDefined();
   });
 
-  describe('Send Email', () => {
+  describe('Send Password Reset Email', () => {
     it('should send password reset email', async () => {
       // Arrange
       mockProjectService.getProject.resolves(MOCK_PROJECT);
@@ -49,6 +49,29 @@ describe('NotificationService', () => {
       expect(mockHttpService.post.calledOnce).toBe(true);
     });
 
+    it('fails to send email', async () => {
+      // Arrange
+      mockProjectService.getProject.resolves(MOCK_PROJECT);
+      mockHttpService.post.returns({
+        toPromise: sandbox.stub().resolves({
+          status: 200,
+          data: {},
+          response: { status: 500, data: { emailSent: false } }
+        })
+      });
+
+      // Act & Assert
+      try {
+        await notificationService.sendPasswordResetEmail('1', 'hicsail@bu.edu', 'https://example.com');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(mockProjectService.getProject.calledOnce).toBe(true);
+        expect(mockHttpService.post.calledOnce).toBe(true);
+      }
+    });
+  });
+
+  describe('Send Password Updated Email', () => {
     it('should send password updated email', async () => {
       // Arrange
       mockProjectService.getProject.resolves(MOCK_PROJECT);
@@ -65,6 +88,29 @@ describe('NotificationService', () => {
       expect(mockHttpService.post.calledOnce).toBe(true);
     });
 
+    it('fails to send email', async () => {
+      // Arrange
+      mockProjectService.getProject.resolves(MOCK_PROJECT);
+      mockHttpService.post.returns({
+        toPromise: sandbox.stub().resolves({
+          status: 200,
+          data: {},
+          response: { status: 500, data: { emailSent: false } }
+        })
+      });
+
+      // Act & Assert
+      try {
+        await notificationService.sendPasswordUpdatedEmail('1', 'hicsail@bu.edu');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(mockProjectService.getProject.calledOnce).toBe(true);
+        expect(mockHttpService.post.calledOnce).toBe(true);
+      }
+    });
+  });
+
+  describe('Send Invite Email', () => {
     it('should send invite email', async () => {
       // Arrange
       mockProjectService.getProject.resolves(MOCK_PROJECT);
@@ -94,7 +140,7 @@ describe('NotificationService', () => {
 
       // Act & Assert
       try {
-        await notificationService.sendPasswordResetEmail('1', 'hicsail@bu.edu', 'https://example.com');
+        await notificationService.sendInviteEmail('1', 'hicsail@bu.edu', 'https://example.com');
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
         expect(mockProjectService.getProject.calledOnce).toBe(true);
