@@ -34,7 +34,7 @@ describe('NotificationService', () => {
   });
 
   describe('Send Email', () => {
-    it('should send email', async () => {
+    it('should send password reset email', async () => {
       // Arrange
       mockProjectService.getProject.resolves(MOCK_PROJECT);
       mockHttpService.post.returns({
@@ -49,8 +49,57 @@ describe('NotificationService', () => {
       expect(mockHttpService.post.calledOnce).toBe(true);
     });
 
-    it('fails send email', async () => {
-      expect(1).toBe(1);
+    it('should send password updated email', async () => {
+      // Arrange
+      mockProjectService.getProject.resolves(MOCK_PROJECT);
+      mockHttpService.post.returns({
+        toPromise: sandbox.stub().resolves({ status: 201, data: { emailSent: true } })
+      });
+
+      // Act
+      const data = await notificationService.sendPasswordUpdatedEmail('1', 'hicsail@bu.edu');
+
+      // Assert
+      expect(data).toEqual({ emailSent: true });
+      expect(mockProjectService.getProject.calledOnce).toBe(true);
+      expect(mockHttpService.post.calledOnce).toBe(true);
+    });
+
+    it('should send invite email', async () => {
+      // Arrange
+      mockProjectService.getProject.resolves(MOCK_PROJECT);
+      mockHttpService.post.returns({
+        toPromise: sandbox.stub().resolves({ status: 201, data: { emailSent: true } })
+      });
+
+      // Act
+      const data = await notificationService.sendInviteEmail('1', 'hicsail@bu.edu', 'https://example.com');
+
+      // Assert
+      expect(data).toEqual({ emailSent: true });
+      expect(mockProjectService.getProject.calledOnce).toBe(true);
+      expect(mockHttpService.post.calledOnce).toBe(true);
+    });
+
+    it('fails to send email', async () => {
+      // Arrange
+      mockProjectService.getProject.resolves(MOCK_PROJECT);
+      mockHttpService.post.returns({
+        toPromise: sandbox.stub().resolves({
+          status: 200,
+          data: {},
+          response: { status: 500, data: { emailSent: false } }
+        })
+      });
+
+      // Act & Assert
+      try {
+        await notificationService.sendPasswordResetEmail('1', 'hicsail@bu.edu', 'https://example.com');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(mockProjectService.getProject.calledOnce).toBe(true);
+        expect(mockHttpService.post.calledOnce).toBe(true);
+      }
     });
   });
 });
