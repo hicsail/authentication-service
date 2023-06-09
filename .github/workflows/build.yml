@@ -12,7 +12,6 @@ on:
 
 jobs:
   client-checks:
-    if: github.event_name == 'pull_request'
     name: Client Checks
     runs-on: ubuntu-latest
     defaults:
@@ -75,7 +74,6 @@ jobs:
           cache-from: type=gha,scope=client
           cache-to: type=gha,scope=client,mode=max
   server-checks:
-    if: github.event_name == 'pull_request'
     name: Server Checks
     runs-on: ubuntu-latest
     defaults:
@@ -106,13 +104,11 @@ jobs:
       - name: Tests
         continue-on-error: true
         run: npm run test:cov
-      - name: Coverage Report
-        uses: romeovs/lcov-reporter-action@v0.3.1
+      - name: Run Code Coverage Report
+        uses: codacy/codacy-coverage-reporter-action@v1
         with:
-          filter-changed-files: true
-          working-directory: packages/server
-          lcov-file: ./packages/server/coverage/lcov.info
-          delete-old-comments: true
+          api-token: ${{ secrets.CODACY_API_TOKEN }}
+          coverage-reports: packages/server/coverage/lcov.info
   server-docker:
     name: Server Docker Build
     runs-on: ubuntu-latest

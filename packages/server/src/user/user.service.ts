@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { addHours, isFuture } from 'date-fns';
 import { Prisma, User } from '@prisma/client';
@@ -7,6 +7,7 @@ import { UpdateStatus } from './types/user.types';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
   constructor(private prisma: PrismaService) {}
 
   private readonly SALT_ROUNDS: number = 10;
@@ -90,10 +91,16 @@ export class UserService {
    * @returns `User` object, or throw `NotFoundError` when not exist
    */
   async findUserByIdIfPermissionGiven(id: string, projectId: string): Promise<User> {
-    const user = this.prisma.user.findFirst({ where: { id: id, projectId: projectId } });
+    const user = await this.prisma.user.findFirst({ where: { id } });
 
     if (!user) {
-      throw new Error('Permission denied');
+      this.logger.error(`User with ID ${id} not found`);
+      throw new HttpException(`User with ID ${id} not found`, HttpStatus.NOT_FOUND);
+    }
+
+    if (user.projectId !== projectId) {
+      this.logger.error(`User with ID ${id} does not have permission for project with ID ${projectId}`);
+      throw new HttpException(`User with ID ${id} does not have permission for project with ID ${projectId}`, HttpStatus.FORBIDDEN);
     }
 
     return user;
