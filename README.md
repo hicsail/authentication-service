@@ -2,9 +2,12 @@
 
 # Authentication Service
 
-![Server Build Status](https://github.com/hicsail/authentication-service/actions/workflows/server.yml/badge.svg)
-![Client Build Status](https://github.com/hicsail/authentication-service/actions/workflows/client.yml/badge.svg)
-![Admin Client Build Status](https://github.com/hicsail/authentication-service/actions/workflows/admin-client.yml/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d098b06d9abd4f009bd748dbc44a1b29)](https://app.codacy.com/gh/hicsail/authentication-service/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/d098b06d9abd4f009bd748dbc44a1b29)](https://app.codacy.com/gh/hicsail/authentication-service/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![License](https://img.shields.io/github/license/hicsail/authentication-service)](https://github.com/hicsail/authentication-service/blob/main/LICENSE)
+[![Docker Pulls](https://img.shields.io/docker/pulls/hicsail/auth-server)](https://hub.docker.com/r/hicsail/auth-server)
+![Uptime](https://img.shields.io/uptimerobot/ratio/7/m794541356-14a8c11ef199580eeed4f80b)
+
 
 The Authentication Microservice provides a secure and flexible authentication and authorization system that can be easily integrated into your application. It is designed for developers who need a reliable and scalable authentication solution that can handle large volumes of users and access requests.
 
