@@ -12,7 +12,6 @@ on:
 
 jobs:
   client-checks:
-    if: github.event_name == 'pull_request'
     name: Client Checks
     runs-on: ubuntu-latest
     defaults:
@@ -75,7 +74,6 @@ jobs:
           cache-from: type=gha,scope=client
           cache-to: type=gha,scope=client,mode=max
   server-checks:
-    if: github.event_name == 'pull_request'
     name: Server Checks
     runs-on: ubuntu-latest
     defaults:
