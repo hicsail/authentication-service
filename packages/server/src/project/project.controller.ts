@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { Project } from '@prisma/client';
-import { UserModel } from 'src/user/model/user.model';
+import { UserModel } from '../user/model/user.model';
 import { ConfigurableProjectSettings, ProjectCreateInput, ProjectIdentifier } from './dto/project.dto';
 import { ProjectService } from './project.service';
 
