@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { ProjectService } from '../project/project.service';
 
-interface Email {
+export interface Email {
   to: string[];
   cc?: string[];
   bcc?: string[];
