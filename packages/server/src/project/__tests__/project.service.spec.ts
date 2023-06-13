@@ -58,8 +58,6 @@ describe('ProjectService', () => {
       findMany: sandbox.stub().returns([MOCK_USER])
     };
 
-    // mockPrismaService.project.findFirstOrThrow.onFirstCall().returns(MOCK_PROJECT).onSecondCall.returns(MOCK_SETTINGS);
-
     projectService = new ProjectService(mockPrismaService, mockUserService, mockConfigService);
   });
 
