@@ -47,11 +47,11 @@ describe('ProjectService', () => {
     mockConfigService.getOrThrow.returns('');
 
     mockPrismaService.project = {
-      create: sandbox.stub().returns(MOCK_PROJECT),
-      findMany: sandbox.stub().resolves([MOCK_PROJECT]),
-      findFirstOrThrow: sandbox.stub().returns(MOCK_PROJECT),
-      update: sandbox.stub().returns(MOCK_PROJECT),
-      count: sandbox.stub().returns(1)
+      create: sandbox.stub(),
+      findMany: sandbox.stub(),
+      findFirstOrThrow: sandbox.stub(),
+      update: sandbox.stub(),
+      count: sandbox.stub()
     };
 
     mockPrismaService.user = {
@@ -199,6 +199,7 @@ describe('ProjectService', () => {
     it('should return true if the project exists', async () => {
       // Arrange
       const projectId = '1';
+      mockPrismaService.project.count.resolves(1);
 
       // Act
       const result = await projectService.exists(projectId);
@@ -266,9 +267,8 @@ describe('ProjectService', () => {
     it('should return the project settings if the project exists', async () => {
       // Arrange
       const projectId = '1';
-      mockPrismaService.project.findFirstOrThrow = sandbox.stub().returns(MOCK_SETTINGS);
-
       mockPrismaService.project.findFirstOrThrow.returns(MOCK_SETTINGS);
+      const existsStub = sinon.stub(projectService, 'exists').resolves(true);
 
       // Act
       const result = await projectService.getProjectSettings(projectId);
@@ -281,6 +281,8 @@ describe('ProjectService', () => {
           select: { displayProjectName: true, allowSignup: true }
         })
       ).toBe(true);
+
+      existsStub.restore();
     });
 
     it('should throw NotFoundException if the project does not exist', async () => {
@@ -296,21 +298,6 @@ describe('ProjectService', () => {
       // Clean up
       existsStub.restore();
     });
-
-    it('should fail if the project does not exist', async () => {
-      // Arrange
-      const projectId = '2';
-      mockPrismaService.project.findFirstOrThrow.throws(new NotFoundException());
-
-      // Act and Assert
-      await expect(projectService.getProjectSettings(projectId)).rejects.toThrowError(NotFoundException);
-      expect(
-        mockPrismaService.project.findFirstOrThrow.calledOnceWith({
-          where: { id: projectId },
-          select: { displayProjectName: true, allowSignup: true }
-        })
-      ).toBe(true);
-    });
   });
 
   describe('Get Auth Settings', () => {
@@ -319,6 +306,7 @@ describe('ProjectService', () => {
       const projectId = '1';
 
       mockPrismaService.project.findFirstOrThrow.returns(MOCK_AUTH_METHODS);
+      const existsStub = sinon.stub(projectService, 'exists').resolves(true);
 
       // Act
       const result = await projectService.getAuthSettings(projectId);
@@ -334,6 +322,9 @@ describe('ProjectService', () => {
           select: { googleAuth: true, emailAuth: true }
         })
       ).toBe(true);
+
+      // Clean up
+      existsStub.restore();
     });
 
     it('should throw NotFoundException if the project does not exist', async () => {
@@ -349,21 +340,6 @@ describe('ProjectService', () => {
       // Clean up
       existsStub.restore();
     });
-
-    it('should fail if the project does not exist', async () => {
-      // Arrange
-      const projectId = '2';
-      mockPrismaService.project.findFirstOrThrow.rejects(new NotFoundException());
-
-      // Act and Assert
-      await expect(projectService.getAuthSettings(projectId)).rejects.toThrowError(NotFoundException);
-      expect(
-        mockPrismaService.project.findFirstOrThrow.calledOnceWith({
-          where: { id: projectId },
-          select: { googleAuth: true, emailAuth: true }
-        })
-      ).toBe(true);
-    });
   });
 
   describe('Update Project Settings', () => {
@@ -373,6 +349,7 @@ describe('ProjectService', () => {
       const projectSettings = { displayProjectName: false, allowSignup: false };
 
       mockPrismaService.project.update.returns(MOCK_UPDATED_PROJECT);
+      const existsStub = sinon.stub(projectService, 'exists').resolves(true);
 
       // Act
       const result = await projectService.updateProjectSettings(projectId, projectSettings);
@@ -385,6 +362,9 @@ describe('ProjectService', () => {
           data: projectSettings
         })
       ).toBe(true);
+
+      // Clean up
+      existsStub.restore();
     });
 
     it('should throw NotFoundException if the project does not exist', async () => {
@@ -401,22 +381,6 @@ describe('ProjectService', () => {
       // Clean up
       existsStub.restore();
     });
-
-    it('should fail if the project does not exist', async () => {
-      // Arrange
-      const projectId = '2';
-      const projectSettings = { displayProjectName: false, allowSignup: false };
-      mockPrismaService.project.update.rejects(new NotFoundException());
-
-      // Act and Assert
-      await expect(projectService.updateProjectSettings(projectId, projectSettings)).rejects.toThrowError(NotFoundException);
-      expect(
-        mockPrismaService.project.update.calledOnceWith({
-          where: { id: projectId },
-          data: projectSettings
-        })
-      ).toBe(true);
-    });
   });
 
   describe('Update Project Auth Methods', () => {
@@ -426,6 +390,7 @@ describe('ProjectService', () => {
       const projectAuthMethods = { googleAuth: false, emailAuth: false };
 
       mockPrismaService.project.update.returns(MOCK_UPDATED_PROJECT);
+      const existsStub = sinon.stub(projectService, 'exists').resolves(true);
 
       // Act
       const result = await projectService.updateProjectAuthMethods(projectId, projectAuthMethods);
@@ -454,22 +419,6 @@ describe('ProjectService', () => {
 
       // Clean up
       existsStub.restore();
-    });
-
-    it('should fail if the project does not exist', async () => {
-      // Arrange
-      const projectId = '2';
-      const projectAuthMethods = { googleAuth: false, emailAuth: false };
-      mockPrismaService.project.update.rejects(new NotFoundException());
-
-      // Act and Assert
-      await expect(projectService.updateProjectAuthMethods(projectId, projectAuthMethods)).rejects.toThrowError(NotFoundException);
-      expect(
-        mockPrismaService.project.update.calledOnceWith({
-          where: { id: projectId },
-          data: projectAuthMethods
-        })
-      ).toBe(true);
     });
   });
 });
