@@ -208,6 +208,18 @@ describe('ProjectService', () => {
       expect(mockPrismaService.project.count.calledOnceWith({ where: { id: projectId } })).toBe(true);
     });
 
+    it('should return false if the projectId is undefined', async () => {
+      // Arrange
+      const projectId = undefined;
+
+      // Act
+      const result = await projectService.exists(projectId);
+
+      // Assert
+      expect(result).toBe(false);
+      expect(mockPrismaService.project.count.called).toBe(false);
+    });
+
     it('should fail if the project does not exist', async () => {
       // Arrange
       const projectId = '2';
@@ -271,6 +283,20 @@ describe('ProjectService', () => {
       ).toBe(true);
     });
 
+    it('should throw NotFoundException if the project does not exist', async () => {
+      // Arrange
+      const projectId = '2';
+      const existsStub = sinon.stub(projectService, 'exists').resolves(false);
+
+      // Act and Assert
+      await expect(projectService.getProjectSettings(projectId)).rejects.toThrow(NotFoundException);
+      expect(existsStub.calledOnceWith(projectId)).toBe(true);
+      expect(mockPrismaService.project.findFirstOrThrow.called).toBe(false);
+
+      // Clean up
+      existsStub.restore();
+    });
+
     it('should fail if the project does not exist', async () => {
       // Arrange
       const projectId = '2';
@@ -310,6 +336,20 @@ describe('ProjectService', () => {
       ).toBe(true);
     });
 
+    it('should throw NotFoundException if the project does not exist', async () => {
+      // Arrange
+      const projectId = '2';
+      const existsStub = sinon.stub(projectService, 'exists').resolves(false);
+
+      // Act and Assert
+      await expect(projectService.getAuthSettings(projectId)).rejects.toThrow(NotFoundException);
+      expect(existsStub.calledOnceWith(projectId)).toBe(true);
+      expect(mockPrismaService.project.findFirstOrThrow.called).toBe(false);
+
+      // Clean up
+      existsStub.restore();
+    });
+
     it('should fail if the project does not exist', async () => {
       // Arrange
       const projectId = '2';
@@ -345,6 +385,21 @@ describe('ProjectService', () => {
           data: projectSettings
         })
       ).toBe(true);
+    });
+
+    it('should throw NotFoundException if the project does not exist', async () => {
+      // Arrange
+      const projectId = '2';
+      const projectSettings = { displayProjectName: false, allowSignup: false };
+      const existsStub = sinon.stub(projectService, 'exists').resolves(false);
+
+      // Act and Assert
+      await expect(projectService.updateProjectSettings(projectId, projectSettings)).rejects.toThrow(NotFoundException);
+      expect(existsStub.calledOnceWith(projectId)).toBe(true);
+      expect(mockPrismaService.project.update.called).toBe(false);
+
+      // Clean up
+      existsStub.restore();
     });
 
     it('should fail if the project does not exist', async () => {
@@ -383,6 +438,22 @@ describe('ProjectService', () => {
           data: projectAuthMethods
         })
       ).toBe(true);
+    });
+
+    it('should throw NotFoundException if the project does not exist', async () => {
+      // Arrange
+      const projectId = '2';
+      const projectAuthMethods = { googleAuth: false, emailAuth: false };
+
+      const existsStub = sinon.stub(projectService, 'exists').resolves(false);
+
+      // Act and Assert
+      await expect(projectService.updateProjectAuthMethods(projectId, projectAuthMethods)).rejects.toThrow(NotFoundException);
+      expect(existsStub.calledOnceWith(projectId)).toBe(true);
+      expect(mockPrismaService.project.update.called).toBe(false);
+
+      // Clean up
+      existsStub.restore();
     });
 
     it('should fail if the project does not exist', async () => {
