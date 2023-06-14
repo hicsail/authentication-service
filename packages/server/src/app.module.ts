@@ -12,6 +12,7 @@ import { InviteModule } from './invite/invite.module';
 import { NotificationModule } from './notification/notification.module';
 import { JwtModule } from './jwt/jwt.module';
 import { TelemetryModule } from './telemetry/telemetry.module';
+import { EmailVerificationModule } from './email-verification/email-verification.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { TelemetryModule } from './telemetry/telemetry.module';
     InviteModule,
     NotificationModule,
     JwtModule,
-    TelemetryModule
+    TelemetryModule,
+    EmailVerificationModule
   ]
 })
 export class AppModule implements NestModule {
