@@ -38,7 +38,4 @@ export class ProjectModel {
 
   @Field({ nullable: true })
   deletedAt?: Date;
-
-  @Field({ nullable: true })
-  verifyEmail?: boolean;
 }

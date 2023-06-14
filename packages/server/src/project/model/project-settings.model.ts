@@ -12,4 +12,7 @@ export class ProjectSettingsModel {
 
   @Field()
   allowSignup: boolean;
+
+  @Field({ nullable: true })
+  verifyEmail?: boolean;
 }
