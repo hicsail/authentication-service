@@ -60,6 +60,11 @@ export class ProjectCreateInput implements Omit<Project, 'id' | 'createdAt' | 'u
   @IsDefined()
   @Field()
   emailAuth: boolean;
+
+  @IsNotEmpty()
+  @IsDefined()
+  @Field()
+  verifyEmail: boolean;
 }
 
 export class ProjectIdentifier {
@@ -120,6 +125,11 @@ export class ProjectSettingsInput implements Partial<ProjectSettingsModel> {
   @IsNotEmpty()
   @Field({ nullable: true })
   allowSignup: boolean;
+
+  @IsNotEmpty()
+  @IsDefined()
+  @Field()
+  verifyEmail: boolean;
 }
 
 @InputType()

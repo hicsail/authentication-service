@@ -34,4 +34,7 @@ export class UserModel {
 
   @Field({ nullable: true })
   deletedAt: Date;
+
+  @Field({ nullable: true })
+  emailVerified?: boolean;
 }
