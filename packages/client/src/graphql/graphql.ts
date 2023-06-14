@@ -193,6 +193,7 @@ export type ProjectCreateInput = {
   muiTheme?: InputMaybe<Scalars['JSON']>;
   name: Scalars['String'];
   redirectUrl?: InputMaybe<Scalars['String']>;
+  verifyEmail: Scalars['Boolean'];
 };
 
 export type ProjectModel = {
@@ -215,12 +216,14 @@ export type ProjectModel = {
 export type ProjectSettingsInput = {
   allowSignup?: InputMaybe<Scalars['Boolean']>;
   displayProjectName?: InputMaybe<Scalars['Boolean']>;
+  verifyEmail: Scalars['Boolean'];
 };
 
 export type ProjectSettingsModel = {
   __typename?: 'ProjectSettingsModel';
   allowSignup: Scalars['Boolean'];
   displayProjectName: Scalars['Boolean'];
+  verifyEmail?: Maybe<Scalars['Boolean']>;
 };
 
 export type Query = {
@@ -261,10 +264,6 @@ export type QueryProjectUsersArgs = {
   projectId: Scalars['String'];
 };
 
-export type QueryUsersArgs = {
-  projectId: Scalars['ID'];
-};
-
 export type ResetDto = {
   code: Scalars['String'];
   email: Scalars['String'];
@@ -277,6 +276,7 @@ export type UserModel = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
+  emailVerified?: Maybe<Scalars['Boolean']>;
   fullname?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   projectId: Scalars['String'];

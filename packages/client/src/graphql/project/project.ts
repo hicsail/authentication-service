@@ -18,7 +18,7 @@ export type GetProjectQuery = {
     logo?: string | null;
     muiTheme: any;
     redirectUrl?: string | null;
-    settings: { __typename?: 'ProjectSettingsModel'; displayProjectName: boolean; allowSignup: boolean };
+    settings: { __typename?: 'ProjectSettingsModel'; displayProjectName: boolean; allowSignup: boolean; verifyEmail?: boolean | null };
     authMethods: { __typename?: 'ProjectAuthMethodsModel'; googleAuth: boolean; emailAuth: boolean };
   };
 };
@@ -34,6 +34,7 @@ export const GetProjectDocument = gql`
       settings {
         displayProjectName
         allowSignup
+        verifyEmail
       }
       authMethods {
         googleAuth

@@ -9,12 +9,13 @@ export type GetUserQueryVariables = Types.Exact<{
   id: Types.Scalars['ID'];
 }>;
 
-export type GetUserQuery = { __typename?: 'Query'; getUser: { __typename?: 'UserModel'; id: string } };
+export type GetUserQuery = { __typename?: 'Query'; getUser: { __typename?: 'UserModel'; id: string; emailVerified?: boolean | null } };
 
 export const GetUserDocument = gql`
   query getUser($id: ID!) {
     getUser(id: $id) {
       id
+      emailVerified
     }
   }
 `;

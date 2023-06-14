@@ -8,6 +8,7 @@ query getProject($id: String!) {
     settings {
       displayProjectName
       allowSignup
+      verifyEmail
     }
     authMethods {
       googleAuth
