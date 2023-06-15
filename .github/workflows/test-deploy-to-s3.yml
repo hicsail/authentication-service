@@ -1,0 +1,28 @@
+name: AWS example workflow
+on:
+  push
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+jobs:
+  S3PackageUpload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::135854645631:role/Github-Actions
+          aws-region: us-east-1
+      - name:  Copy files to S3
+        run: |
+          aws s3 cp ./dist s3://sail-websites/auth-client --recursive
