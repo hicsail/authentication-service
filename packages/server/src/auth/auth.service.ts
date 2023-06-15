@@ -136,7 +136,7 @@ export class AuthService {
       this.logger.log(`User of user id: ${user.id} Created`);
       return resp;
     } catch (err) {
-      this.logger.log(err);
+      this.logger.error(err);
       return err;
     }
   }

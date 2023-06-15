@@ -23,7 +23,7 @@ export class AuthResolver {
   /** Login via username */
   @Mutation(() => AccessToken)
   async loginUsername(@Args('user') user: UsernameLoginDto): Promise<AccessToken> {
-    this.logger.log('Username Validated');
+    this.logger.log('loginUsername Called');
     return this.authService.validateUsername(user.projectId, user.username, user.password);
   }
 
