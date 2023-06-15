@@ -5,7 +5,6 @@ import { ProjectModel } from './model/project.model';
 import { UserModel } from '../user/model/user.model';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
-import { UsernameLoginDto } from 'src/auth/dto/auth.dto';
 import { BadRequestException } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 

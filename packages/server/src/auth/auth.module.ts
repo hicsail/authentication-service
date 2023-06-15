@@ -7,9 +7,10 @@ import { UserModule } from '../user/user.module';
 import { ProjectModule } from '../project/project.module';
 import { NotificationModule } from '../notification/notification.module';
 import { JwtModule } from '../jwt/jwt.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [UserModule, ProjectModule, NotificationModule, JwtModule],
+  imports: [UserModule, ProjectModule, NotificationModule, JwtModule, HttpModule],
   controllers: [LoginController, SignupController, RecoveryController, PublicKeyController],
   providers: [AuthResolver, AuthService, PrismaService],
   exports: [AuthService]

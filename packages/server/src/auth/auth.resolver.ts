@@ -10,7 +10,9 @@ import {
   ResetPasswordTransformPipe,
   SignupTransformPipe,
   UsernameLoginDto,
-  UserSignupDto
+  UserSignupDto,
+  GoogleLoginDto,
+  GoogleLoginTransformPipe
 } from './dto/auth.dto';
 import { UsePipes } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
@@ -33,6 +35,13 @@ export class AuthResolver {
   async loginEmail(@Args('user') user: EmailLoginDto): Promise<AccessToken> {
     this.logger.log('Email Validated');
     return this.authService.validateEmail(user.projectId, user.email, user.password);
+  }
+
+  /** Login via Google */
+  @Mutation(() => AccessToken)
+  @UsePipes(new GoogleLoginTransformPipe())
+  async loginGoogle(@Args('user') user: GoogleLoginDto): Promise<AccessToken> {
+    return this.authService.validateGoogle(user.projectId, user.credential);
   }
 
   /** Signup logic */

@@ -2,6 +2,17 @@ import { HttpStatus, Injectable, Logger, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { ProjectService } from '../project/project.service';
+
+export interface Email {
+  to: string[];
+  cc?: string[];
+  bcc?: string[];
+  subject: string;
+  message: string;
+  template: string;
+  templateData: any;
+}
+
 @Injectable()
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
@@ -11,68 +22,57 @@ export class NotificationService {
     this.notificationUrl = this.configService.getOrThrow('NOTIFICATION_SERVICE_URL');
   }
 
-  async sendPasswordResetEmail(projectId: string, email: string, link: string): Promise<any> {
-    const project = await this.projectService.getProject(projectId);
-    const response = await this.http
-      .post(this.notificationUrl, {
+  private async sendEmail(email: Email, projectId: string): Promise<any> {
+    if (projectId) {
+      const project = await this.projectService.getProject(projectId);
+      email.templateData.project = project;
+    }
+
+    const response = await this.http.post(this.notificationUrl, email).toPromise();
+
+    if (response.status !== HttpStatus.CREATED) {
+      this.logger.error(`Failed to send ${email.template} email to ${email.to} ${projectId ? 'for project ' + projectId : ''}`);
+      throw new HttpException(`Failed to send ${email.template} email`, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return response.data;
+  }
+  async sendPasswordResetEmail(email: string, projectId: string, link: string): Promise<any> {
+    return this.sendEmail(
+      {
         to: [email],
         subject: 'Password reset',
         message: `Click this link to reset your password: ${link}`,
         template: 'auth/passwordReset',
-        templateData: {
-          link,
-          project
-        }
-      })
-      .toPromise();
-    if (response.status !== HttpStatus.CREATED) {
-      this.logger.error(`Failed to send password reset email to ${email} for project ${project.id}`);
-      throw new HttpException('Failed to send password reset email', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    this.logger.log('Reset email sent');
-    return response.data;
+        templateData: { link }
+      },
+      projectId
+    );
   }
 
-  async sendPasswordUpdatedEmail(projectId: string, email: string): Promise<any> {
-    const project = await this.projectService.getProject(projectId);
-    const response = await this.http
-      .post(this.notificationUrl, {
+  async sendPasswordUpdatedEmail(email: string, projectId: string): Promise<any> {
+    return this.sendEmail(
+      {
         to: [email],
         subject: 'Password updated',
         message: 'Your password has been updated.',
         template: 'auth/passwordUpdated',
-        templateData: {
-          project
-        }
-      })
-      .toPromise();
-    if (response.status !== HttpStatus.CREATED) {
-      this.logger.error(`Failed to send password updated email to ${email} for project ${project.id}`);
-      throw new HttpException('Failed to send password updated email', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    this.logger.log('PW update email sent');
-    return response.data;
+        templateData: {}
+      },
+      projectId
+    );
   }
 
-  async sendInviteEmail(projectId: string, email: string, link: string): Promise<any> {
-    const project = await this.projectService.getProject(projectId);
-    const response = await this.http
-      .post(this.notificationUrl, {
+  async sendInviteEmail(email: string, projectId: string, link: string): Promise<any> {
+    return this.sendEmail(
+      {
         to: [email],
-        subject: `You have been invited to join ${project.name}`,
+        subject: `You have been invited to join ${projectId}`,
         message: `Click this link to join: ${link}`,
         template: 'auth/invite',
-        templateData: {
-          link,
-          project
-        }
-      })
-      .toPromise();
-    if (response.status !== HttpStatus.CREATED) {
-      this.logger.error(`Failed to send invite email to ${email} for project ${project.id}`);
-      throw new HttpException('Failed to send invite email', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    this.logger.log('Invite email sent');
-    return response.data;
+        templateData: {}
+      },
+      projectId
+    );
   }
 }

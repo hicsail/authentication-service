@@ -17,3 +17,9 @@ mutation forgotPassword($projectId: String!, $email: String!) {
 mutation resetPassword($projectId: String!, $email: String!, $code: String!, $password: String!) {
   resetPassword(user: { projectId: $projectId, email: $email, code: $code, password: $password })
 }
+
+mutation loginGoogle($projectId: String!, $credential: String!) {
+  loginGoogle(user: {projectId: $projectId, credential: $credential }) {
+    accessToken
+  }
+}
