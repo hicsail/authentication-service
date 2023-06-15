@@ -9,11 +9,13 @@ import { UpdateStatus } from '../user/types/user.types';
 import { ConfigService } from '@nestjs/config';
 import { ProjectService } from '../project/project.service';
 import { NotificationService } from '../notification/notification.service';
+import { Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
@@ -40,6 +42,7 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
+      this.logger.log('Username validated');
       return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
     }
 
@@ -162,8 +165,10 @@ export class AuthService {
       const user = await this.userService.createUser(data);
       const payload = { id: user.id, projectId: user.projectId, role: user.role };
       const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      this.logger.log(`User of user id: ${user.id} Created`);
       return resp;
     } catch (err) {
+      this.logger.error(err);
       return err;
     }
   }

@@ -15,14 +15,17 @@ import {
   GoogleLoginTransformPipe
 } from './dto/auth.dto';
 import { UsePipes } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 @Resolver()
 export class AuthResolver {
+  private readonly logger = new Logger(AuthResolver.name);
   constructor(private readonly authService: AuthService) {}
 
   /** Login via username */
   @Mutation(() => AccessToken)
   async loginUsername(@Args('user') user: UsernameLoginDto): Promise<AccessToken> {
+    this.logger.log('loginUsername Called');
     return this.authService.validateUsername(user.projectId, user.username, user.password);
   }
 
@@ -30,6 +33,7 @@ export class AuthResolver {
   @Mutation(() => AccessToken)
   @UsePipes(new EmailLoginTransformPipe())
   async loginEmail(@Args('user') user: EmailLoginDto): Promise<AccessToken> {
+    this.logger.log('Email Validated');
     return this.authService.validateEmail(user.projectId, user.email, user.password);
   }
 
@@ -44,6 +48,7 @@ export class AuthResolver {
   @Mutation(() => AccessToken)
   @UsePipes(new SignupTransformPipe())
   async signup(@Args('user') user: UserSignupDto): Promise<AccessToken> {
+    this.logger.log('Signup Successful');
     return this.authService.signup(user);
   }
 
@@ -52,7 +57,7 @@ export class AuthResolver {
   @UsePipes(new ForgotPasswordTransformPipe())
   async forgotPassword(@Args('user') user: ForgotDto): Promise<boolean> {
     await this.authService.forgotPassword(user.projectId, user.email);
-
+    this.logger.log('Forgot PW Clicked');
     // GraphQL needs something to return
     return true;
   }
@@ -62,7 +67,7 @@ export class AuthResolver {
   @UsePipes(new ResetPasswordTransformPipe())
   async resetPassword(@Args('user') user: ResetDto): Promise<boolean> {
     await this.authService.resetPassword(user.projectId, user.email, user.password, user.code);
-
+    this.logger.log('PW Reset Successful');
     // GraphQL needs something to return
     return true;
   }
@@ -70,6 +75,7 @@ export class AuthResolver {
   /** Return Public Key */
   @Query(() => [String])
   publicKey(): string[] {
+    this.logger.log('Public Key');
     return this.authService.publicKey();
   }
 }
