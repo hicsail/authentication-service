@@ -1,10 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, Project, User } from '@prisma/client';
 import { ConfigurableProjectSettings, ProjectAuthMethodsInput, ProjectIdentifier, ProjectSettingsInput } from './dto/project.dto';
 import { ProjectSettingsModel } from './model/project-settings.model';
 import { ProjectAuthMethodsModel } from './model/project-auth-methods.model';
-import { UsernameLoginDto } from '../auth/dto/auth.dto';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../user/user.service';
 
