@@ -3,9 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import * as sinon from 'sinon';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../../user/user.service';
-import { Prisma, Project } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { NotFoundException } from '@nestjs/common';
-import { ConfigurableProjectSettings, ProjectAuthMethodsInput, ProjectSettingsInput } from '../dto/project.dto';
 
 const sandbox = sinon.createSandbox();
 
