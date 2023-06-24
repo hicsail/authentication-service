@@ -1,0 +1,3 @@
+query getEmailVerificationStatus($accessToken: String!) {
+    getEmailVerificationStatus(user: {accessToken: $accessToken})
+}

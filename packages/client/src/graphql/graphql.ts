@@ -53,6 +53,10 @@ export type EmailLoginDto = {
   projectId: Scalars['String'];
 };
 
+export type EmailVerificationDto = {
+  accessToken: Scalars['String'];
+};
+
 export type ForgotDto = {
   email: Scalars['String'];
   projectId: Scalars['String'];
@@ -230,6 +234,7 @@ export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
+  getEmailVerificationStatus: Scalars['Boolean'];
   getProject: ProjectModel;
   getUser: UserModel;
   invite: InviteModel;
@@ -242,6 +247,10 @@ export type Query = {
 
 export type Query_EntitiesArgs = {
   representations: Array<Scalars['_Any']>;
+};
+
+export type QueryGetEmailVerificationStatusArgs = {
+  user: EmailVerificationDto;
 };
 
 export type QueryGetProjectArgs = {
