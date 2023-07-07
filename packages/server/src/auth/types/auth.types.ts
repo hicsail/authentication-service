@@ -24,6 +24,9 @@ export type EmailLogin = {
 export class AccessToken {
   @Field()
   accessToken: string;
+
+  @Field()
+  refreshToken: string;
 }
 
 export type ValidatedUser = {
