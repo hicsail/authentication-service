@@ -75,8 +75,7 @@ export class AuthResolver {
   /** Refresh access token */
   @Mutation(() => AccessToken)
   async refresh(@Args('refreshToken') refreshToken: string): Promise<AccessToken> {
-    const accessToken = await this.authService.refreshAccessToken(refreshToken);
-    return accessToken;
+    return this.authService.refreshAccessToken(refreshToken);
   }
 
   /** Return Public Key */

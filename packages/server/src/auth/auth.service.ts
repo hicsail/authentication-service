@@ -179,7 +179,7 @@ export class AuthService {
       const refreshPayload = { id: user.id, projectId: user.projectId, type: 'refresh' };
       const resp = {
         accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }),
-        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATIOn })
+        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATION })
       };
       this.logger.log(`User of user id: ${user.id} Created`);
       return resp;
@@ -223,11 +223,12 @@ export class AuthService {
       const projectId = decodedRefreshToken['projectId'];
 
       const payload = { id: userId, projectId: projectId, type: 'access' };
+      const refreshPayload = { id: userId, projectId: projectId, type: 'refresh' };
       const newAccessToken = this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION });
-
+      const newRefreshToken = this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATION });
       return {
         accessToken: newAccessToken,
-        refreshToken: refreshToken
+        refreshToken: newRefreshToken
       };
     } catch (error) {
       throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
