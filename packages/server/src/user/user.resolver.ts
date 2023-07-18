@@ -1,4 +1,4 @@
-import { Args, ID, Query, Resolver, ResolveReference } from '@nestjs/graphql';
+import { Args, ID, Mutation, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { UserModel } from './model/user.model';
 import { BadRequestException, UseGuards } from '@nestjs/common';
@@ -38,4 +38,16 @@ export class UserResolver {
       throw new BadRequestException(`Could not find user with ID ${reference.id}`);
     }
   }
+
+  // mutation to update user
+  @Mutation(() => UserModel)
+  @UseGuards(AuthGuard)
+  async updateUser(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('fullname') fullname: string,
+    @Args('email') email: string,
+  ): Promise<UserModel> {
+    return this.userService.updateUser(id, fullname, email);
+  }
+  
 }
