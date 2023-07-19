@@ -7,6 +7,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { Role } from '../auth/enum/role.enum';
 import { Roles } from '../auth/roles.decorator';
 import { Logger } from '@nestjs/common';
+import { UserId } from './user.decorator';
 
 @Resolver(() => UserModel)
 export class UserResolver {
@@ -29,6 +30,14 @@ export class UserResolver {
     return this.userService.findUserByIdIfPermissionGiven(id, projectId);
   }
 
+  // get authenticated user
+  @Query(() => UserModel)
+  @UseGuards(AuthGuard)
+  async me(@UserId() userId: string): Promise<UserModel> {
+    this.logger.log(`Users of projectId: ${userId} found updated`);
+    return this.userService.findUserById(userId);
+  }
+  
   @ResolveReference()
   async resolveReference(reference: { __typename: string; id: string }): Promise<UserModel> {
     try {
