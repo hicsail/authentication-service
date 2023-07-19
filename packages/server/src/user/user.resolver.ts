@@ -12,7 +12,7 @@ import { UserId } from './user.decorator';
 @Resolver(() => UserModel)
 export class UserResolver {
   private readonly logger = new Logger(UserResolver.name);
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Query(() => [UserModel])
   @UseGuards(AuthGuard)
@@ -44,11 +44,11 @@ export class UserResolver {
   @Mutation(() => UserModel)
   @UseGuards(AuthGuard)
   async updateUser(
-    @UserId () id: string,
+    @UserId() id: string,
     @Args('fullname') fullname: string,
     @Args('email') email: string,
   ): Promise<UserModel> {
     return this.userService.updateUser(id, fullname, email);
   }
-  
+
 }
