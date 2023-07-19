@@ -1,9 +1,10 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { addHours, isFuture } from 'date-fns';
 import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UpdateStatus } from './types/user.types';
+import { isEmail, length } from 'class-validator';
 
 @Injectable()
 export class UserService {
@@ -246,5 +247,47 @@ export class UserService {
         role
       }
     });
+  }
+
+  /**
+   * Uppdate user information except password
+   * @param id ID of the user
+   * @param fullname full name of the user
+   * @param email email of the user
+   * @returns `User` object
+   * @throws `NotFoundException` when user not found
+   * @throws `BadRequestException` when fullname or email is not provided or email is not valid or email is already taken
+   */
+  async updateUser(id: string, fullname: string, email: string): Promise<User> {
+    const userToUpdate = await this.findUserById(id);
+    if (!userToUpdate) throw new NotFoundException(`User with ID ${id} not found`);
+
+    // null check for optional fields
+    if (!fullname || !email) throw new BadRequestException('Fullname and email are required');
+
+    // length check for fullname and email
+    if (!length(fullname, 3, 50)) throw new BadRequestException('Fullname must be between 3 and 50 characters');
+    if (!length(email, 3, 50)) throw new BadRequestException('Email must be between 3 and 50 characters');
+
+    // check if valid email
+    if (!isEmail(email)) throw new BadRequestException(`Email ${email} is not valid`);
+
+    // check if email is already taken
+    const userWithSameEmail = await this.findUserByEmail(userToUpdate.projectId, email);
+    if (userWithSameEmail && userWithSameEmail.id !== userToUpdate.id) throw new BadRequestException(`Email ${email} is already taken`);
+
+    // if all conditions are met, update & return user
+    const user = await this.prisma.user.update({
+      where: {
+        id: userToUpdate.id
+      },
+      data: {
+        fullname,
+        email,
+        updatedAt: new Date()
+      }
+    });
+
+    return user;
   }
 }
