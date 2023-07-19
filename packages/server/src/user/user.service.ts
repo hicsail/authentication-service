@@ -9,7 +9,7 @@ import { isEmail, length } from 'class-validator';
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   private readonly SALT_ROUNDS: number = 10;
 
@@ -257,7 +257,7 @@ export class UserService {
    * @returns `User` object
    * @throws `NotFoundException` when user not found
    * @throws `BadRequestException` when fullname or email is not provided or email is not valid or email is already taken
-    */
+   */
   async updateUser(id: string, fullname: string, email: string): Promise<User> {
     const userToUpdate = await this.findUserById(id);
     if (!userToUpdate) throw new NotFoundException(`User with ID ${id} not found`);
