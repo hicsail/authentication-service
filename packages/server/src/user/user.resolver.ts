@@ -7,6 +7,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { Role } from '../auth/enum/role.enum';
 import { Roles } from '../auth/roles.decorator';
 import { Logger } from '@nestjs/common';
+import { UserId } from './user.decorator';
 
 @Resolver(() => UserModel)
 export class UserResolver {
@@ -43,7 +44,7 @@ export class UserResolver {
   @Mutation(() => UserModel)
   @UseGuards(AuthGuard)
   async updateUser(
-    @Args('id', { type: () => ID }) id: string,
+    @UserId () id: string,
     @Args('fullname') fullname: string,
     @Args('email') email: string,
   ): Promise<UserModel> {
