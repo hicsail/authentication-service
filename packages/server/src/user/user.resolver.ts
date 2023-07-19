@@ -37,7 +37,7 @@ export class UserResolver {
     this.logger.log(`Users of projectId: ${userId} found updated`);
     return this.userService.findUserById(userId);
   }
-  
+
   @ResolveReference()
   async resolveReference(reference: { __typename: string; id: string }): Promise<UserModel> {
     try {
