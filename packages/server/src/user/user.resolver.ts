@@ -30,6 +30,14 @@ export class UserResolver {
     return this.userService.findUserByIdIfPermissionGiven(id, projectId);
   }
 
+  // get authenticated user
+  @Query(() => UserModel)
+  @UseGuards(AuthGuard)
+  async me(@UserId() userId: string): Promise<UserModel> {
+    this.logger.log(`Called "me" with userId: ${userId}`);
+    return this.userService.findUserById(userId);
+  }
+
   @ResolveReference()
   async resolveReference(reference: { __typename: string; id: string }): Promise<UserModel> {
     try {
