@@ -41,9 +41,13 @@ export class AuthService {
     const user = await this.userService.findUserByUsername(projectId, username);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { id: user.id, projectId: user.projectId, role: user.role };
+      const payload = { id: user.id, projectId: user.projectId, role: user.role, type: 'access' };
+      const refreshPayload = { id: user.id, projectId: user.projectId, type: 'refresh' };
       this.logger.log('Username validated');
-      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return {
+        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }),
+        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATION })
+      };
     }
 
     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -65,9 +69,13 @@ export class AuthService {
     const user = await this.userService.findUserByEmail(projectId, email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { id: user.id, projectId: user.projectId, role: user.role };
+      const payload = { id: user.id, projectId: user.projectId, role: user.role, type: 'access' };
+      const refreshPayload = { id: user.id, projectId: user.projectId, type: 'refresh' };
 
-      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      return {
+        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }),
+        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATION })
+      };
     }
 
     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -88,8 +96,12 @@ export class AuthService {
     const user = await this.userService.findUserByEmail(projectId, verifiedCredentials['email']);
 
     if (user) {
-      const payload = { id: user.id, projectId: user.projectId, role: user.role };
-      return { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const payload = { id: user.id, projectId: user.projectId, role: user.role, type: 'access' };
+      const refreshPayload = { id: user.id, projectId: user.projectId, type: 'refresh' };
+      return {
+        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }),
+        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATION })
+      };
     }
 
     //If user doesn't exist, create new user with Google User data
@@ -158,13 +170,17 @@ export class AuthService {
     const data = user;
 
     if (data == null || (data && Object.keys(data).length == 0)) {
-      return { accessToken: '' };
+      return { accessToken: '', refreshToken: '' };
     }
 
     try {
       const user = await this.userService.createUser(data);
-      const payload = { id: user.id, projectId: user.projectId, role: user.role };
-      const resp = { accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }) };
+      const payload = { id: user.id, projectId: user.projectId, role: user.role, type: 'access' };
+      const refreshPayload = { id: user.id, projectId: user.projectId, type: 'refresh' };
+      const resp = {
+        accessToken: this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION }),
+        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATION })
+      };
       this.logger.log(`User of user id: ${user.id} Created`);
       return resp;
     } catch (err) {
@@ -191,6 +207,31 @@ export class AuthService {
       return (await lastValueFrom(verificationRequest)).data;
     } catch (error) {
       return null;
+    }
+  }
+
+  /**
+   * Refresh access token using refresh token.
+   *
+   * @param refreshToken
+   * @returns New access token
+   */
+  async refreshAccessToken(refreshToken: string): Promise<AccessToken> {
+    try {
+      const decodedRefreshToken = this.jwtService.verify(refreshToken);
+      const userId = decodedRefreshToken['id'];
+      const projectId = decodedRefreshToken['projectId'];
+
+      const payload = { id: userId, projectId: projectId, type: 'access' };
+      const refreshPayload = { id: userId, projectId: projectId, type: 'refresh' };
+      const newAccessToken = this.jwtService.sign(payload, { expiresIn: process.env.JWT_EXPIRATION });
+      const newRefreshToken = this.jwtService.sign(refreshPayload, { expiresIn: process.env.REFRESH_EXPIRATION });
+      return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      };
+    } catch (error) {
+      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
     }
   }
 }
