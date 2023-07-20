@@ -34,7 +34,7 @@ export class UserResolver {
   @Query(() => UserModel)
   @UseGuards(AuthGuard)
   async me(@UserId() userId: string): Promise<UserModel> {
-    this.logger.log(`Users of projectId: ${userId} found updated`);
+    this.logger.log(`Called "me" with userId: ${userId}`);
     return this.userService.findUserById(userId);
   }
 
