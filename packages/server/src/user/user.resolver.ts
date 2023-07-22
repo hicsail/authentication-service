@@ -1,6 +1,6 @@
 import { Args, ID, Mutation, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { UserModel } from './model/user.model';
+import { UserModel, UpdateStatus } from './model/user.model';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { ProjectId } from '../project/project.decorator';
 import { AuthGuard } from '../auth/auth.guard';
@@ -45,5 +45,31 @@ export class UserResolver {
   @UseGuards(AuthGuard)
   async updateUser(@UserId() id: string, @Args('fullname') fullname: string, @Args('email') email: string): Promise<UserModel> {
     return this.userService.updateUser(id, fullname, email);
+  }
+
+  // projectId: string, email: string, pwdPlain: string, resetCodePlain: string
+  // Mutation to update the password
+  @Mutation(() => UpdateStatus)
+  @UseGuards(AuthGuard)
+  async updatePassword(
+    @ProjectId() projectId: string,
+    @Args('email') email: string,
+    @Args('password') pwdPlain: string,
+    @Args('resetCodePlain') resetCodePlain: string
+  ): Promise<UpdateStatus> {
+    return this.userService.updateUserPassword(projectId, email, pwdPlain, resetCodePlain);
+  }
+
+  // projectId: string, email: string, pwdPlain: string, resetCodePlain: string
+  // Mutation to update the password
+  @Mutation(() => UpdateStatus)
+  @UseGuards(AuthGuard)
+  async changePassword(
+    @ProjectId() projectId: string,
+    @Args('email') email: string,
+    @Args('oldPwdPlain') oldPwdPlain: string,
+    @Args('newPwdPlain') newPwdPlain: string
+  ): Promise<UpdateStatus> {
+    return this.userService.changeUserPassword(projectId, email, oldPwdPlain, newPwdPlain);
   }
 }

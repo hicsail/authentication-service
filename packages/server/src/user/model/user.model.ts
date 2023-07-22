@@ -35,3 +35,11 @@ export class UserModel {
   @Field({ nullable: true })
   deletedAt: Date;
 }
+@ObjectType()
+export class UpdateStatus {
+  @Field()
+  message: string;
+
+  @Field(() => Int)
+  status: number;
+}

@@ -290,4 +290,50 @@ export class UserService {
 
     return user;
   }
+
+  /**
+   * Change user password after verifying user's old password against the database
+   *
+   * @param projectId project ID where the user belongs to
+   * @param email email of the user
+   * @param oldPwdPlain old password in plain text
+   * @param newPwdPlain new password in plain text
+   * @returns UpdateStatus
+   */
+  async changeUserPassword(projectId: string, email: string, oldPwdPlain: string, newPwdPlain: string): Promise<UpdateStatus> {
+    const userToUpdate = await this.findUserByEmail(projectId, email);
+
+    if (!userToUpdate) {
+      return {
+        message: 'Unauthorized',
+        status: 401
+      };
+    }
+
+    const isOldPasswordValid = await bcrypt.compare(oldPwdPlain, userToUpdate.password);
+
+    if (!isOldPasswordValid) {
+      return {
+        message: 'Invalid old password.',
+        status: 400
+      };
+    }
+
+    const pwdHash = await bcrypt.hash(newPwdPlain, this.SALT_ROUNDS);
+
+    await this.prisma.user.update({
+      where: {
+        id: userToUpdate.id
+      },
+      data: {
+        password: pwdHash,
+        updatedAt: new Date()
+      }
+    });
+
+    return {
+      message: 'Password successfully updated.',
+      status: 200
+    };
+  }
 }
