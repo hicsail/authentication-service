@@ -12,6 +12,9 @@ import { ResetPassword } from '@pages/reset-password';
 import { Paths } from '@constants/paths';
 import { Invite } from '@pages/invite';
 import { SnackbarProvider } from '@context/snackbar.context';
+import { Profile } from '@pages/profile';
+import { BasicInfo } from '@pages/basic-info';
+import { Password } from '@pages/password';
 
 export const App: FC = () => {
   return (
@@ -21,15 +24,18 @@ export const App: FC = () => {
           <ThemeProvider>
             <Router>
               <ProjectProvider>
-                <Layout>
-                  <Routes>
+                <Routes>
+                  <Route element={<Layout />}>
                     <Route path={Paths.LOGIN} element={<SignIn />} />
                     <Route path={Paths.SIGN_UP} element={<SignUp />} />
                     <Route path={Paths.FORGOT_PASSWORD} element={<ForgotPassword />} />
                     <Route path={Paths.RESET_PASSWORD} element={<ResetPassword />} />
                     <Route path={Paths.INVITE} element={<Invite />} />
-                  </Routes>
-                </Layout>
+                    <Route path={Paths.PROFILE} element={<Profile />} />
+                    <Route path={Paths.BASIC_INFO} element={<BasicInfo />} />
+                    <Route path={Paths.PASSWORD} element={<Password />} />
+                  </Route>
+                </Routes>
               </ProjectProvider>
             </Router>
           </ThemeProvider>

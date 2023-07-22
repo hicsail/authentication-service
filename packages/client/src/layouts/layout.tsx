@@ -2,17 +2,20 @@ import { DarkMode, GitHub, LightMode } from '@mui/icons-material';
 import { AppBar, Avatar, Box, IconButton, Toolbar, Typography } from '@mui/material';
 import React, { FC } from 'react';
 import { useSettings } from '@context/settings.context';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { Paths } from '@constants/paths';
 
 export interface LayoutProps {
   children: React.ReactNode;
 }
 
-export const Layout: FC<LayoutProps> = ({ children }) => {
+export const Layout: FC = ({}) => {
   const { settings, setSettings } = useSettings();
 
   const toggleDarkMode = () => {
     setSettings('theme', settings.theme === 'light' ? 'dark' : 'light');
   };
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -22,13 +25,14 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
     >
       <AppBar elevation={0} color="transparent" position="sticky">
         <Toolbar sx={{ justifyContent: 'end' }}>
+          <IconButton onClick={() => navigate(Paths.PROFILE)}>Profile</IconButton>
           <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDarkMode}>
             {settings.theme === 'light' && <DarkMode color="info" />}
             {settings.theme === 'dark' && <LightMode color="warning" />}
           </IconButton>
         </Toolbar>
       </AppBar>
-      {children}
+      <Outlet />
       <Box
         component="footer"
         sx={{

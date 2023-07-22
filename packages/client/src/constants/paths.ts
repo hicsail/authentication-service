@@ -4,4 +4,7 @@ export enum Paths {
   LOGIN = '/',
   RESET_PASSWORD = '/reset',
   SIGN_UP = '/signup',
+  PROFILE = '/profile',
+  BASIC_INFO = '/profile/basic-info',
+  PASSWORD = '/profile/password'
 }
