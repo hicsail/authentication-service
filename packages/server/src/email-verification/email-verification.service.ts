@@ -22,8 +22,25 @@ export class EmailVerificationService {
         const decoded = this.jwtService.decode(accessToken)
 
         const user = await this.userService.findUserById(decoded['id']);
-        console.log(user.emailVerified)
+        console.log(user.emailVerified);
         return user.emailVerified;
+    }
+
+    async generateVerificationLink(baseUrl: string, accessToken: string): Promise<String> {
+        const decoded = this.jwtService.decode(accessToken);
+        const user = await this.userService.findUserById(decoded['id']);
+
+        const verificationLink = `${baseUrl}?token=${accessToken}`;
+        return verificationLink;
+
+    }
+
+    async verifyEmail(accessToken: string): Promise<Boolean> {
+        const decoded = this.jwtService.decode(accessToken)
+        const user = await this.userService.findUserById(decoded['id']);
+        
+        this.userService.updateUserEmailVerificationStatus(user.id, true);
+        return this.getVerificationStatus(accessToken);
 
     }
 

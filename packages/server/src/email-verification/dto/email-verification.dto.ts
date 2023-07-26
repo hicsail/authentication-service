@@ -14,13 +14,41 @@ export class EmailVerificationDto {
     accessToken: string;
 }
 
+@InputType()
+export class GenerateLinkDto {
+    @IsNotEmpty()
+    @IsString()
+    @IsDefined()
+    @Type(() => String)
+    @Field()
+    baseUrl: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @IsDefined()
+    @Type(() => String)
+    @Field()
+    accessToken: string;
+}
+
+
 export class EmailVerificationTransformPipe implements PipeTransform {
-    constructor () {}
     transform(body: any): EmailVerificationDto {
         const user = new EmailVerificationDto();
         
         user.accessToken = body.accessToken;
 
+        return user;
+    }
+}
+
+export class SendLinkTransformPipe implements PipeTransform {
+    transform(body: any): GenerateLinkDto {
+        const user = new GenerateLinkDto();
+
+        user.baseUrl = body.baseUrl;
+        user.accessToken = body.accessToken;
+        
         return user;
     }
 }

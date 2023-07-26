@@ -247,4 +247,24 @@ export class UserService {
       }
     });
   }
+
+  /**
+   * Update user's email verification status
+   * 
+   * @param id ID of the user
+   * @param emailVerified `true` to verify email. `false` to un-verify email
+   */
+
+  async updateUserEmailVerificationStatus(id: string, emailVerified: boolean): Promise<void> {
+    const userToUpdate = await this.findUserById(id);
+
+    await this.prisma.user.update({
+      where: {
+        id: id
+      },
+      data: {
+        emailVerified: emailVerified
+      }
+    });
+  }
 }

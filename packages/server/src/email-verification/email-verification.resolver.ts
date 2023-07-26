@@ -3,7 +3,9 @@ import { EmailVerificationService } from './email-verification.service';
 
 import {
     EmailVerificationDto,
-    EmailVerificationTransformPipe
+    EmailVerificationTransformPipe,
+    GenerateLinkDto,
+    SendLinkTransformPipe
 } from './dto/email-verification.dto'
 import { UsePipes } from '@nestjs/common';
 
@@ -16,6 +18,18 @@ export class EmailVerificationResolver {
     @UsePipes(new EmailVerificationTransformPipe())
     async getEmailVerificationStatus(@Args('user') user: EmailVerificationDto): Promise<Boolean> {
         return this.emailVerificationService.getVerificationStatus(user.accessToken);
+    }
+    
+    @Mutation(() => String)
+    @UsePipes(new SendLinkTransformPipe())
+    async generateVerificationLink(@Args('user') user: GenerateLinkDto): Promise<String> {
+        return this.emailVerificationService.generateVerificationLink(user.baseUrl, user.accessToken);
+    }
+
+    @Mutation(() => Boolean)
+    @UsePipes(new EmailVerificationTransformPipe())
+    async verifyEmail(@Args('user') user: EmailVerificationDto): Promise<Boolean> {
+        return this.emailVerificationService.verifyEmail(user.accessToken);
     }
 
 }
