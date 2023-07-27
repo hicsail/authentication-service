@@ -20,6 +20,9 @@ export class ProjectService {
    * @throws Will throw an error if the project ID is already in use or an error if the user is not authorized to create a project
    */
   async createProject(newProject: Prisma.ProjectCreateInput): Promise<Project> {
+    if (!newProject.muiTheme) {
+      newProject.muiTheme = {};
+    }
     const project = await this.prisma.project.create({
       data: newProject
     });
