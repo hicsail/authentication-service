@@ -91,23 +91,27 @@ export class ConfigurableProjectSettings implements Partial<Omit<Project, 'id' |
   description: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @Field({ nullable: true })
-  logo: string | null;
+  logo: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @Field(() => JSON, { nullable: true })
   muiTheme: any;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @Field({ nullable: true })
-  homePage: string | null;
+  homePage: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @Field({ nullable: true })
-  redirectUrl: string | null;
+  redirectUrl: string;
 }
 
 /**
