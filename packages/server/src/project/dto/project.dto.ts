@@ -16,10 +16,10 @@ export class ProjectCreateInput implements Omit<Project, 'id' | 'createdAt' | 'u
   @Field()
   name: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @IsDefined()
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
   @IsOptional()
@@ -41,24 +41,28 @@ export class ProjectCreateInput implements Omit<Project, 'id' | 'createdAt' | 'u
   @Field({ nullable: true })
   redirectUrl: string | null;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsDefined()
-  @Field()
+  @Field({ nullable: true })
   displayProjectName: boolean;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsDefined()
-  @Field()
+  @Field({ nullable: true })
   allowSignup: boolean;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsDefined()
-  @Field()
+  @Field({ nullable: true })
   googleAuth: boolean;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsDefined()
-  @Field()
+  @Field({ nullable: true })
   emailAuth: boolean;
 }
 
@@ -87,23 +91,27 @@ export class ConfigurableProjectSettings implements Partial<Omit<Project, 'id' |
   description: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @Field({ nullable: true })
-  logo: string | null;
+  logo: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @Field(() => JSON, { nullable: true })
   muiTheme: any;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @Field({ nullable: true })
-  homePage: string | null;
+  homePage: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @Field({ nullable: true })
-  redirectUrl: string | null;
+  redirectUrl: string;
 }
 
 /**
