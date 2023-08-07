@@ -1,61 +1,65 @@
-import { DynamicModule, Module, ModuleMetadata, ValueProvider } from '@nestjs/common';
+import { HttpModule, HttpService } from '@nestjs/axios';
+import { DynamicModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { firstValueFrom } from 'rxjs';
+import { Algorithm } from 'jsonwebtoken';
+import { JwtStrategy } from './jwt.strategy';
+import { JwtAuthGuard } from './jwt.guard';
 
 export interface AuthModuleOptions {
-  /**
-   * The public key used for JWT verification, required for use by both
-   * the client and server
-   */
-  publicKey: string;
-  /**
-   * The private key used for JWT creation, only used by the server that
-   * mints JWTs
-   */
-  privateKey?: string;
+  /** URL to get the public key from */
+  publicKeyURL: string;
+  /** The sign algorithm being used */
+  signAlgorithm: Algorithm;
 }
-
-export interface AuthModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
-  useFactory: (...args: any[]) => Promise<AuthModuleOptions> | AuthModuleOptions;
-  inject?: any[];
-};
 
 export const AUTH_MODULE_OPTIONS = 'AUTH_MODULE_OPTIONS';
 
-@Module({
-  imports: [],
-  exports: []
-})
+@Module({})
 export class AuthModule {
-  /** Register option when options can be provided directly */
-  static register(_options: AuthModuleOptions): DynamicModule {
-    return {
-      module: AuthModule
-    }
-  }
+  private static publicKey: string | null = null;
 
-  /** Async option when providing a factory that generates the options */
-  static registerAsync(options: AuthModuleAsyncOptions): DynamicModule {
+
+  static register(options: AuthModuleOptions): DynamicModule {
     return {
       module: AuthModule,
-      imports: options.imports || [],
-      providers: [this.createAsyncOptionsProvider(options)]
+      imports: [
+        this.getJwtModule(options)
+      ],
+      providers: [
+        JwtAuthGuard,
+        {
+          provide: JwtStrategy,
+          inject: [HttpService],
+          useFactory: async(httpService: HttpService) => new JwtStrategy(await this.getPublicKey(options, httpService)),
+        }
+      ],
+      exports: [JwtAuthGuard]
     };
   }
 
-  /** Provider that get's options from factory method */
-  private static createAsyncOptionsProvider(options: AuthModuleAsyncOptions): ValueProvider<AuthModuleOptions> {
-    return {
-      provide: AUTH_MODULE_OPTIONS,
-      useFactory: options.useFactory,
-      inject: options.inject || []
-    };
-  }
-
-  private static getJwtModule(optionsProvider: Provider): DynamicModule {
+  /** Make the JWT module, grabbing the public key from the provided URL */
+  private static getJwtModule(options: AuthModuleOptions): DynamicModule {
     return JwtModule.registerAsync({
-      useFactory: async () => ({
-
+      imports: [HttpModule],
+      inject: [HttpService],
+      useFactory: async (httpService: HttpService) => ({
+        publicKey: await this.getPublicKey(options, httpService),
+        signOptions: {
+          algorithm: options.signAlgorithm
+        }
       })
-    });
+    })
+  }
+
+  private static async getPublicKey(options: AuthModuleOptions, httpService: HttpService): Promise<string> {
+    if (this.publicKey) {
+      return this.publicKey;
+    }
+
+    const publicKeyResponse = await firstValueFrom(httpService.get(options.publicKeyURL));
+    // Cache the response
+    this.publicKey = publicKeyResponse.data[0];
+    return this.publicKey;
   }
 }
