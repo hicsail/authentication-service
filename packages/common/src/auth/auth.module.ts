@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { Algorithm } from 'jsonwebtoken';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './jwt.guard';
+import { PassportModule } from '@nestjs/passport';
 
 export interface AuthModuleOptions {
   /** URL to get the public key from */
@@ -24,6 +25,8 @@ export class AuthModule {
     return {
       module: AuthModule,
       imports: [
+        PassportModule,
+        HttpModule,
         this.getJwtModule(options)
       ],
       providers: [

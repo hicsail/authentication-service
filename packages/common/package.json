@@ -8,6 +8,9 @@
     "type": "git",
     "url": "git+https://github.com/hicsail/authentication-service.git"
   },
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "tsc",
     "clean": "rimraf lib",
