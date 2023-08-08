@@ -35,6 +35,20 @@ export class AuthModule {
     };
   }
 
+  /** Make the JWT module, grabbing the public key from the provided URL */
+  private static async getJwtModule(options: AuthModuleOptions): Promise<DynamicModule> {
+    return JwtModule.registerAsync({
+      imports: [HttpModule],
+      inject: [HttpService],
+      useFactory: async (httpService: HttpService) => ({
+        publicKey: await this.getPublicKeyHelper(options.publicKeyURL, httpService),
+        signOptions: {
+          algorithm: options.signAlgorithm
+        }
+      })
+    })
+  }
+
   static registerAsync(options: AuthModuleOptionsAsync): DynamicModule {
     const jwtModuleOptionsProvider: Provider = {
       provide: JWT_MODULE_OPTIONS,
@@ -56,20 +70,6 @@ export class AuthModule {
       ],
       exports: [JwtAuthGuard]
     }
-  }
-
-  /** Make the JWT module, grabbing the public key from the provided URL */
-  private static async getJwtModule(options: AuthModuleOptions): Promise<DynamicModule> {
-    return JwtModule.registerAsync({
-      imports: [HttpModule],
-      inject: [HttpService],
-      useFactory: async (httpService: HttpService) => ({
-        publicKey: await this.getPublicKeyHelper(options.publicKeyURL, httpService),
-        signOptions: {
-          algorithm: options.signAlgorithm
-        }
-      })
-    })
   }
 
   private static getJwtModuleAsync(options: AuthModuleOptionsAsync, jwtModuleOptionsProvider: Provider): DynamicModule {
