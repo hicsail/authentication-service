@@ -1,6 +1,7 @@
 import { HttpModule, HttpService } from '@nestjs/axios';
-import { DynamicModule, Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import { JWT_MODULE_OPTIONS } from '@nestjs/jwt/dist/jwt.constants';
 import { firstValueFrom } from 'rxjs';
 import { Algorithm } from 'jsonwebtoken';
 import { JwtStrategy } from './jwt.strategy';
@@ -14,12 +15,19 @@ export interface AuthModuleOptions {
   signAlgorithm: Algorithm;
 }
 
+export interface AuthModuleOptionsAsync extends Pick<ModuleMetadata, 'imports'> {
+  useFactory: (...args: any) => Promise<JwtModuleOptions>;
+  inject?: any[];
+}
+
 export const AUTH_MODULE_OPTIONS = 'AUTH_MODULE_OPTIONS';
+
+// TODO: Attempt to have an intermediate module that provides a service
+//       which exposes the needed settings
 
 @Module({})
 export class AuthModule {
   private static publicKey: string | null = null;
-
 
   static register(options: AuthModuleOptions): DynamicModule {
     return {
@@ -34,20 +42,35 @@ export class AuthModule {
         {
           provide: JwtStrategy,
           inject: [HttpService],
-          useFactory: async(httpService: HttpService) => new JwtStrategy(await this.getPublicKey(options, httpService)),
+          useFactory: async(httpService: HttpService) => new JwtStrategy(await this.getPublicKeyHelper(options.publicKeyURL, httpService)),
         }
       ],
       exports: [JwtAuthGuard]
     };
   }
 
+  static registerAsync(options: AuthModuleOptionsAsync): DynamicModule {
+    return {
+      module: AuthModule,
+      imports: [
+        PassportModule,
+        HttpModule,
+        this.getJwtModuleAsync(options)
+      ],
+      providers: [
+        JwtAuthGuard
+      ],
+      exports: [JwtAuthGuard]
+    }
+  }
+
   /** Make the JWT module, grabbing the public key from the provided URL */
-  private static getJwtModule(options: AuthModuleOptions): DynamicModule {
+  private static async getJwtModule(options: AuthModuleOptions): Promise<DynamicModule> {
     return JwtModule.registerAsync({
       imports: [HttpModule],
       inject: [HttpService],
       useFactory: async (httpService: HttpService) => ({
-        publicKey: await this.getPublicKey(options, httpService),
+        publicKey: await this.getPublicKeyHelper(options.publicKeyURL, httpService),
         signOptions: {
           algorithm: options.signAlgorithm
         }
@@ -55,12 +78,26 @@ export class AuthModule {
     })
   }
 
-  private static async getPublicKey(options: AuthModuleOptions, httpService: HttpService): Promise<string> {
+  private static getJwtModuleAsync(options: AuthModuleOptionsAsync): DynamicModule {
+    return {
+      module: JwtModule,
+      imports: options.imports,
+      providers: [
+        {
+          provide: JWT_MODULE_OPTIONS,
+          inject: options.inject,
+          useFactory: async () => options.useFactory
+        }
+      ]
+    };
+  }
+
+  static async getPublicKeyHelper(publicKeyURL: string, httpService: HttpService): Promise<string> {
     if (this.publicKey) {
       return this.publicKey;
     }
 
-    const publicKeyResponse = await firstValueFrom(httpService.get(options.publicKeyURL));
+    const publicKeyResponse = await firstValueFrom(httpService.get(publicKeyURL));
     // Cache the response
     this.publicKey = publicKeyResponse.data[0];
     return this.publicKey;
