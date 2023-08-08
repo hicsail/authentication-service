@@ -1,29 +1,12 @@
 import { HttpModule, HttpService } from '@nestjs/axios';
-import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import { DynamicModule, Module, Provider } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { JWT_MODULE_OPTIONS } from '@nestjs/jwt/dist/jwt.constants';
 import { firstValueFrom } from 'rxjs';
-import { Algorithm } from 'jsonwebtoken';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './jwt.guard';
 import { PassportModule } from '@nestjs/passport';
-
-export interface AuthModuleOptions {
-  /** URL to get the public key from */
-  publicKeyURL: string;
-  /** The sign algorithm being used */
-  signAlgorithm: Algorithm;
-}
-
-export interface AuthModuleOptionsAsync extends Pick<ModuleMetadata, 'imports'> {
-  useFactory: (...args: any) => Promise<JwtModuleOptions>;
-  inject?: any[];
-}
-
-export const AUTH_MODULE_OPTIONS = 'AUTH_MODULE_OPTIONS';
-
-// TODO: Attempt to have an intermediate module that provides a service
-//       which exposes the needed settings
+import { AuthModuleOptionsAsync, AuthModuleOptions } from './auth.interface';
 
 @Module({})
 export class AuthModule {
@@ -39,10 +22,13 @@ export class AuthModule {
       ],
       providers: [
         JwtAuthGuard,
+        JwtStrategy,
         {
           provide: JwtStrategy,
           inject: [HttpService],
-          useFactory: async(httpService: HttpService) => new JwtStrategy(await this.getPublicKeyHelper(options.publicKeyURL, httpService)),
+          useFactory: async(httpService: HttpService) => new JwtStrategy({
+            publicKey: await this.getPublicKeyHelper(options.publicKeyURL, httpService)
+          }),
         }
       ],
       exports: [JwtAuthGuard]
@@ -50,15 +36,23 @@ export class AuthModule {
   }
 
   static registerAsync(options: AuthModuleOptionsAsync): DynamicModule {
+    const jwtModuleOptionsProvider: Provider = {
+      provide: JWT_MODULE_OPTIONS,
+      inject: options.inject,
+      useFactory: options.useFactory
+    };
+
     return {
       module: AuthModule,
       imports: [
         PassportModule,
-        HttpModule,
-        this.getJwtModuleAsync(options)
+        this.getJwtModuleAsync(options, jwtModuleOptionsProvider),
+        ...options.imports
       ],
       providers: [
-        JwtAuthGuard
+        JwtAuthGuard,
+        JwtStrategy,
+        jwtModuleOptionsProvider
       ],
       exports: [JwtAuthGuard]
     }
@@ -78,17 +72,11 @@ export class AuthModule {
     })
   }
 
-  private static getJwtModuleAsync(options: AuthModuleOptionsAsync): DynamicModule {
+  private static getJwtModuleAsync(options: AuthModuleOptionsAsync, jwtModuleOptionsProvider: Provider): DynamicModule {
     return {
       module: JwtModule,
       imports: options.imports,
-      providers: [
-        {
-          provide: JWT_MODULE_OPTIONS,
-          inject: options.inject,
-          useFactory: async () => options.useFactory
-        }
-      ]
+      providers: [jwtModuleOptionsProvider]
     };
   }
 
