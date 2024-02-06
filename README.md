@@ -62,6 +62,12 @@ Ensure you have the following software installed on your machine:
     docker-compose up -d --build
     ```
 
+1. Set environment variables:
+
+    ```
+    source .env.test
+    ```
+
 1. Install the project's npm dependencies:
 
     ```
