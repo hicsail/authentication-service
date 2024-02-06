@@ -288,7 +288,7 @@ describe('Auth Module Integration Test (service)', () => {
       expect(result.refreshToken).toBe('refresh-token');
     });
 
-    it('it should block signup if project doesn\'t allow signup', async () => {
+    it("it should block signup if project doesn't allow signup", async () => {
       // Arrange
       mockUserService.createUser.resolves(MOCK_USER);
       mockProjectService.getProject.resolves({
@@ -299,13 +299,15 @@ describe('Auth Module Integration Test (service)', () => {
       mockJwtService.sign.onSecondCall().returns('refresh-token');
 
       // Act
-      const result = await authResolver.signup({
-        projectId: PROJECT_ID,
-        email: EMAIL,
-        password: PASSWORD
-      }).catch(e => {
-        expect(e).toBeDefined();
-      });
+      const result = await authResolver
+        .signup({
+          projectId: PROJECT_ID,
+          email: EMAIL,
+          password: PASSWORD
+        })
+        .catch((e) => {
+          expect(e).toBeDefined();
+        });
 
       // Assert
       expect(result).toBeUndefined();
