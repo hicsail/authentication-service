@@ -16,7 +16,7 @@ export class UserSignupDto {
   @IsOptional()
   @IsString()
   @Field()
-  fullname: string;
+  fullname?: string;
 
   @IsDefined()
   @IsEmail()
@@ -141,6 +141,7 @@ export class SignupTransformPipe implements PipeTransform {
     user.username = body.username?.toString();
     user.email = body.email?.toString().toLowerCase();
     user.password = body.password;
+    user.fullname = body.fullname;
 
     return user;
   }

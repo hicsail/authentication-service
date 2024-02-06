@@ -168,6 +168,15 @@ export class AuthService {
    */
   async signup(user: UserSignupDto): Promise<AccessToken> {
     const data = user;
+    const project = await this.projectService.getProject(data.projectId);
+
+    if (project == null) {
+      throw new HttpException('Project not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (!project.allowSignup) {
+      throw new HttpException('Signup is not allowed for this project', HttpStatus.FORBIDDEN);
+    }
 
     if (data == null || (data && Object.keys(data).length == 0)) {
       return { accessToken: '', refreshToken: '' };
