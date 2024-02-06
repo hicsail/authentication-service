@@ -45,8 +45,8 @@ This section outlines the steps to set up the Authentication Service for local d
 Ensure you have the following software installed on your machine:
 
 1. [Docker](https://docs.docker.com/get-docker/)
-2. [Node.js](https://nodejs.org/en/download/)
-3. [npm](https://www.npmjs.com/get-npm)
+1. [Node.js](https://nodejs.org/en/download/)
+1. [npm](https://www.npmjs.com/get-npm)
 
 ## Setup Instructions
 
@@ -56,39 +56,39 @@ Ensure you have the following software installed on your machine:
     cd packages/server
     ```
 
-2. Build and run the Docker Compose file:
+1. Build and run the Docker Compose file:
 
     ```
     docker-compose up -d --build
     ```
 
-3. Install the project's npm dependencies:
+1. Install the project's npm dependencies:
 
     ```
     npm i
     ```
 
-4. Generate Prisma Client JS:
+1. Generate Prisma Client JS:
 
     ```
     npm run prisma:generate
     ```
 
-5. Run Prisma migrations to set up your database schema:
+1. Run Prisma migrations to set up your database schema:
 
     ```
     npm run prisma:migrate
     ```
 
-6. Start the development server:
+1. Start the development server:
 
     ```
     npm run start:dev
     ```
 
-7. Access the GraphQL Playground at [http://localhost:3001/graphql](http://localhost:3001/graphql).
+1. Access the GraphQL Playground at [http://localhost:3001/graphql](http://localhost:3001/graphql).
 
-8. To create a project, use the following GraphQL mutation:
+1. To create a project, use the following GraphQL mutation:
 
     ```graphql
     mutation {
