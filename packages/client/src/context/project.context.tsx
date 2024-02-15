@@ -75,7 +75,15 @@ export const ProjectProvider: FC<ProjectProviderProps> = ({ children, ...props }
       <ThemeProvider
         theme={createTheme({
           ...theme,
-          ...project?.muiTheme
+          palette: {
+            ...theme.palette,
+            primary: {
+              main: project?.muiTheme.primaryColor || theme.palette.primary.main
+            },
+            secondary: {
+              main: project?.muiTheme.secondaryColor || theme.palette.secondary.main
+            }
+          }
         })}
       >
         {children}
