@@ -5,6 +5,7 @@ import { Roles } from '../auth/roles.decorator';
 import { UserService } from './user.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ProjectId } from '../project/project.decorator';
+import { UserId } from './user.decorator';
 
 @Controller('users')
 @UseGuards(AuthGuard)
@@ -12,9 +13,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
-  async getMyInfo(@Req() req): Promise<User> {
+  async getMyInfo(@UserId() userId: string): Promise<User> {
     try {
-      return await this.userService.findUserById(req.user.id);
+      const user = await this.userService.findUserById(userId);
+      delete user.password;
+      return user;
     } catch (error) {
       throw new HttpException('User ID does not exist', HttpStatus.NOT_FOUND);
     }
@@ -23,14 +26,18 @@ export class UserController {
   @Get()
   @Roles(Role.Admin)
   async getAllUsersFromCurrentProject(@ProjectId() projectId: string): Promise<User[]> {
-    return await this.userService.findUsersByProjectId(projectId);
+    const users = await this.userService.findUsersByProjectId(projectId);
+    users.forEach((user) => delete user.password);
+    return users;
   }
 
   @Get(':id')
   @Roles(Role.Admin)
   async getUserInfo(@Param('id', new ParseUUIDPipe()) id: string): Promise<User> {
     try {
-      return await this.userService.findUserById(id);
+      const user = await this.userService.findUserById(id);
+      delete user.password;
+      return user;
     } catch (error) {
       throw new HttpException('User ID does not exist', HttpStatus.NOT_FOUND);
     }
