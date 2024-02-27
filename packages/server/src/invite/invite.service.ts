@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { InviteModel } from './model/invite.model';
 import { isPast } from 'date-fns';
 import { AuthService } from '../auth/auth.service';
+import { ProjectService } from '../project/project.service';
 
 @Injectable()
 export class InviteService {
@@ -19,7 +20,8 @@ export class InviteService {
     private readonly userService: UserService,
     private readonly auth: AuthService,
     private readonly notification: NotificationService,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
+    private readonly projectService: ProjectService
   ) {}
 
   /**
@@ -39,6 +41,12 @@ export class InviteService {
     if (await this.findInviteByEmail(projectId, newInvite.email)) {
       throw new HttpException('Invite already exists for this user', HttpStatus.FORBIDDEN);
     }
+
+    // get project
+    const project = await this.projectService.getProject(projectId);
+    if (!project) {
+      throw new HttpException(`Project ${projectId} not found`, HttpStatus.NOT_FOUND);
+    }
     // Generate a random invite code
     const inviteCode = randomBytes(4).toString('hex');
     const hashInviteCode = await hash(inviteCode, 10);
@@ -56,7 +64,7 @@ export class InviteService {
       }
     });
     // Send the invitation email
-    await this.sendInviteEmail(invite, inviteCode);
+    await this.sendInviteEmail(invite, inviteCode, project);
     return invite;
   }
 
@@ -304,10 +312,10 @@ export class InviteService {
    * @param {string} inviteCode - The invite code to include in the email invitation.
    * @returns {Promise<any>} - A promise that resolves when the email is sent.
    */
-  private async sendInviteEmail(invite: Invite, inviteCode: string): Promise<any> {
+  private async sendInviteEmail(invite: Invite, inviteCode: string, project?: Partial<Project>): Promise<any> {
     // Construct the invite URL and send the invitation email
     const inviteUrl = `${this.config.get('BASE_URL')}/invite/${invite.id}?inviteCode=${inviteCode}`;
-    return this.notification.sendInviteEmail(invite.projectId, invite.email, inviteUrl);
+    return this.notification.sendInviteEmail(invite.email, inviteUrl, project);
   }
 
   /**

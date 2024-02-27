@@ -2,6 +2,7 @@ import { HttpStatus, Injectable, Logger, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { ProjectService } from '../project/project.service';
+import { Project } from '@prisma/client';
 
 export interface Email {
   to: string[];
@@ -22,8 +23,8 @@ export class NotificationService {
     this.notificationUrl = this.configService.getOrThrow('NOTIFICATION_SERVICE_URL');
   }
 
-  private async sendEmail(email: Email, projectId: string): Promise<any> {
-    if (projectId) {
+  private async sendEmail(email: Email, projectId?: string): Promise<any> {
+    if (projectId && !email.templateData.project) {
       const project = await this.projectService.getProject(projectId);
       email.templateData.project = project;
     }
@@ -63,16 +64,16 @@ export class NotificationService {
     );
   }
 
-  async sendInviteEmail(email: string, projectId: string, link: string): Promise<any> {
-    return this.sendEmail(
-      {
-        to: [email],
-        subject: `You have been invited to join ${projectId}`,
-        message: `Click this link to join: ${link}`,
-        template: 'auth/invite',
-        templateData: {}
-      },
-      projectId
-    );
+  async sendInviteEmail(email: string, link: string, project: Partial<Project>): Promise<any> {
+    return this.sendEmail({
+      to: [email],
+      subject: `You have been invited to join ${project.name}`,
+      message: `Click this link to join: ${link}`,
+      template: 'auth/invite',
+      templateData: {
+        link,
+        project
+      }
+    });
   }
 }
